@@ -28,6 +28,21 @@ public class User implements IUser {
     private Integer _vegzesEve;
     //endregion
 
+    public User(String _psCode, String _name, String _email, String _passwordHash, Integer _szakId, UserRoles _role, Integer _kezdesEve, Integer _vegzesEve) {
+        this._psCode = _psCode;
+        this._name = _name;
+        this._email = _email;
+        this._passwordHash = _passwordHash;
+        this._szakId = _szakId;
+        this._role = _role;
+        this._kezdesEve = _kezdesEve;
+        this._vegzesEve = _vegzesEve;
+    }
+
+    public User(){
+
+    }
+
     //region Getters
     @Override
     public String getPsCode() {
@@ -101,8 +116,6 @@ public class User implements IUser {
 
     @Override
     public IUser setSzakId(Integer szakId) throws IllegalArgumentException {
-        //TODO: check, hogy van-e ilyen?
-        //nem, az itt nem scope imo, ez egy modell
         if (szakId == null || szakId < 0) throw new IllegalArgumentException("szakId");
 
         _szakId = szakId;
