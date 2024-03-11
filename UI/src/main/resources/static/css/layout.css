@@ -1,0 +1,229 @@
+:root{
+    --brown: #B5B5A1;
+    --blue: #00FFF8;
+    --light_blue: #C0FEFC;
+    --light_brown: #E0E0DC;
+    --green: #00BE4C;
+    --red: #FF0000;
+    --white: #FFFFFF;
+    --text_color: #707070;
+    --mid_blue: #DCF1F0;
+    --aqua: #00FFF8;
+    --lightgrey: lightgrey;
+}
+
+a{
+    text-decoration: none;
+    color: var(--white);
+}
+
+
+body{
+    position: relative;
+    top: 0;
+    font-family: "Arial", serif;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    margin: 0;
+    height: 100vh;
+    background-image: linear-gradient(to right, var(--light_brown), var(--light_blue));
+}
+
+main{
+    position: relative;
+    top: 0;
+    height: 100vh;
+    padding-bottom: 50px;
+}
+
+header{
+    z-index: 999;
+    position: fixed;
+    top: 0;
+    margin: 0;
+    height: 70px;
+    width: 100%;
+    background-color: var(--brown);
+    text-align: left;
+    padding: 1px;
+    color: var(--blue);
+}
+
+header > .logo{
+    float: left;
+    padding: 5px 5px;
+}
+
+/*header > .page-name{*/
+/*    padding-top: 5px;*/
+/*}*/
+
+header > h1{
+    color: var(--aqua);
+    font-style: italic;
+    margin: auto;
+    padding: 14px;
+}
+
+#cookie{
+    font-style: normal;
+}
+
+#user-icon{
+    float: right;
+    padding-right: 5px;
+    /*z-index: 999;*/
+}
+
+.login{
+    height: auto;
+    position: absolute;
+    margin: 0;
+    top: 10vw;
+    left: 25vw;
+    width: 50vw;
+
+}
+
+.login > div, .error{
+    display: inline-block;
+    background-color: var(--mid_blue);
+    width: 20vw;
+    border-radius: 20px;
+    padding: 0;
+
+}
+.login > div > .form{
+    padding: 10px 20px 0 20px;
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    margin-right: 20px;
+}
+
+.login > div > div > h2{
+    width: 18.2vw;
+    margin: 0 0 10px;
+    padding: 20px 20px 20px 20px;
+    background-color: var(--brown);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    color: var(--white);
+}
+
+.login > div > div{
+    right: auto;
+    padding-top: 0;
+    display: flex;
+    align-items: center;
+}
+
+.login > .left{
+    margin-right: 30px;
+    /*display: inline-block;*/
+    float: left;
+}
+.login > .right{
+    margin-left: 30px;
+    /*display: inline-block;*/
+    float: right;
+}
+.login label{
+    display: block;
+    align-items: center;
+    height: 25px;
+    margin-bottom: 0;
+    width: 17vw;
+    color: var(--text_color);
+}
+
+.login input{
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 5px;
+    height: 1.5vw;
+    width: 16vw;
+    box-shadow: 2px 2px 5px var(--lightgrey) inset;
+}
+
+.login .button, .error button{
+    height: 35px;
+    width: 100px;
+    float: right;
+    margin-top: 20px;
+    margin-bottom: 25px;
+    margin-right: 0.8vw;
+    background-color: var(--brown);
+    border: none;
+    color: var(--white);
+    font-size: large;
+    border-radius: 18px;
+    box-shadow: 3px 3px 10px var(--lightgrey);
+}
+
+.error_message{
+    color: red;
+}
+
+.info_message{
+    color: #20fa20;
+}
+
+#dropdown{
+    position:relative;
+    float: right;
+    background-color: var(--brown);
+    padding-left: 80px;
+    margin: -72px -1px -10px 0;
+    height: 72px;
+}
+
+#dropdown-menu{
+    z-index: 999;
+    opacity: 0;
+    position: fixed;
+    background-color: var(--blue);
+    margin-top: 72px;
+    margin-left: -80px;
+}
+
+#dropdown-menu p, #dropdown-menu button{
+    margin: 20px 0;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-size: 20pt;
+    text-decoration: none;
+    color: var(--text_color);
+}
+
+#dropdown-menu hr{
+    border-top: 2px solid var(--text_color);
+    width: 80%;
+}
+
+#dropdown:hover{
+    background-color: var(--text_color);
+}
+
+#dropdown:hover #dropdown-menu{
+    animation: dropdown-anim 500ms ease-out;
+    opacity: 1;
+}
+@keyframes dropdown-anim{
+    0%{
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    100%{
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
+
+#logout{
+    margin: 0;
+    padding: 0;
+    background-color: unset;
+    border: none;
+    box-shadow: none;
+}

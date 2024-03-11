@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" th:href="@{/images/dnd_map_logo.svg}">
+    <link th:href="@{/css/layout.css}" rel="stylesheet"/>
+    <link th:href="@{/css/mid.css}" rel="stylesheet"/>
+    <link id="theme" th:href="@{/css/lightmode.css}" rel="stylesheet"  type="text/css"/>
+    <script>
+        document.getElementById('cookie').innerHTML=showIcon()
+        function showIcon() {
+            var cookies = document.cookie.split(';');
+            var isEnabled = cookies[0].split('=')[1] === "true";
+
+            if(isEnabled){
+                document.getElementById('theme').href = "/css/darkmode.css";
+            }
+
+            return isEnabled ? "☾" : "☼";
+        }
+    </script>
+    <title>Edit user profile</title>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<main>
+    <div class="edit_user">
+        <div class="top"><h2>Settings</h2></div>
+        <div>
+            <form id="removeUser" th:action="@{/edit-user/delete}" method="get">
+            </form>
+            <form th:action="@{/edit-user/process}" enctype="multipart/form-data" method="POST">
+                <p th:if="${edit_error} != null" th:text="${edit_error}" class="error_message"/>
+                <p th:if="${param.success != null}" class="info_message">
+                    Editing was successful!
+                </p>
+                <table>
+                    <tr>
+                        <th><label for="new_uname">Username</label></th>
+                        <th><input type="text" name="username" id="new_uname" th:value="${user.username}"></th>
+                    </tr>
+                    <tr>
+                        <th><label for="new_email">E-mail</label></th>
+                        <th><input type="email" name="email" id="new_email" th:value="${user.email}"></th>
+                    </tr>
+                    <tr>
+                        <th><label for="new_pwd">New password</label></th>
+                        <th><input type="password" name="new_password" id="new_pwd" value=""></th>
+                    </tr>
+                    <tr>
+                        <th><label for="new_pwd_again">New password again</label></th>
+                        <th><input type="password" name="new_password2" id="new_pwd_again" value=""></th>
+                    </tr>
+                    <tr>
+                        <th><label for="pfp">Profile picture</label></th>
+                        <th><label for="pfp"><input type="file" name="pfp" id="pfp"/></label></th>
+                    </tr>
+                </table>
+                <input class="button" type="submit" name="edit-btn" value="Edit"/>
+                <button class="removeUser button" form="removeUser">Remove user</button>
+            </form>
+        </div>
+    </div>
+
+
+</main>
+
+</body>
+</html>

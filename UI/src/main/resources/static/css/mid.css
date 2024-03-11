@@ -1,0 +1,362 @@
+.edit_place{
+    position: absolute;
+    margin: 0;
+    top: 70px;
+    left: 20vw;
+    width: 60vw;
+    height: fit-content;
+    border-radius: 20px;
+    display: inline-block;
+    background-color: var(--mid_blue);
+}
+
+.edit_place .top {
+    background-color: var(--brown);
+    padding: 5px 0 5px 20px;
+    height: 4%;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    color: var(--white)
+}
+
+.edit_place > div > form{
+    height: 80%;
+    padding: 20px 10px 50px 25px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+label{
+    font-size: 15pt;
+    display: block;
+    align-items: center;
+    height: 25px;
+    margin-bottom: 0;
+    width: 17vw;
+    color: var(--text_color);
+}
+::file-selector-button{
+    cursor: pointer;
+    height: 20px;
+    width: 7vw;
+    float: left;
+    left: 0;
+    background-color: var(--brown);
+    border: none;
+    color: var(--white);
+    font-size: large;
+    border-radius: 18px;
+    box-shadow: 3px 3px 10px lightgrey;
+}
+
+.edit_place .left{
+    float: left;
+    width: 40%;
+    height: fit-content;
+}
+.edit_place .right{
+    width: 60%;
+    float: right;
+    margin-right: 0;
+    height: fit-content;
+}
+.edit_place input[type=text]{
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 5px;
+    height: 1.5vw;
+    box-shadow: 2px 2px 5px var(--lightgrey) inset;
+}
+
+.right_input{
+    margin-top: 5px !important;
+    margin-bottom: 5px !important;
+}
+.coords{
+    width: 100px !important;
+    float: right !important;
+    margin-right: 5px !important;
+}
+.zaxis{
+    width: 60px !important;
+    float: right !important;
+    margin-right: 2px;
+}
+
+.balanced{
+    width: 47% !important;
+    margin: 3% 0 3% 3%;
+}
+
+.edit_place textarea{
+    width: 90%;
+    margin-bottom: 5px;
+    border: none;
+    border-radius: 10px;
+    height: 5vw;
+    box-shadow: 2px 2px 5px var(--lightgrey) inset;
+}
+
+.edit_place .left input[type=text] {
+    /*width: 19.5vw;*/
+    width: 90%;
+}
+.edit_place table{
+    width: 90%;
+}
+
+.edit_place td, th{
+    border-bottom: 1px solid var(--text_color);
+}
+.edit_place th{
+    color:var(--brown);
+    font-weight: lighter;
+}
+.remove[value=Remove]{
+    width: 85px;
+    padding:0 !important;
+    margin:0 !important;
+}
+#remove_child{
+    width: 85px;
+    padding: 0 !important;
+    margin:0 0 0 2px !important;
+}
+#add_child{
+    width: 55px;
+    padding: 0 !important;
+    margin: 8px 0 8px 5px;
+}
+
+.edit_place .select{
+    color: var(--text_color);
+    font-size: 16px;
+    width: 90%;
+    padding: 2px;
+    margin-bottom: 5px;
+    border: none;
+    border-radius: 5px;
+    height: 26px;
+    box-shadow: 2px 2px 5px var(--lightgrey) inset;
+}
+
+.remove[value='Remove place']{
+    float: right;
+    width: 160px;
+    margin-right: 2vw;
+    right: 5px; !important;
+}
+.remove{
+    box-shadow: 3px 3px 10px var(--lightgrey);
+    background: var(--red) !important;
+}
+
+.editleftfix{
+    margin: 3% 0 3% 3%;
+}
+
+.edit_place .bbutton{
+    cursor: pointer;
+    height: 35px;
+    padding: 5px;
+    margin-top: 40px;
+    margin-bottom: 25px;
+    /*margin-right: -3vw;*/
+    /*margin-left: 5vw;*/
+    background-color: var(--brown);
+    border: none;
+    color: var(--white);
+    font-size: large;
+    border-radius: 18px;
+    box-shadow: 3px 3px 10px var(--lightgrey);
+}
+
+#editplace_picture{
+    padding-right: 5vw;
+    width: 90%;
+}
+
+.add{
+    width: 60px;
+    float: right;
+    margin: 5px 4vw 10px 0 !important;
+}
+
+.save{
+    width: 100px;
+    margin-right: 2.5vw;
+    float: right;
+}
+
+.addworld{
+    padding: 0;
+    width: 80px;
+    float: right;
+    margin: 5px 3vw 0 0 !important;
+}
+
+.saveworld{
+    width: 100px;
+    float: right;
+    margin-left: 1vw !important;
+    margin-right: 3vw !important;
+}
+
+
+.removeworld{
+    background-color: var(--red) !important;
+    margin-right: 0;
+    float: right;
+}
+
+.profile-picture{
+    border-radius: 50%;
+    float:none;
+}
+
+.wide{
+    width: 90%;
+}
+
+#beforeadd{
+    margin-top: 5px;
+    width: 67%;
+}
+
+.editworld_username{
+    margin: 0;
+    color: var(--text_color);
+    font-family: "Arial", serif;
+    font-size: 16pt;
+}
+
+.pending{
+    margin: 0;
+    color: var(--text_color);
+    font-style: italic;
+    font-size: 16pt;
+    text-align: center;
+}
+
+.edit_user {
+    position: absolute;
+    margin: 0;
+    top: 70px;
+    left: 22vw;
+    width: 40vw;
+    height: fit-content;
+    border-radius: 20px;
+    display: inline-block;
+    background-color: var(--mid_blue);
+}
+
+.edit_user .top, .error_outer .top {
+    background-color: var(--brown);
+    padding: 5px 0 5px 20px;
+    height: 4%;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    color: var(--white)
+}
+
+.edit_user .bottom {
+    padding: 5px 0 5px 20px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
+.edit_user table {
+    width: 80%;
+    text-align: left;
+    margin: 0 auto;
+    padding: 20px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.edit_user th {
+    padding-right: 10px;
+    width: 40%;
+    border: none;
+}
+
+.edit_user input {
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 5px;
+    height: 1.5vw;
+    width: 100%;
+    box-shadow: 2px 2px 5px var(--lightgrey) inset;
+}
+
+.edit_user .button {
+    cursor: pointer;
+    height: 35px;
+    padding: 5px;
+    margin-top: 40px;
+    margin-bottom: 25px;
+    margin-right: 15%;
+    width: 20%;
+    float: right;
+    background-color: var(--brown);
+    border: none;
+    color: var(--white);
+    font-size: large;
+    border-radius: 18px;
+    box-shadow: 3px 3px 10px var(--lightgrey);
+}
+
+.edit_user .error_message {
+    color: red;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.edit_user .info_message {
+    font-style: italic;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.removeUser{
+    background-color: var(--red) !important;
+    margin-right: 0;
+    float: right;
+}
+
+input[type=submit]{
+    cursor: pointer;
+}
+
+.error_outer{
+    position: absolute;
+    margin: 0;
+    top: 70px;
+    left: 20vw;
+    width: 60vw;
+    height: fit-content;
+    border-radius: 20px;
+    display: inline-block;
+    background-color: var(--mid_blue);
+}
+
+.error_outer div{
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 60vw;
+}
+
+.error_outer div h2{
+    margin: 0 !important;
+    padding: 20px;
+}
+
+.error .error_message{
+    font-size: 16pt;
+    margin: 30px;
+}
+
+#errorb{
+    float: right;
+    height: fit-content;
+}

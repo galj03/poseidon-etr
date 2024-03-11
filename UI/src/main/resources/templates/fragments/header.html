@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Header</title>
+<!--    <link rel="stylesheet" href="../../static/css/layout.css"/>-->
+    <link th:href="@{/css/layout.css}" rel="stylesheet" />
+    <link id="theme" th:href="@{/css/lightmode.css}" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+
+<header th:fragment="header">
+<!--    <img width="60" th:src="@{/images/dnd_map_logo_background.svg}" alt="dnd_map_logó"/>-->
+    <a class="logo" th:href="@{../}"><img width="60" th:src="@{/images/dnd_map_logo_background.svg}" alt="dnd_map_logó"/></a>
+<!--    <a style="top: 0; color: var(&#45;&#45;blue);" class="page-name" th:href="@{../}"><h1>TTRPG MAP</h1></a>-->
+    <h1>TTRPG MAP <a id="cookie" th:href="@{../change-theme}">☼</a></h1>
+
+    <script>
+        document.getElementById('cookie').innerHTML=showIcon()
+        function showIcon() {
+            var cookies = document.cookie.split(';');
+            var isEnabled = cookies[0].split('=')[1] === "true";
+
+            if(isEnabled === true){
+                document.getElementById('theme').href = "/css/darkmode.css";
+            }
+
+            return isEnabled ? "☾" : "☀︎";
+        }
+    </script>
+    <div id="dropdown">
+        <img width="60" th:src="@{/images/user-icon.svg}" alt="user-icon" id="user-icon"/>
+        <div id="dropdown-menu">
+            <a th:href="@{../user}" target="_self"><p>Username</p></a>
+            <hr>
+            <!--<a th:href="@{/logout}" target="_self"><p>Logout</p></a>-->
+            <form id="header_form" action="#" th:action="@{/logout}" method="post">
+                <button type="submit" id="logout">Logout</button>
+            </form>
+        </div>
+    </div>
+</header>
+
+</body>
+</html>

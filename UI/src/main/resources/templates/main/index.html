@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" th:href="@{/images/dnd_map_logo.svg}">
+    <link th:href="@{/css/layout.css}" rel="stylesheet" />
+    <link th:href="@{/css/wide.css}" rel="stylesheet" />
+    <link id="theme" th:href="@{/css/lightmode.css}" rel="stylesheet"  type="text/css"/>
+    <script>
+        document.getElementById('cookie').innerHTML=showIcon()
+        function showIcon() {
+            var cookies = document.cookie.split(';');
+            var isEnabled = cookies[0].split('=')[1] === "true";
+
+            if(isEnabled){
+                document.getElementById('theme').href = "/css/darkmode.css";
+            }
+
+            return isEnabled ? "☾" : "☼";
+        }
+    </script>
+    <title>All worlds</title>
+</head>
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+    <main>
+        <div th:unless="${invites.size()}==0">
+            <div class="head">
+                <h2>Invites</h2>
+            </div>
+            <div class="body">    
+                <table>
+                    <colgroup>
+                        <col span="1" style="width: 15%;">
+                        <col span="1" style="width: 15%;">
+                        <col span="1" style="width: 54%;">
+                        <col span="1" style="width: 8%;">
+                        <col span="1" style="width: 8%;">
+                    </colgroup>
+                    <tr th:each="invite,iter : ${invites}">
+                        <td>
+                            <h3 th:text="${invite.getName}">World 1</h3>
+                        </td>
+                        <td>
+                            <p class="username" th:text="${invite.getOwner().getUsername()}"><img width="20" th:src="@{/images/dnd_map_logo_background.svg}" alt="user-pfp" class="profile-picture">
+                                User 1</p>
+                        </td>
+                        <td>
+                            <p class="description" th:text="${invite.getDescription}">asdasdasd</p>
+                        </td>
+                        <form action="/accept" method="get">
+                        <td>
+                            <button class="accept" th:name="acceptButton" th:value="${invite.getId()}"><a>Accept</a></button>
+                        </td>
+                        </form>
+                        <form action="/decline" method="get">
+                        <td>
+                            <button class="decline" th:name="declineButton" th:value="${invite.getId()}"><a>Decline</a></button>
+                        </td>
+                        </form>
+                    </tr>
+                </table>
+                <br>
+            </div>
+        </div>
+    
+        <div class="outer">
+            <div class="head">
+                <h2>All worlds<button class="unique"><a style="color: var(--brown)" th:href="@{./new-world}">New</a></button></h2>
+            </div>
+            <div class="body">
+                <table>
+                    <colgroup>
+                        <col span="1" style="width: 15%;">
+                        <col span="1" style="width: 15%;">
+                        <col span="1" style="width: 54%;">
+                        <col span="1" style="width: 8%;">
+                        <col span="1" style="width: 8%;">
+                    </colgroup>
+                    <tr th:each="world,iter : ${worlds}">
+                        <td>
+                            <h3 th:text="${world.getName}">World1</h3>
+                        </td>
+                        <td>
+                            <p class="username">
+                                <p class="username" th:if="${world.getOwner().getUsername()}==${user.getUsername()}">
+                                    Your world</p>
+                                <p class="username" th:unless="${world.getOwner().getUsername()}==${user.getUsername()}" th:text="${world.getOwner().getUsername()}">
+                                    User 1</p>
+                        </td>
+                        <td>
+                            <p class="description" th:text="${world.getDescription}">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                        </td>
+                        <td>
+                            <button th:if="${world.getOwner().getUsername()}==${user.getUsername()}"><a th:href="@{../edit-world(id=${world.getId()})}">Edit</a></button>
+                        </td>
+                        <td>
+                            <button th:if="${world.getRootPlace()}==${null} and ${world.getOwner().getId()}!=${user.getId()}"><a th:href="@{../}">Open</a></button>
+                            <button th:if="${world.getRootPlace()}!=${null}"><a th:href="@{../place(placeId=${world.getRootPlace().getId()})}">Open</a></button>
+                            <button style="width: 140px;" th:unless="${world.getRootPlace()}!=${null}" th:if="${world.getOwner().getId()}==${user.getId()}"><a th:href="@{../new-place(worldId=${world.getId()}, isOwnWorld=${true})}">Add root place</a></button>
+                        </td>
+                    </tr>
+                </table>
+                <br>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
