@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" th:href="@{/images/dnd_map_logo.svg}">
+<!--    <link rel="icon" th:href="@{/images/dnd_map_logo.svg}">-->
     <link th:href="@{/css/layout.css}" rel="stylesheet"/>
     <title>Login - Registration</title>
 </head>
@@ -32,28 +32,13 @@
         </div>
 
         <div class="right">
-            <div class="top"><h2>Sign-up</h2></div>
-            <div class="form">
-                <form th:action="@{/auth/register}" method="POST">
-                    <p th:if="${register_error} != null" th:text="${register_error}" class="error_message"/>
-                    <p th:if="${param.success != null}" class="info_message">
-                        Registration was successful!
-                    </p>
-
-                    <label for="new_uname">Username</label>
-                    <input type="text" name="username" id="new_uname"></br>
-
-                    <label for="new_email">E-mail</label>
-                    <input type="email" name="email" id="new_email"></br>
-
-                    <label for="new_pwd">Password</label>
-                    <input type="password" name="password" id="new_pwd"></br>
-
-                    <label for="new_pwd_again">Password again</label>
-                    <input type="password" name="password2" id="new_pwd_again"></br>
-
-                    <input class="button" type="submit" name="login-btn" value="Sign up"/></br>
-                </form>
+            <div class="top"><h2>Üzenőfal</h2></div>
+            <div class="post">
+                <div class="post">
+                    <div>
+                        <
+                    </div>
+                </div>
             </div>
         </div>
 

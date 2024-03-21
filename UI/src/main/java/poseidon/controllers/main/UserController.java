@@ -1,9 +1,7 @@
 package poseidon.controllers.main;
 
 import poseidon.DAO._Interfaces.IUserDAO;
-import poseidon.DAO._Interfaces.IWorldDAO;
 import poseidon.DTO._Interfaces.IUser;
-import poseidon.DTO._Interfaces.IWorld;
 import poseidon.Exceptions.QueryException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,20 +15,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.Objects;
 
 @Controller
 @PreAuthorize("authentication.principal.username != null")
 public class UserController {
 
-    private IWorldDAO _worldDAO;
     private IUserDAO _userDAO;
     private IUser _user;
     private BCryptPasswordEncoder _encoder;
 
-    public UserController(IWorldDAO worldDAO, IUserDAO userDAO, BCryptPasswordEncoder encoder) {
-        _worldDAO = worldDAO;
+    public UserController(IUserDAO userDAO, BCryptPasswordEncoder encoder) {
         _userDAO = userDAO;
         _encoder = encoder;
     }
@@ -63,8 +58,6 @@ public class UserController {
             String currentUserName = authentication.getName();
             _user = _userDAO.getBySearchText(currentUserName);
         }
-        List<IWorld> worlds = _worldDAO.getAllByOwner(_user);
-        model.addAttribute("worlds", worlds);
         model.addAttribute("user", _user);
         return "main/user";
     }

@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  */
 public class User implements IUser {
     //region Properties
-    private Integer _id;
+    private String _id;
     private String _username;
     private String _email;
     private String _passwordHash;
@@ -26,7 +26,7 @@ public class User implements IUser {
 
     //region Getters
     @Override
-    public Integer getId() {
+    public String getPsCode() {
         return _id;
     }
 
@@ -43,7 +43,7 @@ public class User implements IUser {
 
     //region Setters
     @Override
-    public IUser setId(int id) throws IllegalOperationException {
+    public IUser setPsCode(String id) throws IllegalOperationException {
         if (_id != null) throw new IllegalOperationException("Id cannot be changed");
         _id = id;
         return this;

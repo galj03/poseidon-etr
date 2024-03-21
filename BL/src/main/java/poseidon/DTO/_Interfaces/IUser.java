@@ -10,10 +10,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 public interface IUser extends UserDetails {
     //region Getters
     /**
-     * Getter for id.
-     * @return The id of the user. Null if it wasn't yet saved.
+     * Getter for PS code.
+     * @return The PS code of the user. Null if it wasn't yet saved.
      */
-    Integer getId();
+    String getPsCode();
     /**
      * Getter for the username.
      * @return The username.
@@ -33,12 +33,12 @@ public interface IUser extends UserDetails {
 
     //region Setters
     /**
-     * Setter for the id, only allow if id is null.
-     * @param id New id.
+     * Setter for the PS code, only allow if PS code is null.
+     * @param id New PS code.
      * @return Self for chaining.
-     * @throws IllegalOperationException If id has been already set.
+     * @throws IllegalOperationException If PS code has been already set.
      */
-    IUser setId(int id) throws IllegalOperationException;
+    IUser setPsCode(String id) throws IllegalOperationException;
 
     /**
      * Setter for the username.

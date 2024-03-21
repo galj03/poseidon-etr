@@ -1,6 +1,5 @@
 package poseidon.DAO;
 
-import poseidon.DTO._Interfaces.IWorld;
 import poseidon.Exceptions.ArgumentNullException;
 import poseidon.Exceptions.QueryException;
 import poseidon.DAO._Interfaces.IUserDAO;
@@ -37,8 +36,8 @@ public class PostgreSQLUserDAO extends JdbcDaoSupport implements IUserDAO {
 
     //region Public members
     @Override
-    public IUser getById(int id) throws QueryException {
-        return getRow("SELECT * FROM \"user\" WHERE id=?", id);
+    public IUser getByPsCode(String id) throws QueryException {
+        return getRow("SELECT * FROM \"users\" WHERE id=?", id);
     }
 
     @Override
@@ -47,61 +46,8 @@ public class PostgreSQLUserDAO extends JdbcDaoSupport implements IUserDAO {
     }
 
     @Override
-    public List<IUser> getByInvitedWorld(IWorld world) throws IllegalArgumentException, QueryException {
-        if (world == null) throw new ArgumentNullException("world");
-        if (world.getId() == null) throw new ArgumentNullException("World must be saved first.");
-
-        return getRows("SELECT \"user\".* FROM \"user\", player " +
-                        "WHERE player.user_id=\"user\".id AND player.accepted_invite=FALSE AND player.world_id=?",
-                world.getId());
-    }
-
-    @Override
-    public List<IUser> getByWorldJoined(IWorld world) throws IllegalArgumentException, QueryException {
-        if (world == null) throw new ArgumentNullException("world");
-        if (world.getId() == null) throw new ArgumentNullException("World must be saved first.");
-
-        return getRows("SELECT \"user\".* FROM \"user\", player " +
-                        "WHERE player.user_id=\"user\".id AND player.accepted_invite=TRUE AND player.world_id=?",
-                world.getId());
-    }
-
-    @Override
-    public void acceptInvite(IUser user, IWorld world) throws IllegalArgumentException, QueryException {
-        if (user == null) throw new ArgumentNullException("user");
-        if (world == null) throw new ArgumentNullException("world");
-        if (user.getId() == null) throw new ArgumentNullException("User must be saved first.");
-        if (world.getId() == null) throw new ArgumentNullException("World must be saved first.");
-
-
-        try {
-            String sql = "UPDATE player SET accepted_invite=TRUE WHERE user_id=? AND world_id=?";
-            getJdbcTemplate().update(connection -> {
-                PreparedStatement ps = connection.prepareStatement(sql);
-                ps.setInt(1, user.getId());
-                ps.setInt(2, world.getId());
-                return ps;
-            });
-        } catch (DataAccessException exception) {
-            throw new QueryException("Could not update record in database", exception);
-        }
-    }
-
-    @Override
-    public void declineInvite(IUser user, IWorld world) throws IllegalArgumentException, QueryException {
-        if (user == null) throw new ArgumentNullException("user");
-        if (world == null) throw new ArgumentNullException("world");
-        if (user.getId() == null) throw new ArgumentNullException("User must be saved first.");
-        if (world.getId() == null) throw new ArgumentNullException("World must be saved first.");
-        if (world.getInvitedUsers().contains(user)) throw new ArgumentNullException("User has already accepted the invited to the given world");
-
-        String sql = "DELETE FROM player WHERE user_id=? AND world_id=? AND accepted_invite=FALSE";
-        getJdbcTemplate().update(sql, user.getId(), world.getId());
-    }
-
-    @Override
     public IUser save(IUser user) throws QueryException {
-        if (user.getId() == null) {
+        if (user.getPsCode() == null) {
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
             try {
@@ -120,7 +66,7 @@ public class PostgreSQLUserDAO extends JdbcDaoSupport implements IUserDAO {
             Number key = keyHolder.getKey();
             if (key == null) throw new QueryException("Failed to get inserted record's id");
 
-            return getById(key.intValue());
+            return getByPsCode(key.toString());
         }
 
         try {
@@ -131,23 +77,23 @@ public class PostgreSQLUserDAO extends JdbcDaoSupport implements IUserDAO {
                 ps.setString(2, user.getEmail());
                 ps.setString(3, user.getPassword());
                 ps.setString(4, user.getPfpPath());
-                ps.setInt(5, user.getId());
+                ps.setString(5, user.getPsCode());
                 return ps;
             });
         } catch (DataAccessException exception) {
             throw new QueryException("Could not insert value into database", exception);
         }
 
-        return getById(user.getId());
+        return getByPsCode(user.getPsCode());
     }
 
     @Override
     public void remove(IUser user) throws IllegalArgumentException, QueryException {
         if (user == null) throw new ArgumentNullException("user");
-        if (user.getId() == null) throw new ArgumentNullException("User must be saved first.");
+        if (user.getPsCode() == null) throw new ArgumentNullException("User must be saved first.");
 
         String sql = "DELETE FROM \"user\" WHERE id=?";
-        getJdbcTemplate().update(sql, user.getId());
+        getJdbcTemplate().update(sql, user.getPsCode());
     }
     //endregion
 
@@ -159,7 +105,7 @@ public class PostgreSQLUserDAO extends JdbcDaoSupport implements IUserDAO {
             if (rows.isEmpty()) return null;
 
             return new User()
-                    .setId((Integer) rows.get(0).get("id"))
+                    .setPsCode((Integer) rows.get(0).get("id"))
                     .setUsername((String) rows.get(0).get("username"))
                     .setEmail((String) rows.get(0).get("email"))
                     .setPassword((String) rows.get(0).get("password"))
@@ -178,7 +124,7 @@ public class PostgreSQLUserDAO extends JdbcDaoSupport implements IUserDAO {
 
             for (Map<String,Object> row: rows) {
                 result.add(new User()
-                        .setId((Integer) row.get("id"))
+                        .setPsCode((Integer) row.get("id"))
                         .setUsername((String) row.get("username"))
                         .setEmail((String) row.get("email"))
                         .setPassword((String) row.get("password"))

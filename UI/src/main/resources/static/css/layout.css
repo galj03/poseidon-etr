@@ -118,16 +118,17 @@ header > h1{
     align-items: center;
 }
 
-.login > .left{
+.login > .left, .left{
     margin-right: 30px;
     /*display: inline-block;*/
     float: left;
 }
-.login > .right{
+.login > .right, .right{
     margin-left: 30px;
     /*display: inline-block;*/
     float: right;
 }
+
 .login label{
     display: block;
     align-items: center;
@@ -159,6 +160,11 @@ header > h1{
     font-size: large;
     border-radius: 18px;
     box-shadow: 3px 3px 10px var(--lightgrey);
+}
+
+.post {
+    display: flex;
+    flex-direction: column;
 }
 
 .error_message{

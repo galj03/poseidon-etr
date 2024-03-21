@@ -62,9 +62,9 @@
                             <button><a th:href="@{../edit-world(id=${world.getId()})}">Edit</a></button>
                         </td>
                         <td>
-                            <button th:if="${world.getRootPlace()}==${null} and ${world.getOwner().getId()}!=${user.getId()}"><a th:href="@{../}">Open</a></button>
+                            <button th:if="${world.getRootPlace()}==${null} and ${world.getOwner().getId()}!=${user.getPsCode()}"><a th:href="@{../}">Open</a></button>
                             <button th:if="${world.getRootPlace()}!=${null}"><a th:href="@{../place(placeId=${world.getRootPlace().getId()})}">Open</a></button>
-                            <button style="width: 140px;" th:unless="${world.getRootPlace()}!=${null}" th:if="${world.getOwner().getId()}==${user.getId()}"><a th:href="@{../new-place(worldId=${world.getId()}, isOwnWorld=${true})}">Add root place</a></button>
+                            <button style="width: 140px;" th:unless="${world.getRootPlace()}!=${null}" th:if="${world.getOwner().getId()}==${user.getPsCode()}"><a th:href="@{../new-place(worldId=${world.getId()}, isOwnWorld=${true})}">Add root place</a></button>
                         </td>
                     </tr>
                 </table>
