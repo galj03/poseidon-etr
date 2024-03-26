@@ -21,6 +21,7 @@ public interface IUserDAO {
      * @throws QueryException If query was unsuccessful.
      */
     IUser getByPsCode(String id) throws QueryException;
+
     /**
      * Get user by their exact username or e-mail.
      * @param searchText Value to search for username or e-mail with.
@@ -28,6 +29,7 @@ public interface IUserDAO {
      * @throws QueryException If query was unsuccessful.
      */
     IUser getByEmail(String searchText) throws QueryException;
+
     /**
      * Save given user to datasource.
      * @param user User to save.
@@ -35,6 +37,7 @@ public interface IUserDAO {
      * @throws QueryException If query was unsuccessful.
      */
     IUser save(IUser user) throws QueryException;
+
     /**
      * Remove user from datasource with their profile picture, all worlds and invites.
      * @param user User to remove.

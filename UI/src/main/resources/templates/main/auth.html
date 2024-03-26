@@ -36,7 +36,13 @@
             <div class="post">
                 <div class="post">
                     <div>
-                        <
+                        <table>
+                        <tr th:each="user,iter : ${users}">
+                            <td>
+                                <h3 th:text="${user.getPsCode()}">World 1</h3>
+                            </td>
+                        </tr>
+                        </table>
                     </div>
                 </div>
             </div>

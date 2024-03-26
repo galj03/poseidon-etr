@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import poseidon.UserRoles;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
@@ -114,6 +115,7 @@ public class OracleDBUserDAO extends JdbcDaoSupport implements IUserDAO {
     //endregion
 
     //region Private members
+    //TODO: fix
     private IUser getRow(String sql, Object... args) throws QueryException {
         try {
             List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sql, args);
@@ -142,15 +144,17 @@ public class OracleDBUserDAO extends JdbcDaoSupport implements IUserDAO {
             List<IUser> result = new ArrayList<>();
 
             for (Map<String,Object> row: rows) {
+                UserRoles role = row.get("jogosultsag").toString() == "ROLE_USER" ? UserRoles.ROLE_USER : UserRoles.ROLE_ADMIN;
+
                 result.add(new User()
                         .setPsCode((String) row.get("PS_kod"))
                         .setName((String) row.get("nev"))
                         .setEmail((String) row.get("email"))
                         .setPassword((String) row.get("jelszo"))
-                        .setSzakId((Integer) row.get("szak_id"))
-                        .setRole((UserRoles) row.get("jogosultsag"))
-                        .setKezdesEve((Integer) row.get("kezdes_eve"))
-                        .setVegzesEve((Integer) row.get("vegzes_ideje"))
+                        .setSzakId(((BigDecimal)row.get("szak_id")).intValue())
+                        .setRole(role)
+                        .setKezdesEve(((BigDecimal)row.get("kezdes_eve")).intValue())
+                        .setVegzesEve(((BigDecimal)row.get("vegzes_ideje")).intValue())
                 );
             }
 

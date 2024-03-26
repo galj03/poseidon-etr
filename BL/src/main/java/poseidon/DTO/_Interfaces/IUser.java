@@ -32,6 +32,7 @@ public interface IUser extends UserDetails {
      */
     String getEmail();
 
+    //TODO: consider storing szak itself
     /**
      * Getter for the szak id.
      *

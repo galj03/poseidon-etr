@@ -33,6 +33,9 @@ public class AuthController {
         cookie.setMaxAge(7 * 24 * 60 * 60);
         cookie.setPath("/");
 
+        Iterable<IUser> users = _userDAO.getAllUsers();
+        model.addAttribute("users", users);
+
         if (isDarkModeEnabled == "not found") {
             response.addCookie(cookie);
         }
