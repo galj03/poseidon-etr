@@ -38,7 +38,7 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             String currentUserName = authentication.getName();
-            _user = _userDAO.getBySearchText(currentUserName);
+            _user = _userDAO.getByEmail(currentUserName);
         }
 
         String newValue = Objects.equals(isDarkModeEnabled, "true") ? "false" : "true";
@@ -56,7 +56,7 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             String currentUserName = authentication.getName();
-            _user = _userDAO.getBySearchText(currentUserName);
+            _user = _userDAO.getByEmail(currentUserName);
         }
         model.addAttribute("user", _user);
         return "main/user";
@@ -67,7 +67,7 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             String currentUserName = authentication.getName();
-            _user = _userDAO.getBySearchText(currentUserName);
+            _user = _userDAO.getByEmail(currentUserName);
         }
         model.addAttribute("user", _user);
         return "main/edituser";
@@ -79,12 +79,11 @@ public class UserController {
             @RequestParam("email") String email,
             @RequestParam("new_password") String new_password,
             @RequestParam("new_password2") String new_password2,
-            @RequestParam("pfp") MultipartFile pfp,
             Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             String currentUserName = authentication.getName();
-            _user = _userDAO.getBySearchText(currentUserName);
+            _user = _userDAO.getByEmail(currentUserName);
         }
         model.addAttribute("user", _user);
 
@@ -92,12 +91,12 @@ public class UserController {
         IUser existingUserByEmail;
 
         try {
-            existingUserByUsername = _userDAO.getBySearchText(username);
+            existingUserByUsername = _userDAO.getByEmail(username);
         } catch (QueryException e) {
             existingUserByUsername = null;
         }
         try {
-            existingUserByEmail = _userDAO.getBySearchText(email);
+            existingUserByEmail = _userDAO.getByEmail(email);
         } catch (QueryException e) {
             existingUserByEmail = null;
         }
@@ -132,13 +131,8 @@ public class UserController {
             _user = _userDAO.save(_user);
         }
 
-        if (!pfp.isEmpty()) {
-            _user.setPfpPath(pfp.getOriginalFilename());
-            _user = _userDAO.save(_user);
-        }
-
         if (!Objects.equals(_user.getUsername(), username) && !username.equals("")) {
-            _user.setUsername(username);
+            _user.setName(username);
             _user = _userDAO.save(_user);
             return "redirect:/auth";
         }

@@ -18,7 +18,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         IUser user;
         try {
-            user = _userDAO.getBySearchText(username);
+            user = _userDAO.getByEmail(username);
         } catch (QueryException e) {
             user = null;
         }

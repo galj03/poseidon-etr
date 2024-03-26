@@ -6,6 +6,7 @@ import poseidon.Exceptions.ArgumentNullException;
 import poseidon.Exceptions.IllegalOperationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import poseidon.UserRoles;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -17,17 +18,25 @@ import java.util.regex.Pattern;
  */
 public class User implements IUser {
     //region Properties
-    private String _id;
-    private String _username;
+    private String _psCode;
+    private String _name;
     private String _email;
     private String _passwordHash;
-    private String _pfpPath;
+    private Integer _szakId;
+    private UserRoles _role;
+    private Integer _kezdesEve;
+    private Integer _vegzesEve;
     //endregion
 
     //region Getters
     @Override
     public String getPsCode() {
-        return _id;
+        return _psCode;
+    }
+
+    @Override
+    public String getName() {
+        return _name;
     }
 
     @Override
@@ -36,24 +45,39 @@ public class User implements IUser {
     }
 
     @Override
-    public String getPfpPath() {
-        return _pfpPath;
+    public Integer getSzakId() {
+        return _szakId;
+    }
+
+    @Override
+    public UserRoles getRole() {
+        return _role;
+    }
+
+    @Override
+    public Integer getKezdesEve() {
+        return _kezdesEve;
+    }
+
+    @Override
+    public Integer getVegzesEve() {
+        return _vegzesEve;
     }
     //endregion
 
     //region Setters
     @Override
     public IUser setPsCode(String id) throws IllegalOperationException {
-        if (_id != null) throw new IllegalOperationException("Id cannot be changed");
-        _id = id;
+        if (_psCode != null) throw new IllegalOperationException("Id cannot be changed");
+        _psCode = id;
         return this;
     }
 
     @Override
-    public IUser setUsername(String username) throws ArgumentNullException {
-        if (username == null || username.isEmpty()) throw new ArgumentNullException("username");
+    public IUser setName(String name) throws ArgumentNullException {
+        if (name == null || name.isEmpty()) throw new ArgumentNullException("name");
 
-        _username = username.trim();
+        _name = name.trim();
         return this;
     }
 
@@ -76,8 +100,34 @@ public class User implements IUser {
     }
 
     @Override
-    public IUser setPfpPath(String path) {
-        _pfpPath = path == null || path.isEmpty() ? null : path.trim();
+    public IUser setSzakId(Integer szakId) throws IllegalArgumentException {
+        //TODO: check, hogy van-e ilyen?
+        //nem, az itt nem scope imo, ez egy modell
+        if (szakId == null || szakId < 0) throw new IllegalArgumentException("szakId");
+
+        _szakId = szakId;
+        return this;
+    }
+
+    @Override
+    public IUser setRole(UserRoles role) {
+        _role = role;
+        return this;
+    }
+
+    @Override
+    public IUser setKezdesEve(Integer kezdesEve) throws IllegalArgumentException {
+        if (kezdesEve == null || kezdesEve < 0) throw new IllegalArgumentException("kezdesEve");
+
+        _kezdesEve = kezdesEve;
+        return this;
+    }
+
+    @Override
+    public IUser setVegzesEve(Integer vegzesEve) throws IllegalArgumentException {
+        if (vegzesEve == null || vegzesEve < 0) throw new IllegalArgumentException("vegzesEve");
+
+        _vegzesEve = vegzesEve;
         return this;
     }
     //endregion
@@ -108,7 +158,7 @@ public class User implements IUser {
 
     @Override
     public String getUsername() {
-        return _username;
+        return _psCode;
     }
 
     /**

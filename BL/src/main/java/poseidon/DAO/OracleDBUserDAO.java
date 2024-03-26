@@ -11,6 +11,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
+import poseidon.UserRoles;
+
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
@@ -18,17 +20,17 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Data access object for the user model in a PostgreSQL database.
+ * Data access object for the user model in an Oracle database.
  */
 @Repository
-public class PostgreSQLUserDAO extends JdbcDaoSupport implements IUserDAO {
+public class OracleDBUserDAO extends JdbcDaoSupport implements IUserDAO {
     //region Properties
     private final DataSource _dataSource;
     //endregion
 
     //region Constructor
     @Autowired
-    public PostgreSQLUserDAO(DataSource dataSource) {
+    public OracleDBUserDAO(DataSource dataSource) {
         _dataSource = dataSource;
         setDataSource(_dataSource);
     }
@@ -36,13 +38,18 @@ public class PostgreSQLUserDAO extends JdbcDaoSupport implements IUserDAO {
 
     //region Public members
     @Override
-    public IUser getByPsCode(String id) throws QueryException {
-        return getRow("SELECT * FROM \"users\" WHERE id=?", id);
+    public Iterable<IUser> getAllUsers() throws QueryException {
+        return getRows("SELECT * FROM felhasznalo");
     }
 
     @Override
-    public IUser getBySearchText(String searchText) throws QueryException {
-        return getRow("SELECT * FROM \"user\" WHERE username=? or email=?", searchText, searchText);
+    public IUser getByPsCode(String id) throws QueryException {
+        return getRow("SELECT * FROM felhasznalo WHERE PS_kod=?", id);
+    }
+
+    @Override
+    public IUser getByEmail(String searchText) throws QueryException {
+        return getRow("SELECT * FROM felhasznalo WHERE email=?", searchText);
     }
 
     @Override
@@ -51,12 +58,18 @@ public class PostgreSQLUserDAO extends JdbcDaoSupport implements IUserDAO {
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
             try {
-                String sql = "INSERT INTO \"user\"(username, email, password) VALUES (?, ?, ?)";
+                String sql = "INSERT INTO felhasznalo(PS_kod, nev, email, jelszo, szak_id, jogosultsag, kezdes_eve, vegzes_ideje) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                 getJdbcTemplate().update(connection -> {
-                    PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
-                    ps.setString(1, user.getUsername());
-                    ps.setString(2, user.getEmail());
-                    ps.setString(3, user.getPassword());
+                    //TODO: this is needed for auto-generated id-s: PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
+                    PreparedStatement ps = connection.prepareStatement(sql);
+                    ps.setString(1, user.getPsCode());
+                    ps.setString(2, user.getName());
+                    ps.setString(3, user.getEmail());
+                    ps.setString(4, user.getPassword());
+                    ps.setString(5, user.getSzakId().toString());
+                    ps.setString(6, user.getRole().toString());
+                    ps.setString(7, user.getKezdesEve().toString());
+                    ps.setString(8, user.getVegzesEve().toString());
                     return ps;
                 }, keyHolder);
             } catch (DataAccessException exception) {
@@ -70,14 +83,17 @@ public class PostgreSQLUserDAO extends JdbcDaoSupport implements IUserDAO {
         }
 
         try {
-            String sql = "UPDATE \"user\" SET username=?, email=?, password=?, pfp=? WHERE id=?";
+            String sql = "UPDATE felhasznalo SET nev=?, email=?, jelszo=?, szak_id=?, jogosultsag=?, kezdes_eve=?, vegzes_ideje=? WHERE PS_kod=?";
             getJdbcTemplate().update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(sql);
-                ps.setString(1, user.getUsername());
+                ps.setString(1, user.getName());
                 ps.setString(2, user.getEmail());
                 ps.setString(3, user.getPassword());
-                ps.setString(4, user.getPfpPath());
-                ps.setString(5, user.getPsCode());
+                ps.setString(4, user.getSzakId().toString());
+                ps.setString(5, user.getRole().toString());
+                ps.setString(6, user.getKezdesEve().toString());
+                ps.setString(7, user.getVegzesEve().toString());
+                ps.setString(8, user.getPsCode());
                 return ps;
             });
         } catch (DataAccessException exception) {
@@ -92,7 +108,7 @@ public class PostgreSQLUserDAO extends JdbcDaoSupport implements IUserDAO {
         if (user == null) throw new ArgumentNullException("user");
         if (user.getPsCode() == null) throw new ArgumentNullException("User must be saved first.");
 
-        String sql = "DELETE FROM \"user\" WHERE id=?";
+        String sql = "DELETE FROM felhasznalo WHERE PS_kod=?";
         getJdbcTemplate().update(sql, user.getPsCode());
     }
     //endregion
@@ -105,11 +121,14 @@ public class PostgreSQLUserDAO extends JdbcDaoSupport implements IUserDAO {
             if (rows.isEmpty()) return null;
 
             return new User()
-                    .setPsCode((Integer) rows.get(0).get("id"))
-                    .setUsername((String) rows.get(0).get("username"))
+                    .setPsCode((String) rows.get(0).get("PS_kod"))
+                    .setName((String) rows.get(0).get("nev"))
                     .setEmail((String) rows.get(0).get("email"))
-                    .setPassword((String) rows.get(0).get("password"))
-                    .setPfpPath((String) rows.get(0).get("pfp"));
+                    .setPassword((String) rows.get(0).get("jelszo"))
+                    .setSzakId((Integer) rows.get(0).get("szak_id"))
+                    .setRole((UserRoles) rows.get(0).get("jogosultsag"))
+                    .setKezdesEve((Integer) rows.get(0).get("kezdes_eve"))
+                    .setVegzesEve((Integer) rows.get(0).get("vegzes_ideje"));
 
         } catch (DataAccessException exception) {
             throw new QueryException("Could not get values from database", exception);
@@ -124,11 +143,14 @@ public class PostgreSQLUserDAO extends JdbcDaoSupport implements IUserDAO {
 
             for (Map<String,Object> row: rows) {
                 result.add(new User()
-                        .setPsCode((Integer) row.get("id"))
-                        .setUsername((String) row.get("username"))
+                        .setPsCode((String) row.get("PS_kod"))
+                        .setName((String) row.get("nev"))
                         .setEmail((String) row.get("email"))
-                        .setPassword((String) row.get("password"))
-                        .setPfpPath((String) row.get("pfp"))
+                        .setPassword((String) row.get("jelszo"))
+                        .setSzakId((Integer) row.get("szak_id"))
+                        .setRole((UserRoles) row.get("jogosultsag"))
+                        .setKezdesEve((Integer) row.get("kezdes_eve"))
+                        .setVegzesEve((Integer) row.get("vegzes_ideje"))
                 );
             }
 

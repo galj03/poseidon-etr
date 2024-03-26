@@ -55,12 +55,12 @@ public class AuthController {
         IUser existingUserByEmail;
 
         try {
-            existingUserByUsername = _userDAO.getBySearchText(username);
+            existingUserByUsername = _userDAO.getByEmail(username);
         } catch (QueryException e) {
             existingUserByUsername = null;
         }
         try {
-            existingUserByEmail = _userDAO.getBySearchText(email);
+            existingUserByEmail = _userDAO.getByEmail(email);
         } catch (QueryException e) {
             existingUserByEmail = null;
         }
@@ -82,7 +82,7 @@ public class AuthController {
         //TODO: jelszó tartalmazzon az angol abc-ből kis- és nagybetűt, számot, és speciális karaktert, valamint legalább 6 karakter hosszú legyen.
 
         IUser newUser = new User()
-                .setUsername(username)
+                .setName(username)
                 .setEmail(email)
                 .setPassword(_encoder.encode(password));
         _userDAO.save(newUser);

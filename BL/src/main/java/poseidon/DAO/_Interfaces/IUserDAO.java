@@ -8,6 +8,13 @@ import poseidon.DTO._Interfaces.IUser;
  */
 public interface IUserDAO {
     /**
+     * Get all users.
+     * @return The users, or null.
+     * @throws QueryException If query was unsuccessful.
+     */
+    Iterable<IUser> getAllUsers() throws QueryException;
+
+    /**
      * Get user by their id.
      * @param id The user's id.
      * @return The user with the given id, or null.
@@ -20,7 +27,7 @@ public interface IUserDAO {
      * @return The user with the given username or e-mail address.
      * @throws QueryException If query was unsuccessful.
      */
-    IUser getBySearchText(String searchText) throws QueryException;
+    IUser getByEmail(String searchText) throws QueryException;
     /**
      * Save given user to datasource.
      * @param user User to save.
