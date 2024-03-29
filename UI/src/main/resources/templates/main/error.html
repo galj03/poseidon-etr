@@ -5,21 +5,6 @@
     <link rel="icon" th:href="@{/images/dnd_map_logo.svg}">
     <link th:href="@{/css/layout.css}" rel="stylesheet"/>
     <link th:href="@{/css/mid.css}" rel="stylesheet"/>
-    <link id="theme" th:href="@{/css/lightmode.css}" rel="stylesheet" type="text/css"/>
-    <script>
-        document.getElementById('cookie').innerHTML = showIcon()
-
-        function showIcon() {
-            var cookies = document.cookie.split(';');
-            var isEnabled = cookies[0].split('=')[1] === "true";
-
-            if (isEnabled) {
-                document.getElementById('theme').href = "/css/darkmode.css";
-            }
-
-            return isEnabled ? "☾" : "☼";
-        }
-    </script>
     <title>Error</title>
 </head>
 <body>

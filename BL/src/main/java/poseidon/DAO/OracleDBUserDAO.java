@@ -122,15 +122,17 @@ public class OracleDBUserDAO extends JdbcDaoSupport implements IUserDAO {
 
             if (rows.isEmpty()) return null;
 
+            UserRoles role = rows.get(0).get("jogosultsag").toString() == "ROLE_USER" ? UserRoles.ROLE_USER : UserRoles.ROLE_ADMIN;
+
             return new User()
                     .setPsCode((String) rows.get(0).get("PS_kod"))
                     .setName((String) rows.get(0).get("nev"))
                     .setEmail((String) rows.get(0).get("email"))
                     .setPassword((String) rows.get(0).get("jelszo"))
-                    .setSzakId((Integer) rows.get(0).get("szak_id"))
-                    .setRole((UserRoles) rows.get(0).get("jogosultsag"))
-                    .setKezdesEve((Integer) rows.get(0).get("kezdes_eve"))
-                    .setVegzesEve((Integer) rows.get(0).get("vegzes_ideje"));
+                    .setSzakId(((BigDecimal)rows.get(0).get("szak_id")).intValue())
+                    .setRole(role)
+                    .setKezdesEve(((BigDecimal)rows.get(0).get("kezdes_eve")).intValue())
+                    .setVegzesEve(((BigDecimal)rows.get(0).get("vegzes_ideje")).intValue());
 
         } catch (DataAccessException exception) {
             throw new QueryException("Could not get values from database", exception);
