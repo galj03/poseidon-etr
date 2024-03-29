@@ -16,13 +16,13 @@
             <div class="form">
                 <form th:action="@{/auth/login}" method="POST">
                     <p th:if="${param.failed != null}" class="error_message">
-                        Username or password is incorrect!
+                        A PS kód vagy a jelszó hibás!
                     </p>
 
-                    <label for="username">Username</label>
+                    <label for="username">PS kód:</label>
                     <input type="text" name="username" id="username"></br>
 
-                    <label for="password">Password</label>
+                    <label for="password">Jelszó:</label>
                     <input type="password" name="password" id="password"></br>
 
                     <input class="button" type="submit" name="login-btn" value="Log in"/></br>
