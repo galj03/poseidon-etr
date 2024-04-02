@@ -1,0 +1,53 @@
+table {
+    background-color: #bbbbbb;
+    /*border-collapse: collapse;*/
+    border-radius: 0 0 20px 20px;
+
+    width: 75vw;
+    align-content: center;
+}
+
+caption {
+    border-radius: 20px 20px 0 0;
+    background-color: #cccccc;
+    padding: 8px 0;
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+thead {
+    min-height: 2.5rem;
+    margin: 20px 0;
+}
+
+tr {
+    border: #000000 solid 2px;
+    background-color: inherit;
+}
+
+tr[onclick] {
+    background-color: inherit;
+}
+
+td[headers], td {
+    text-align: center;
+}
+
+td {
+    padding: 5px;
+}
+
+td button, .caption-button {
+    padding: 10px;
+    background-color: #447483;
+    border: none;
+    border-radius: 3px;
+    outline: none;
+    color: white;
+}
+
+.caption-button {
+    position: relative;
+    left: 50px;
+    margin-left: 30px;
+}

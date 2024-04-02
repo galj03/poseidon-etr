@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link th:href="@{/css/layout.css}" rel="stylesheet"/>
+    <title>Poseidon</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main>
+    <div class="login">
+        <div class="left">
+            <div class="top"><h2>Login</h2></div>
+            <div class="form">
+                <form th:action="@{/auth/login}" method="POST">
+                    <p th:if="${param.failed != null}" class="error_message">
+                        A PS kód vagy a jelszó hibás!
+                    </p>
+
+                    <label for="username">PS kód:</label>
+                    <input type="text" name="username" id="username"></br>
+
+                    <label for="password">Jelszó:</label>
+                    <input type="password" name="password" id="password"></br>
+
+                    <input class="button" type="submit" name="login-btn" value="Log in"/></br>
+                </form>
+            </div>
+        </div>
+
+        <div class="right">
+            <div class="top"><h2>Üzenőfal - TODO: rendesen megcsinálni</h2></div>
+            <div class="post">
+                <div class="post">
+                    <div>
+                        <table>
+                        <tr th:each="user,iter : ${users}">
+                            <td>
+                                <h3 th:text="${user.getPsCode()}">World 1</h3>
+                            </td>
+                        </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+</main>
+
+</body>
+</html>

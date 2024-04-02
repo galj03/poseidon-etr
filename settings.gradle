@@ -1,0 +1,4 @@
+rootProject.name = 'poseidon-etr'
+
+include 'BL'
+include 'UI'
