@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" th:href="@{/images/dnd_map_logo.svg}">
+    <link th:href="@{/css/layout.css}" rel="stylesheet"/>
+    <link th:href="@{/css/mid.css}" rel="stylesheet"/>
+    <title>Error</title>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+
+<main>
+    <div class="error_outer">
+    <div class="top"><h2>Error</h2></div>
+    <div class="error">
+        <p th:if="${error} != null" th:text="${error}" class="error_message"></p>
+        <button id="errorb"><a th:href="@{/}">Return to main page</a></button>
+    </div>
+    </div>
+</main>
+
+</body>
+</html>

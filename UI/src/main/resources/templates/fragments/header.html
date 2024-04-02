@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Header</title>
+    <link th:href="@{/css/layout.css}" rel="stylesheet" />
+</head>
+<body>
+
+<header th:fragment="header">
+    <a class="logo" th:href="@{../}"><img width="60" th:src="@{/images/dnd_map_logo_background.svg}" alt="dnd_map_logó"/></a>
+    <h1>TTRPG MAP</h1>
+    <div id="dropdown">
+        <img width="60" th:src="@{/images/user-icon.svg}" alt="user-icon" id="user-icon"/>
+        <div id="dropdown-menu">
+            <a th:href="@{../user}" target="_self"><p>Username</p></a>
+            <hr>
+            <form id="header_form" action="#" th:action="@{/logout}" method="post">
+                <button type="submit" id="logout">Logout</button>
+            </form>
+        </div>
+    </div>
+</header>
+
+</body>
+</html>
