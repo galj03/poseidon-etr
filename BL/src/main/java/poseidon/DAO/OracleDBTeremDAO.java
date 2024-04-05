@@ -6,9 +6,9 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-import poseidon.DAO._Interfaces.ISzakDAO;
-import poseidon.DTO.Szak;
-import poseidon.DTO._Interfaces.ISzak;
+import poseidon.DAO._Interfaces.ITeremDAO;
+import poseidon.DTO.Terem;
+import poseidon.DTO._Interfaces.ITerem;
 import poseidon.Exceptions.ArgumentNullException;
 import poseidon.Exceptions.QueryException;
 
@@ -20,39 +20,39 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class OracleDBSzakDAO extends JdbcDaoSupport implements ISzakDAO {
+public class OracleDBTeremDAO extends JdbcDaoSupport implements ITeremDAO {
     //region Properties
     private final DataSource _dataSource;
     //endregion
 
     //region Constructor
     @Autowired
-    public OracleDBSzakDAO(DataSource dataSource) {
+    public OracleDBTeremDAO(DataSource dataSource) {
         _dataSource = dataSource;
         setDataSource(_dataSource);
     }
     //endregion
 
     @Override
-    public Iterable<ISzak> getAll() throws QueryException {
-        return getRows("select * from szak");
+    public Iterable<ITerem> getAll() throws QueryException {
+        return getRows("select * from terem");
     }
 
     @Override
-    public ISzak getById(Integer id) throws QueryException {
-        return getRow("select * from szak where id=?", id);
+    public ITerem getById(Integer id) throws QueryException {
+        return getRow("select * from terem where id=?", id);
     }
 
     @Override
-    public ISzak save(ISzak szak) throws QueryException {
-        if (szak.getSzakId() == null) {
+    public ITerem save(ITerem terem) throws QueryException {
+        if (terem.getTeremId() == null) {
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
             try {
-                String sql = "INSERT INTO szak(id, nev) VALUES (?, ?)";
+                String sql = "INSERT INTO terem(id, ferohely) VALUES (?, ?)";
                 getJdbcTemplate().update(connection -> {
                     PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
-                    ps.setString(1, szak.getName());
+                    ps.setString(1, terem.getFerohely().toString());
                     return ps;
                 }, keyHolder);
             } catch (DataAccessException exception) {
@@ -66,56 +66,56 @@ public class OracleDBSzakDAO extends JdbcDaoSupport implements ISzakDAO {
         }
 
         try {
-            String sql = "UPDATE szak SET nev=? WHERE id=?";
+            String sql = "UPDATE terem SET ferohely=? WHERE id=?";
             getJdbcTemplate().update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(sql);
-                ps.setString(1, szak.getName());
-                ps.setString(2, szak.getSzakId().toString());
+                ps.setString(1, terem.getFerohely().toString());
+                ps.setString(2, terem.getTeremId().toString());
                 return ps;
             });
         } catch (DataAccessException exception) {
             throw new QueryException("Could not insert value into database", exception);
         }
 
-        return getById(szak.getSzakId());
+        return getById(terem.getTeremId());
     }
 
     @Override
-    public void remove(ISzak szak) throws IllegalArgumentException, QueryException {
-        if (szak == null) throw new ArgumentNullException("szak");
-        if (szak.getSzakId() == null) throw new ArgumentNullException("Szak must be saved first.");
+    public void remove(ITerem terem) throws IllegalArgumentException, QueryException {
+        if (terem == null) throw new ArgumentNullException("terem");
+        if (terem.getTeremId() == null) throw new ArgumentNullException("Terem must be saved first.");
 
-        String sql = "DELETE FROM szak WHERE id=?";
-        getJdbcTemplate().update(sql, szak.getSzakId());
+        String sql = "DELETE FROM terem WHERE id=?";
+        getJdbcTemplate().update(sql, terem.getTeremId());
     }
 
     //region Private members
-    private ISzak getRow(String sql, Object... args) throws QueryException {
+    private ITerem getRow(String sql, Object... args) throws QueryException {
         try {
             List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sql, args);
 
             if (rows.isEmpty()) return null;
 
-            return new Szak()
-                    .setSzakId(((BigDecimal)rows.get(0).get("id")).intValue())
-                    .setName((String) rows.get(0).get("nev"));
+            return new Terem()
+                    .setTeremId(((BigDecimal) rows.get(0).get("id")).intValue())
+                    .setFerohely(((BigDecimal) rows.get(0).get("ferohely")).intValue());
 
         } catch (DataAccessException exception) {
             throw new QueryException("Could not get values from database", exception);
         }
     }
 
-    private List<ISzak> getRows(String sql, Object... args) throws QueryException {
+    private List<ITerem> getRows(String sql, Object... args) throws QueryException {
         try {
             List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sql, args);
 
-            List<ISzak> result = new ArrayList<>();
+            List<ITerem> result = new ArrayList<>();
 
-            for (Map<String,Object> row: rows) {
+            for (Map<String, Object> row : rows) {
                 result.add(
-                        new Szak()
-                                .setSzakId(((BigDecimal)row.get("id")).intValue())
-                                .setName((String) row.get("nev"))
+                        new Terem()
+                                .setTeremId(((BigDecimal) row.get("id")).intValue())
+                                .setFerohely(((BigDecimal) row.get("ferohely")).intValue())
                 );
             }
 
