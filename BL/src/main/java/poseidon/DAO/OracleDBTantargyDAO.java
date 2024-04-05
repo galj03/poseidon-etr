@@ -6,9 +6,9 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-import poseidon.DAO._Interfaces.ISzakDAO;
-import poseidon.DTO.Szak;
-import poseidon.DTO._Interfaces.ISzak;
+import poseidon.DAO._Interfaces.ITantargyDAO;
+import poseidon.DTO.Tantargy;
+import poseidon.DTO._Interfaces.ITantargy;
 import poseidon.Exceptions.ArgumentNullException;
 import poseidon.Exceptions.QueryException;
 
@@ -20,39 +20,40 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class OracleDBSzakDAO extends JdbcDaoSupport implements ISzakDAO {
+public class OracleDBTantargyDAO extends JdbcDaoSupport implements ITantargyDAO {
     //region Properties
     private final DataSource _dataSource;
     //endregion
 
     //region Constructor
     @Autowired
-    public OracleDBSzakDAO(DataSource dataSource) {
+    public OracleDBTantargyDAO(DataSource dataSource) {
         _dataSource = dataSource;
         setDataSource(_dataSource);
     }
     //endregion
 
     @Override
-    public Iterable<ISzak> getAll() throws QueryException {
-        return getRows("select * from szak");
+    public Iterable<ITantargy> getAll() throws QueryException {
+        return getRows("select * from tantargy");
     }
 
     @Override
-    public ISzak getById(Integer id) throws QueryException {
-        return getRow("select * from szak where id=?", id);
+    public ITantargy getById(Integer id) throws QueryException {
+        return getRow("select * from tantargy where id=?", id);
     }
 
     @Override
-    public ISzak save(ISzak szak) throws QueryException {
-        if (szak.getSzakId() == null) {
+    public ITantargy save(ITantargy tantargy) throws QueryException {
+        if (tantargy.getTantargyId() == null) {
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
             try {
-                String sql = "INSERT INTO szak(id, nev) VALUES (?, ?)";
+                String sql = "INSERT INTO tantargy(id, nev, targyfelelos) VALUES (?, ?, ?)";
                 getJdbcTemplate().update(connection -> {
                     PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
-                    ps.setString(1, szak.getName());
+                    ps.setString(1, tantargy.getNev());
+                    ps.setString(2, tantargy.getFelelos());
                     return ps;
                 }, keyHolder);
             } catch (DataAccessException exception) {
@@ -66,56 +67,59 @@ public class OracleDBSzakDAO extends JdbcDaoSupport implements ISzakDAO {
         }
 
         try {
-            String sql = "UPDATE szak SET nev=? WHERE id=?";
+            String sql = "UPDATE tantargy SET nev=?, targyfelelos=? WHERE id=?";
             getJdbcTemplate().update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(sql);
-                ps.setString(1, szak.getName());
-                ps.setString(2, szak.getSzakId().toString());
+                ps.setString(1, tantargy.getNev());
+                ps.setString(2, tantargy.getFelelos());
+                ps.setString(3, tantargy.getTantargyId().toString());
                 return ps;
             });
         } catch (DataAccessException exception) {
             throw new QueryException("Could not insert value into database", exception);
         }
 
-        return getById(szak.getSzakId());
+        return getById(tantargy.getTantargyId());
     }
 
     @Override
-    public void remove(ISzak szak) throws IllegalArgumentException, QueryException {
-        if (szak == null) throw new ArgumentNullException("szak");
-        if (szak.getSzakId() == null) throw new ArgumentNullException("Szak must be saved first.");
+    public void remove(ITantargy tantargy) throws IllegalArgumentException, QueryException {
+        if (tantargy == null) throw new ArgumentNullException("tantargy");
+        if (tantargy.getTantargyId() == null) throw new ArgumentNullException("Tantargy must be saved first.");
 
-        String sql = "DELETE FROM szak WHERE id=?";
-        getJdbcTemplate().update(sql, szak.getSzakId());
+        String sql = "DELETE FROM tantargy WHERE id=?";
+        getJdbcTemplate().update(sql, tantargy.getTantargyId());
     }
 
     //region Private members
-    private ISzak getRow(String sql, Object... args) throws QueryException {
+    private ITantargy getRow(String sql, Object... args) throws QueryException {
         try {
             List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sql, args);
 
             if (rows.isEmpty()) return null;
 
-            return new Szak()
-                    .setSzakId(((BigDecimal)rows.get(0).get("id")).intValue())
-                    .setName((String) rows.get(0).get("nev"));
+            return new Tantargy()
+                    .setTantargyId(((BigDecimal) rows.get(0).get("id")).intValue())
+                    .setNev((String) rows.get(0).get("nev"))
+                    .setFelelos((String) rows.get(0).get("targyfelelos"));
 
         } catch (DataAccessException exception) {
             throw new QueryException("Could not get values from database", exception);
         }
     }
 
-    private List<ISzak> getRows(String sql, Object... args) throws QueryException {
+    private List<ITantargy> getRows(String sql, Object... args) throws QueryException {
         try {
             List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sql, args);
 
-            List<ISzak> result = new ArrayList<>();
+            List<ITantargy> result = new ArrayList<>();
 
-            for (Map<String,Object> row: rows) {
+            for (Map<String, Object> row : rows) {
                 result.add(
-                        new Szak()
-                                .setSzakId(((BigDecimal)row.get("id")).intValue())
-                                .setName((String) row.get("nev"))
+                        new Tantargy()
+                                .setTantargyId(((BigDecimal) row.get("id")).intValue())
+                                .setNev((String) row.get("nev"))
+                                .setFelelos((String) row.get("targyfelelos"))
                 );
             }
 
