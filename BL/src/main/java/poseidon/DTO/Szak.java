@@ -12,6 +12,9 @@ public class Szak implements ISzak {
         this._name = _name;
     }
 
+    public Szak() {
+    }
+
     //Getters
     @Override
     public Integer getSzakId() {
