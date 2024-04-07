@@ -47,6 +47,7 @@ public class AuthController {
         return "redirect:/auth";
     }
 
+    //TODO: consider moving this elsewhere
     @PostMapping("/auth/register")
     public String registerUser(
             @RequestParam("username") String username,
@@ -82,13 +83,14 @@ public class AuthController {
             return "main/auth";
         }
 
+        //ez tenyleg kell? :D
         //TODO: jelszó tartalmazzon az angol abc-ből kis- és nagybetűt, számot, és speciális karaktert, valamint legalább 6 karakter hosszú legyen.
 
-        IUser newUser = new User()
-                .setName(username)
-                .setEmail(email)
-                .setPassword(_encoder.encode(password));
-        _userDAO.save(newUser);
+//        IUser newUser = new User()
+//                .setName(username)
+//                .setEmail(email)
+//                .setPassword(_encoder.encode(password));
+//        _userDAO.save(newUser);
 
         return "redirect:/auth?success=true";
     }

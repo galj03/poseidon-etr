@@ -7,8 +7,6 @@ import poseidon.DTO.User;
 import poseidon.DTO._Interfaces.IUser;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import poseidon.UserRoles;
@@ -55,13 +53,10 @@ public class OracleDBUserDAO extends JdbcDaoSupport implements IUserDAO {
 
     @Override
     public IUser save(IUser user) throws QueryException {
-        if (user.getPsCode() == null) {
-            KeyHolder keyHolder = new GeneratedKeyHolder();
-
+        if (getByPsCode(user.getPsCode()) == null) {
             try {
                 String sql = "INSERT INTO felhasznalo(PS_kod, nev, email, jelszo, szak_id, jogosultsag, kezdes_eve, vegzes_ideje) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                 getJdbcTemplate().update(connection -> {
-                    //TODO: this is needed for auto-generated id-s: PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
                     PreparedStatement ps = connection.prepareStatement(sql);
                     ps.setString(1, user.getPsCode());
                     ps.setString(2, user.getName());
@@ -72,15 +67,12 @@ public class OracleDBUserDAO extends JdbcDaoSupport implements IUserDAO {
                     ps.setString(7, user.getKezdesEve().toString());
                     ps.setString(8, user.getVegzesEve().toString());
                     return ps;
-                }, keyHolder);
+                });
             } catch (DataAccessException exception) {
                 throw new QueryException("Could not insert value into database", exception);
             }
 
-            Number key = keyHolder.getKey();
-            if (key == null) throw new QueryException("Failed to get inserted record's id");
-
-            return getByPsCode(key.toString());
+            return getByPsCode(user.getPsCode());
         }
 
         try {
@@ -115,7 +107,6 @@ public class OracleDBUserDAO extends JdbcDaoSupport implements IUserDAO {
     //endregion
 
     //region Private members
-    //TODO: fix
     private IUser getRow(String sql, Object... args) throws QueryException {
         try {
             List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sql, args);
