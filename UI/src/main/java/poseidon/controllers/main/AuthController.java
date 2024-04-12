@@ -1,7 +1,9 @@
 package poseidon.controllers.main;
 
+import poseidon.DAO._Interfaces.IPosztDAO;
 import poseidon.DAO._Interfaces.IUserDAO;
 import poseidon.DTO.User;
+import poseidon.DTO._Interfaces.IPoszt;
 import poseidon.DTO._Interfaces.IUser;
 import poseidon.Exceptions.QueryException;
 import jakarta.servlet.http.Cookie;
@@ -14,27 +16,45 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Controller
 public class AuthController {
     private IUserDAO _userDAO;
+    private IPosztDAO _posztDAO;
     private BCryptPasswordEncoder _encoder;
 
-    public AuthController(IUserDAO userDAO, BCryptPasswordEncoder encoder) {
+    public AuthController(IUserDAO userDAO, BCryptPasswordEncoder encoder, IPosztDAO posztDAO) {
         _userDAO = userDAO;
         _encoder = encoder;
+        _posztDAO = posztDAO;
     }
 
     @GetMapping("/auth")
     public String auth(@CookieValue(value = "isDarkModeEnabled",
-            defaultValue = "not found") String isDarkModeEnabled, HttpServletResponse response, Model model) {
+            defaultValue = "not found") String isDarkModeEnabled, HttpServletResponse response, Model model, Principal principal) {
         Cookie cookie = new Cookie("isDarkModeEnabled", "false");
         cookie.setMaxAge(7 * 24 * 60 * 60);
         cookie.setPath("/");
 
-        Iterable<IUser> users = _userDAO.getAllUsers();
-        model.addAttribute("users", users);
+        boolean isLoggedIn = principal != null;
+        Iterable<IPoszt> posts = _posztDAO.getAll();
+
+        Map<String, String> user_content = new HashMap<>();
+
+        for (IPoszt post: posts) {
+            String author = "";
+            String content = post.getTartalom();
+            IUser user = _userDAO.getByPsCode(post.getPsCode());
+            author += user.getName() + " (" + post.getPsCode() + "):";
+            user_content.put(author, content);
+        }
+
+        model.addAttribute("posts", user_content);
+        model.addAttribute("isLoggedIn", isLoggedIn);
 
         if (isDarkModeEnabled == "not found") {
             response.addCookie(cookie);
