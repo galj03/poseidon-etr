@@ -172,7 +172,7 @@ public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
     @Override
     public void saveGrade(String psCode, Integer tantargyId, Integer grade) {
         try {
-            String sql = "UPDATE felvette SET jegy = ? WHERE ps_kod = ? AND tantargy_id = ?";
+            String sql = "UPDATE felvette SET jegy = ?, allapot = ? WHERE ps_kod = ? AND tantargy_id = ?";
             getJdbcTemplate().update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(sql);
                 if (grade == null) {
@@ -180,8 +180,9 @@ public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
                 } else {
                     ps.setInt(1, grade);
                 }
-                ps.setString(2, psCode);
-                ps.setInt(3, tantargyId);
+                ps.setString(2, grade == null ? Constants.JOVAHAGYOTT : Constants.TELJESITETT);
+                ps.setString(3, psCode);
+                ps.setInt(4, tantargyId);
                 return ps;
             });
         } catch (DataAccessException exception) {
