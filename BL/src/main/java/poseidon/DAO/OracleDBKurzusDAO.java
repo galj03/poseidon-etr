@@ -8,8 +8,13 @@ import org.springframework.stereotype.Repository;
 import poseidon.Constants;
 import poseidon.DAO._Interfaces.IKurzusDAO;
 import poseidon.DTO.Kurzus;
-import poseidon.DTO.User;
+import poseidon.DTO.KurzusData;
+import poseidon.DTO.Tantargy;
+import poseidon.DTO.TantargyData;
 import poseidon.DTO._Interfaces.IKurzus;
+import poseidon.DTO._Interfaces.IKurzusData;
+import poseidon.DTO._Interfaces.ITantargyData;
+import poseidon.DTO.User;
 import poseidon.DTO._Interfaces.IUser;
 import poseidon.Exceptions.ArgumentNullException;
 import poseidon.Exceptions.QueryException;
@@ -22,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Repository
 public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
@@ -40,6 +46,67 @@ public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
     @Override
     public IKurzus getById(Integer id) throws QueryException {
         return getRow("select * from kurzus where id=?", id);
+    }
+
+    public List<IKurzus> getKurzusokByTantargyId(Integer tantargyId) throws QueryException {
+        return getRows("select * from kurzus where tantargy_id=?", tantargyId);
+    }
+
+    public Integer getSumOfEnrolledStudents(Integer kurzusId) {
+        try {
+            List<Map<String, Object>> rows = getJdbcTemplate().queryForList("SELECT * FROM felvette WHERE kurzus_id = ?", kurzusId);
+
+            return rows.size();
+
+        } catch (DataAccessException exception) {
+            throw new QueryException("Could not get values from database", exception);
+        } catch (QueryException exception) {
+            throw new QueryException("Failed to query a nested value", exception);
+        }
+    }
+
+    public List<IKurzusData> getAllCoursesOfSubject(Integer tantargyId) {
+        try {
+            List<Map<String, Object>> rows = getJdbcTemplate().queryForList("SELECT kurzus.id, nev, oktato_ps_kod, kezdes_ideje_nap, kezdes_ideje_idopont, felveheto, vizsga, ferohely, (SELECT nev FROM felhasznalo WHERE PS_kod = oktato_ps_kod) AS OKTATO_NEV\n" +
+                    "    FROM kurzus, terem\n" +
+                    "    WHERE kurzus.terem_id = terem.id\n" +
+                    "    AND kurzus.tantargy_id = ?", tantargyId);
+
+            List<IKurzusData> result = new ArrayList<>();
+
+            // debug
+//            if (!rows.isEmpty()) {
+//                Set<String> keys = rows.get(0).keySet();
+//
+//                for (String key : keys) {
+//                    System.err.println(key);
+//                }
+//                System.err.println("-------------------");
+//            }
+
+            for (Map<String, Object> row : rows) {
+                IKurzusData kurzusData = new KurzusData();
+                kurzusData
+                        .setKurzusId(((BigDecimal) row.get("id")).intValue())
+                        .setNev((String) row.get("nev"))
+                        .setOktatoPsKod((String) row.get("oktato_ps_kod"))
+                        .setOktatoNeve((String) row.get("oktato_nev"))
+                        .setNap((String) row.get("kezdes_ideje_nap"))
+                        .setKezdesIdeje(((BigDecimal) row.get("kezdes_ideje_idopont")).intValue())
+                        .setFelveheto("I".equals(row.get("felveheto")))
+                        .setVizsga("I".equals(row.get("vizsga")))
+                        .setFerohely(((BigDecimal) row.get("ferohely")).intValue())
+                        .setAktualisLetszam(getSumOfEnrolledStudents(kurzusData.getKurzusId()));
+                result.add(kurzusData);
+            }
+
+            return result;
+
+        } catch (DataAccessException exception) {
+            throw new QueryException("Could not get values from database", exception);
+        } catch (QueryException exception) {
+            throw new QueryException("Failed to query a nested value", exception);
+        }
     }
 
     @Override
@@ -203,6 +270,16 @@ public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
             List<IKurzus> result = new ArrayList<>();
 
             for (Map<String, Object> row : rows) {
+
+                // debug
+//                if (!rows.isEmpty()) {
+//                    Set<String> keys = rows.get(0).keySet();
+//
+//                    for (String key : keys) {
+//                        System.err.println(key);
+//                    }
+//                }
+
                 Boolean isFelveheto = row.get("felveheto").equals(Constants.TRUE);
                 Boolean isVizsga = row.get("vizsga").equals(Constants.TRUE);
 

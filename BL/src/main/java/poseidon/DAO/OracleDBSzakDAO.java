@@ -15,6 +15,8 @@ import poseidon.DTO.User;
 import poseidon.DTO._Interfaces.ISzak;
 import poseidon.DTO._Interfaces.ITantargy;
 import poseidon.DTO._Interfaces.IUser;
+import poseidon.DTO.TantargyData;
+import poseidon.DTO._Interfaces.ITantargyData;
 import poseidon.Exceptions.ArgumentNullException;
 import poseidon.Exceptions.QueryException;
 import poseidon.UserRoles;
@@ -41,6 +43,50 @@ public class OracleDBSzakDAO extends BaseDAO implements ISzakDAO {
     @Override
     public Iterable<ISzak> getAll() throws QueryException {
         return getRows("select * from szak");
+    }
+
+    @Override
+    public List<ITantargyData> kotelezokGetAll(String psCode, Integer szakId) throws QueryException {
+        try {
+            List<Map<String, Object>> rows = getJdbcTemplate().queryForList("SELECT tantargy.id, tantargy.nev, tantargy.targyfelelos, " +
+                    "  (SELECT CASE WHEN COUNT(*) > 0 THEN 'IGEN' ELSE 'NEM' END " +
+                    "   FROM felvette " +
+                    "   WHERE PS_kod=? AND allapot='TELJESITETT' AND tantargy_id=tantargy.id) " +
+                    "  AS teljesitette, (SELECT felhasznalo.nev FROM felhasznalo WHERE felhasznalo.PS_kod=tantargy.targyfelelos) AS targyfelelosneve " +
+                    "FROM kotelezo, tantargy " +
+                    "WHERE szak_id=? AND kotelezo.tantargy_id=tantargy.id", psCode, szakId);
+
+            List<ITantargyData> result = new ArrayList<>();
+
+//            // debug
+//            if (!rows.isEmpty()) {
+//                Set<String> keys = rows.get(0).keySet();
+//
+//                for (String key : keys) {
+//                    System.err.println(key);
+//                }
+//            }
+
+            for (Map<String, Object> row : rows) {
+                ITantargyData tantargyData = new TantargyData();
+                tantargyData.setTantargy(
+                        new Tantargy()
+                                .setTantargyId(((BigDecimal) row.get("id")).intValue())
+                                .setNev((String) row.get("nev"))
+                                .setFelelos((String) row.get("targyfelelos"))
+                );
+                tantargyData.setTeljesitett(row.get("teljesitette").equals("IGEN"));
+                tantargyData.setTargyfelelosNev((String) row.get("targyfelelosneve"));
+                result.add(tantargyData);
+            }
+
+            return result;
+
+        } catch (DataAccessException exception) {
+            throw new QueryException("Could not get values from database", exception);
+        } catch (QueryException exception) {
+            throw new QueryException("Failed to query a nested value", exception);
+        }
     }
 
     @Override

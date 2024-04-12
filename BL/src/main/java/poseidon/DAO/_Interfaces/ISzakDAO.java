@@ -4,6 +4,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import poseidon.DTO._Interfaces.ISzak;
 import poseidon.DTO._Interfaces.ITantargy;
 import poseidon.DTO._Interfaces.IUser;
+import poseidon.DTO._Interfaces.ITantargyData;
 import poseidon.Exceptions.QueryException;
 
 import java.sql.SQLException;
@@ -12,6 +13,8 @@ import java.util.Map;
 
 public interface ISzakDAO {
     Iterable<ISzak> getAll() throws QueryException;
+
+    List<ITantargyData> kotelezokGetAll(String psCode, Integer szakId) throws QueryException;
 
     ISzak getById(Integer id) throws QueryException;
 

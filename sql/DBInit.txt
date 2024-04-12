@@ -449,3 +449,34 @@ select * from kotelezo;
 select * from felvette;
 select * from poszt;
 select * from komment;
+
+-- TRIGGEREK
+
+CREATE OR REPLACE FUNCTION countStudentsOnCourse (kurzusID IN kurzus.ID%TYPE) RETURN NUMBER
+IS
+    v_result NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_result FROM felvette WHERE kurzus_id = kurzusID;
+    RETURN v_result;
+END;
+/
+CREATE OR REPLACE FUNCTION capacity (kurzusID IN kurzus.ID%TYPE) RETURN NUMBER
+IS
+    v_result NUMBER;
+BEGIN
+    select ferohely into v_result from kurzus, terem where kurzus.terem_id=terem.id and kurzus.id=kurzusID;
+    RETURN v_result;
+END;
+
+/
+CREATE OR REPLACE TRIGGER changeFelvehetoStatus
+AFTER INSERT
+ON felvette
+FOR EACH ROW
+BEGIN
+    IF countStudentsOnCourse(:NEW.kurzus_id) >= capacity(:NEW.kurzus_id) THEN
+        UPDATE kurzus
+        SET felveheto = 'N'
+        WHERE id = :NEW.kurzus_id;
+    END IF;
+END;
