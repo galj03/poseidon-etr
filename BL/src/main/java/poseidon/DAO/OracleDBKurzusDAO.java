@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import poseidon.Constants;
 import poseidon.DAO._Interfaces.IKurzusDAO;
 import poseidon.DTO.Kurzus;
 import poseidon.DTO._Interfaces.IKurzus;
@@ -111,6 +112,9 @@ public class OracleDBKurzusDAO extends JdbcDaoSupport implements IKurzusDAO {
 
             if (rows.isEmpty()) return null;
 
+            Boolean isFelveheto = rows.get(0).get("felveheto") == Constants.TRUE;
+            Boolean isVizsga = rows.get(0).get("vizsga") == Constants.TRUE;
+
             return new Kurzus()
                     .setKurzusId(((BigDecimal) rows.get(0).get("id")).intValue())
                     .setNev((String) rows.get(0).get("nev"))
@@ -119,8 +123,8 @@ public class OracleDBKurzusDAO extends JdbcDaoSupport implements IKurzusDAO {
                     .setKezdesIdopontja((Timestamp) rows.get(0).get("kezdes_ideje_idopont"))
                     .setTantargyId(((BigDecimal) rows.get(0).get("tantargy_id")).intValue())
                     .setTeremId(((BigDecimal) rows.get(0).get("terem_id")).intValue())
-                    .setIsFelveheto((Boolean) rows.get(0).get("felveheto"))
-                    .setIsVizsga((Boolean) rows.get(0).get("vizsga"));
+                    .setIsFelveheto(isFelveheto)
+                    .setIsVizsga(isVizsga);
 
         } catch (DataAccessException exception) {
             throw new QueryException("Could not get values from database", exception);
@@ -134,6 +138,9 @@ public class OracleDBKurzusDAO extends JdbcDaoSupport implements IKurzusDAO {
             List<IKurzus> result = new ArrayList<>();
 
             for (Map<String, Object> row : rows) {
+                Boolean isFelveheto = row.get("felveheto") == Constants.TRUE;
+                Boolean isVizsga = row.get("vizsga") == Constants.TRUE;
+
                 result.add(
                         new Kurzus()
                                 .setKurzusId(((BigDecimal) row.get("id")).intValue())
@@ -143,8 +150,8 @@ public class OracleDBKurzusDAO extends JdbcDaoSupport implements IKurzusDAO {
                                 .setKezdesIdopontja((Timestamp) row.get("kezdes_ideje_idopont"))
                                 .setTantargyId(((BigDecimal) row.get("tantargy_id")).intValue())
                                 .setTeremId(((BigDecimal) row.get("terem_id")).intValue())
-                                .setIsFelveheto((Boolean) row.get("felveheto"))
-                                .setIsVizsga((Boolean) row.get("vizsga"))
+                                .setIsFelveheto(isFelveheto)
+                                .setIsVizsga(isVizsga)
                 );
             }
 
