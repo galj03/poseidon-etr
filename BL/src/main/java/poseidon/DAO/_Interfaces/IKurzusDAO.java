@@ -7,16 +7,22 @@ import poseidon.Exceptions.QueryException;
 import java.util.List;
 import java.util.Map;
 
+import java.util.List;
+
 public interface IKurzusDAO {
     Iterable<IKurzus> getAll() throws QueryException;
 
     IKurzus getById(Integer id) throws QueryException;
 
-    public List<IKurzus> getKurzusokByTantargyId(Integer tantargyId);
+    List<IKurzus> getKurzusokByTantargyId(Integer tantargyId);
 
-    public Integer getSumOfEnrolledStudents(Integer kurzusId);
+    Integer getSumOfEnrolledStudents(Integer kurzusId);
 
-    public List<IKurzusData> getAllCoursesOfSubject(Integer tantargyId);
+    List<IKurzusData> getAllCoursesOfSubject(Integer tantargyId);
+
+    void enrollCourse(Integer kurzusId, String PsCode);
+
+    void removeFromCourse(String PsCode, Integer kurzusId);
 
     IKurzus save(IKurzus kurzus) throws QueryException;
 

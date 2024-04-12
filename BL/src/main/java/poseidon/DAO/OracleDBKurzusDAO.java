@@ -54,7 +54,7 @@ public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
 
     public Integer getSumOfEnrolledStudents(Integer kurzusId) {
         try {
-            List<Map<String, Object>> rows = getJdbcTemplate().queryForList("SELECT * FROM felvette WHERE kurzus_id = ?", kurzusId);
+            List<Map<String, Object>> rows = getJdbcTemplate().queryForList("SELECT * FROM felvette WHERE kurzus_id = ? AND allapot = " + "'" + Constants.JOVAHAGYOTT + "'", kurzusId);
 
             return rows.size();
 
@@ -107,6 +107,26 @@ public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
         } catch (QueryException exception) {
             throw new QueryException("Failed to query a nested value", exception);
         }
+    }
+
+    public void enrollCourse(Integer kurzusId, String PsCode) {
+        try {
+            String sql = "INSERT INTO felvette VALUES (?, ?, ?, " + "'" + Constants.JOVAHAGYASRA_VAR + "'" + ", NULL)";
+            getJdbcTemplate().update(connection -> {
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ps.setString(1, PsCode);
+                ps.setString(2, String.valueOf(kurzusId));
+                ps.setString(3, String.valueOf(getById(kurzusId).getTantargyId()));
+                return ps;
+            });
+        } catch (DataAccessException exception) {
+            throw new QueryException("Could not insert value into database", exception);
+        }
+    }
+
+    public void removeFromCourse(String PsCode, Integer kurzusId) {
+        String sql = "DELETE FROM felvette WHERE kurzus_id=? AND PS_kod=?";
+        getJdbcTemplate().update(sql, kurzusId, PsCode);
     }
 
     @Override
@@ -217,7 +237,7 @@ public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
             }
 
             IUser tmpUser = new User()
-                    .setPsCode((String)item.get("ps_kod"));
+                    .setPsCode((String) item.get("ps_kod"));
 
             if (lastKurzus.getKurzusId() != tmpKurzus.getKurzusId()) {
                 hallgatokJegyeKurzusonkent.put(lastKurzus, new HashMap<>(hallgatokJegyei));
@@ -225,9 +245,9 @@ public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
                 lastKurzus = tmpKurzus;
                 hallgatokJegyei.clear();
                 hallgatokJegyeKurzusonkent.clear();
-                hallgatokJegyei.put(tmpUser, item.get("jegy") == null ? 0 : ((BigDecimal)item.get("jegy")).intValue());
+                hallgatokJegyei.put(tmpUser, item.get("jegy") == null ? 0 : ((BigDecimal) item.get("jegy")).intValue());
             } else {
-                hallgatokJegyei.put(tmpUser, item.get("jegy") == null ? 0 : ((BigDecimal)item.get("jegy")).intValue());
+                hallgatokJegyei.put(tmpUser, item.get("jegy") == null ? 0 : ((BigDecimal) item.get("jegy")).intValue());
             }
         }
         if (lastKurzus.getKurzusId() == tmpKurzus.getKurzusId()) {
