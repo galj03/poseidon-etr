@@ -1,7 +1,9 @@
 package poseidon.controllers.main;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.dao.DataIntegrityViolationException;
 import poseidon.DAO._Interfaces.*;
+import poseidon.DTO.User;
 import poseidon.DTO._Interfaces.IUser;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -11,8 +13,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import poseidon.Exceptions.QueryException;
+import poseidon.UserRoles;
 
 import java.sql.SQLException;
+import java.util.Objects;
 
 @Controller
 @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -24,6 +28,7 @@ public class AdminController {
     private final ISzakDAO _szakDAO;
     private final ITantargyDAO _tantargyDAO;
     private final ITeremDAO _teremDAO;
+    private final BCryptPasswordEncoder _encoder;
     private IUser _user;
 
     public AdminController(IUserDAO userDAO,
@@ -32,7 +37,8 @@ public class AdminController {
                            IPosztDAO posztDAO,
                            ISzakDAO szakDAO,
                            ITantargyDAO tantargyDAO,
-                           ITeremDAO teremDAO) {
+                           ITeremDAO teremDAO,
+                           BCryptPasswordEncoder encoder) {
         _userDAO = userDAO;
         _kommentDAO = kommentDAO;
         _kurzusDAO = kurzusDAO;
@@ -40,6 +46,7 @@ public class AdminController {
         _szakDAO = szakDAO;
         _tantargyDAO = tantargyDAO;
         _teremDAO = teremDAO;
+        _encoder = encoder;
     }
 
     @GetMapping("/admin")
@@ -59,6 +66,64 @@ public class AdminController {
         model.addAttribute("termek", _teremDAO.getAll());
         return "main/admin";
     }
+
+    //region Update
+    @PostMapping("/admin/edit-user")
+    public String saveUser(
+            @RequestParam("psCode") String psCode,
+            @RequestParam("name") String name,
+            @RequestParam("email") String email,
+            @RequestParam("password") String password,
+            //@RequestParam("password2") String password2,
+            @RequestParam("szakId") Integer szakId,
+            @RequestParam("role") String role,
+            @RequestParam("kezdes_ev") Integer kezdEv,
+            @RequestParam("vegzes_ev") Integer vegzEv,
+            Model model) {
+        if(kezdEv == null || kezdEv == 0){
+            model.addAttribute("error", "Starting year must be given!");
+            return "main/error";
+        }
+
+        if(vegzEv == null || vegzEv == 0){
+            vegzEv = kezdEv + 3;
+        }
+
+        if (_szakDAO.getById(szakId) == null) {
+            model.addAttribute("error", "Selected szak not found!");
+            return "main/error";
+        }
+        if (kezdEv > vegzEv) {
+            model.addAttribute("error", "Ending year must be bigger than starting year!");
+            return "main/error";
+        }
+        if (vegzEv - kezdEv > 100) {
+            model.addAttribute("error", "One does not simply go to university for over a century!");
+            return "main/error";
+        }
+
+        //TODO: bekotes utan legyen meg
+//        if (!Objects.equals(password, password2)) {
+//            model.addAttribute("register_error", "The two passwords should be the same!");
+//            return "main/auth";
+//        }
+
+        var roleEnum = Objects.equals(role, "ROLE_ADMIN") ? UserRoles.ROLE_ADMIN : UserRoles.ROLE_USER;
+
+        IUser newUser = new User()
+                .setPsCode(psCode)
+                .setName(name)
+                .setEmail(email)
+                .setPassword(_encoder.encode(password))
+                .setSzakId(szakId)
+                .setRole(roleEnum)
+                .setKezdesEve(kezdEv)
+                .setVegzesEve(vegzEv);
+        _userDAO.save(newUser);
+
+        return "redirect:/admin";
+    }
+    //endregion Update
 
     //region Delete
     @PostMapping("/admin/delete-user")

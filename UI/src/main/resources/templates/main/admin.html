@@ -72,34 +72,34 @@
                 <div class="row my-2 mb-4" style="background-color: white; width: 100%; height: 2px;"></div>
                 <!-- Módosítás -->
 
-<!--                TODO: bekotni + validation -->
-                <form action="" class="row mt-2 mb-4">
+                <form th:action="@{/admin/edit-user}" method="post" class="row mt-2 mb-4">
                     <div class="col-1">
-                        <input style="width: 100%;" type="text" name="" value="BWE8LT">
+                        <input style="width: 100%;" type="text" name="psCode" value="BWE8LT">
                     </div>
                     <div class="col-1">
-                        <input style="width: 100%;" type="text" name="" value="Csonka Valentin Viktor">
+                        <input style="width: 100%;" type="text" name="name" value="Csonka Valentin Viktor">
                     </div>
                     <div class="col-1">
-                        <input style="width: 100%;" type="password" name="" value="password123">
+                        <input style="width: 100%;" type="password" name="password" value="password123">
                     </div>
                     <div class="col-3">
-                        <input style="width: 100%;" type="text" name="" value="example@asd.com">
+                        <input style="width: 100%;" type="text" name="email" value="example@asd.com">
                     </div>
                     <div class="col-1">
-                        <input style="width: 100%;" type="text" name="" value="Programtervező informatikus">
+                        <input style="width: 100%;" type="number" name="szakId" value="1">
                     </div>
-                    <div class="col-2">
-                        <input style="width: 100%;" type="text" name="" value="Hallgató">
+                    <select class="col-2" name="role">
+                        <option value="ROLE_USER" selected>ROLE_USER</option>
+                        <option value="ROLE_ADMIN">ROLE_ADMIN</option>
+                    </select>
+                    <div class="col-1">
+                        <input style="width: 100%;" type="number" name="kezdes_ev" value="2022">
                     </div>
                     <div class="col-1">
-                        <input style="width: 100%;" type="number" name="" value="2022">
+                        <input style="width: 100%;" type="number" name="vegzes_ev" value="-">
                     </div>
                     <div class="col-1">
-                        <input style="width: 100%;" type="number" name="" value="-">
-                    </div>
-                    <div class="col-1">
-                        <form action="" style="height: 60%; min-height: 50px; width: 100%;"><input class="rounded" style="background-color: green; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="button" value="Mentés"></form>
+                        <input class="rounded" style="background-color: green; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Mentés">
                     </div>
                 </form>
 
