@@ -35,7 +35,7 @@ public class AuthController {
 
     @GetMapping("/auth")
     public String auth(@CookieValue(value = "isDarkModeEnabled",
-            defaultValue = "not found") String isDarkModeEnabled, HttpServletResponse response, Model model, Principal principal) {
+            defaultValue = "not found") String isDarkModeEnabled, HttpServletResponse response, Model model) {
         Cookie cookie = new Cookie("isDarkModeEnabled", "false");
         cookie.setMaxAge(7 * 24 * 60 * 60);
         cookie.setPath("/");
