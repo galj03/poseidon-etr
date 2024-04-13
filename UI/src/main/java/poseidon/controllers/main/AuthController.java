@@ -40,7 +40,6 @@ public class AuthController {
         cookie.setMaxAge(7 * 24 * 60 * 60);
         cookie.setPath("/");
 
-        boolean isLoggedIn = principal != null;
         Iterable<IPoszt> posts = _posztDAO.getAll();
 
         Map<String, String> user_content = new HashMap<>();
@@ -54,7 +53,6 @@ public class AuthController {
         }
 
         model.addAttribute("posts", user_content);
-        model.addAttribute("isLoggedIn", isLoggedIn);
 
         if (isDarkModeEnabled == "not found") {
             response.addCookie(cookie);
