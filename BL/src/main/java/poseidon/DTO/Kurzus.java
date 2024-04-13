@@ -124,8 +124,8 @@ public class Kurzus implements IKurzus {
     }
 
     @Override
-    public IKurzus setTeremId(Integer id) throws ArgumentNullException {
-        if (id == null) throw new ArgumentNullException("teremId");
+    public IKurzus setTeremId(Integer id) {
+
         _teremId = id;
         return this;
     }

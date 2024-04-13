@@ -1,5 +1,6 @@
 package poseidon.controllers.main;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import poseidon.DAO._Interfaces.*;
 import poseidon.DTO._Interfaces.IUser;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -62,14 +63,110 @@ public class AdminController {
     //region Delete
     @PostMapping("/admin/delete-user")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String deleteUser(@RequestParam("psCode") String psCode, Model model) {
+    public String deleteUser(@RequestParam("key") String key, Model model) {
         try {
-            _userDAO.remove(_userDAO.getByPsCode(psCode));
+            _userDAO.remove(_userDAO.getByPsCode(key));
         } catch (QueryException e) {
             model.addAttribute("error", "Could not remove user from database." + e.getMessage());
             return "main/error";
         } catch (SQLException e) {
             model.addAttribute("error", "Could not remove user from database. Check NOT NULL. " + e.getMessage());
+            return "main/error";
+        }
+
+        return "redirect:/admin";
+    }
+
+    @PostMapping("/admin/delete-kurzus")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String deleteKurzus(@RequestParam("key") Integer key, Model model) {
+        try {
+            _kurzusDAO.remove(_kurzusDAO.getById(key));
+        } catch (QueryException e) {
+            model.addAttribute("error", "Could not remove user from database." + e.getMessage());
+            return "main/error";
+        } //catch (SQLException e) {
+//            model.addAttribute("error", "Could not remove user from database. Check NOT NULL. " + e.getMessage());
+//            return "main/error";
+//        }
+
+        return "redirect:/admin";
+    }
+
+    @PostMapping("/admin/delete-szak")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String deleteSzak(@RequestParam("key") Integer key, Model model) {
+        try {
+            _szakDAO.remove(_szakDAO.getById(key));
+        } catch (QueryException e) {
+            model.addAttribute("error", "Could not remove user from database." + e.getMessage());
+            return "main/error";
+        } catch (DataIntegrityViolationException e) {
+            model.addAttribute("error", "A törölni kívánt rekordhoz egy része még szerepel értékként más táblában!" + e.getMessage());
+            return "main/error";
+        }
+
+        return "redirect:/admin";
+    }
+
+    @PostMapping("/admin/delete-tantargy")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String deleteTantargy(@RequestParam("key") Integer key, Model model) {
+        try {
+            _tantargyDAO.remove(_tantargyDAO.getById(key));
+        } catch (QueryException e) {
+            model.addAttribute("error", "Could not remove user from database." + e.getMessage());
+            return "main/error";
+        } catch (DataIntegrityViolationException e) {
+            model.addAttribute("error", "A törölni kívánt rekordhoz egy része még szerepel értékként más táblában! " + e.getMessage());
+            return "main/error";
+        }
+
+        return "redirect:/admin";
+    }
+
+    @PostMapping("/admin/delete-terem")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String deleteTerem(@RequestParam("key") Integer key, Model model) {
+        try {
+            _teremDAO.remove(_teremDAO.getById(key));
+        } catch (QueryException e) {
+            model.addAttribute("error", "Could not remove user from database." + e.getMessage());
+            return "main/error";
+        } catch (DataIntegrityViolationException e) {
+            model.addAttribute("error", "A törölni kívánt rekordhoz egy része még szerepel értékként más táblában! " + e.getMessage());
+            return "main/error";
+        }
+
+        return "redirect:/admin";
+    }
+
+    @PostMapping("/admin/delete-poszt")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String deletePoszt(@RequestParam("key") Integer key, Model model) {
+        try {
+            _posztDAO.remove(_posztDAO.getById(key));
+        } catch (QueryException e) {
+            model.addAttribute("error", "Could not remove user from database." + e.getMessage());
+            return "main/error";
+        } catch (DataIntegrityViolationException e) {
+            model.addAttribute("error", "A törölni kívánt rekordhoz egy része még szerepel értékként más táblában! " + e.getMessage());
+            return "main/error";
+        }
+
+        return "redirect:/admin";
+    }
+
+    @PostMapping("/admin/delete-komment")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String deleteKomment(@RequestParam("key") Integer key, Model model) {
+        try {
+            _kommentDAO.remove(_kommentDAO.getById(key));
+        } catch (QueryException e) {
+            model.addAttribute("error", "Could not remove user from database." + e.getMessage());
+            return "main/error";
+        } catch (DataIntegrityViolationException e) {
+            model.addAttribute("error", "A törölni kívánt rekordhoz egy része még szerepel értékként más táblában! " + e.getMessage());
             return "main/error";
         }
 

@@ -40,7 +40,7 @@ CREATE TABLE kurzus (
     kezdes_ideje_nap VARCHAR2(15) NOT NULL,
     kezdes_ideje_idopont TIMESTAMP NOT NULL,
     tantargy_id NUMBER NOT NULL,
-    terem_id NUMBER NOT NULL,
+    terem_id NUMBER,
     felveheto CHAR(1) NOT NULL,
     vizsga CHAR(1) NOT NULL
 );
@@ -93,7 +93,7 @@ ALTER TABLE poszt ADD CONSTRAINT poszt_pk PRIMARY KEY (id);
 ALTER TABLE komment ADD CONSTRAINT komment_pk PRIMARY KEY (id);
 
 /* ---------- Külső kulcsok hozzárendelése táblákhoz ---------- */
-ALTER TABLE felhasznalo ADD CONSTRAINT felhasznalo_fk1 FOREIGN KEY(szak_id) REFERENCES szak(id) on delete cascade;
+ALTER TABLE felhasznalo ADD CONSTRAINT felhasznalo_fk1 FOREIGN KEY(szak_id) REFERENCES szak(id);
 ALTER TABLE tantargy ADD CONSTRAINT tantargy_fk1 FOREIGN KEY(targyfelelos) REFERENCES felhasznalo(PS_kod) on delete set null;
 ALTER TABLE kurzus ADD CONSTRAINT kurzus_fk1 FOREIGN KEY(tantargy_id) REFERENCES tantargy(id) on delete cascade;
 ALTER TABLE kurzus ADD CONSTRAINT kurzus_fk2 FOREIGN KEY(terem_id) REFERENCES terem(id) on delete set null;

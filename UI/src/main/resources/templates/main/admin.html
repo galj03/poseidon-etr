@@ -130,8 +130,9 @@
                     </div>
                     <div class="col-1">
                         <form th:action="@{/admin/delete-user}" method="post" style="height: 60%; min-height: 50px; width: 100%;">
-                            <input hidden type="text" name="psCode" th:value="${user.getPsCode()}">
-                            <input class="rounded" style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Törlés"></form>
+                            <input hidden type="text" name="key" th:value="${user.getPsCode()}">
+                            <input class="rounded" style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Törlés">
+                        </form>
                     </div>
                 </div>
             </div>
@@ -229,7 +230,10 @@
                         <h3 class="fs-4" th:text="${kurzus.isVizsga()}">Nem</h3>
                     </div>
                     <div class="col-1">
-                        <form action="" style="height: 60%; min-height: 50px; width: 100%;"><input class="rounded" style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="button" value="Törlés"></form>
+                        <form th:action="@{/admin/delete-kurzus}" method="post" style="height: 60%; min-height: 50px; width: 100%;">
+                            <input hidden type="text" name="key" th:value="${kurzus.getKurzusId()}">
+                            <input class="rounded" style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Törlés">
+                        </form>
                     </div>
                 </div>
             </div>
@@ -273,7 +277,10 @@
                         <h3 class="fs-4" th:text="${szak.getName()}">Programtervező informatikus</h3>
                     </div>
                     <div class="col-1">
-                        <form action="" style="height: 60%; min-height: 50px; width: 100%;"><input class="rounded" style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="button" value="Törlés"></form>
+                        <form th:action="@{/admin/delete-szak}" method="post" style="height: 60%; min-height: 50px; width: 100%;">
+                            <input hidden type="text" name="key" th:value="${szak.getSzakId()}">
+                            <input class="rounded" style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Törlés">
+                        </form>
                     </div>
                 </div>
             </div>
@@ -326,7 +333,10 @@
                         <h3 class="fs-4" th:text="${tantargy.getFelelos()}">Gercsó Always</h3>
                     </div>
                     <div class="col-1">
-                        <form action="" style="height: 60%; min-height: 50px; width: 100%;"><input class="rounded" style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="button" value="Törlés"></form>
+                        <form th:action="@{/admin/delete-tantargy}" method="post" style="height: 60%; min-height: 50px; width: 100%;">
+                            <input hidden type="text" name="key" th:value="${tantargy.getTantargyId()}">
+                            <input class="rounded" style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Törlés">
+                        </form>
                     </div>
                 </div>
             </div>
@@ -370,7 +380,10 @@
                         <h3 class="fs-4" th:text="${terem.getFerohely()}">30</h3>
                     </div>
                     <div class="col-1">
-                        <form action="" style="height: 60%; min-height: 50px; width: 100%;"><input class="rounded" style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="button" value="Törlés"></form>
+                        <form th:action="@{/admin/delete-terem}" method="post" style="height: 60%; min-height: 50px; width: 100%;">
+                            <input hidden type="text" name="key" th:value="${terem.getTeremId()}">
+                            <input class="rounded" style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Törlés">
+                        </form>
                     </div>
                 </div>
             </div>
@@ -422,7 +435,10 @@
                         <h3 class="fs-4" th:text="${poszt.getTartalom()}">I love HTML <3</h3>
                     </div>
                     <div class="col-1">
-                        <form action="" style="height: 60%; min-height: 50px; width: 100%;"><input class="rounded" style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="button" value="Törlés"></form>
+                        <form th:action="@{/admin/delete-poszt}" method="post" style="height: 60%; min-height: 50px; width: 100%;">
+                            <input hidden type="text" name="key" th:value="${poszt.getPosztId()}">
+                            <input class="rounded" style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Törlés">
+                        </form>
                     </div>
                 </div>
             </div>
@@ -484,7 +500,10 @@
                         <h3 class="fs-4" th:text="${komment.getTartalom()}">I love HTML <3</h3>
                     </div>
                     <div class="col-1">
-                        <form action="" style="height: 60%; min-height: 50px; width: 100%;"><input class="rounded" style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="button" value="Törlés"></form>
+                        <form th:action="@{/admin/delete-komment}" method="post" style="height: 60%; min-height: 50px; width: 100%;">
+                            <input hidden type="text" name="key" th:value="${komment.getKommentId()}">
+                            <input class="rounded" style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Törlés">
+                        </form>
                     </div>
                 </div>
             </div>

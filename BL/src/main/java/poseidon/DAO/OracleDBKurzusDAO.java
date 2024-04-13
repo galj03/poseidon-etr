@@ -149,7 +149,7 @@ public class OracleDBKurzusDAO extends JdbcDaoSupport implements IKurzusDAO {
                                 .setKezdesNapja((String) row.get("kezdes_ideje_nap"))
                                 .setKezdesIdopontja((Timestamp) row.get("kezdes_ideje_idopont"))
                                 .setTantargyId(((BigDecimal) row.get("tantargy_id")).intValue())
-                                .setTeremId(((BigDecimal) row.get("terem_id")).intValue())
+                                .setTeremId(row.get("terem_id") == null ? null : ((BigDecimal) row.get("terem_id")).intValue())
                                 .setIsFelveheto(isFelveheto)
                                 .setIsVizsga(isVizsga)
                 );
