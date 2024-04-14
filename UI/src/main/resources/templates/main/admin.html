@@ -31,6 +31,59 @@
     </script>
 </head>
 <body>
+    <div th:if="${confirmObj != null}" class="m-0 p-0">
+        <div class="text-light d-flex justify-content-center flex-column text-center" style="width: 100%; height: 100%; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 2; display: block; background-color: rgba(0,0,0,0.5);">
+            <div class="m-auto rounded p-2 d-flex justify-content-center flex-column text-center" style="width: 50%; min-width: 300px; height: 50%; min-height: 450px; background-color: #377ded; border: 2px solid white; box-shadow: 0px 0px 10px 1px white;">
+                <h3>Regisztráció konfirmálása</h3>
+                <p>Ön regisztrálni kíván egy felhasználót a következő adatokkal:</p>
+                <div class="container rounded">
+                    <div class="row">
+                        <div class="col text-end">PS-kód:</div>
+                        <div class="col text-start" th:text="${confirmObj.getPsCode()}"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-end">Név:</div>
+                        <div class="col text-start" th:text="${confirmObj.getName()}"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-end">Email:</div>
+                        <div class="col text-start" th:text="${confirmObj.getEmail()}"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-end">Szak:</div>
+                        <div class="col text-start" th:text="${confirmObj.getSzakId()}"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-end">Jogosultság:</div>
+                        <div class="col text-start" th:text="${confirmObj.getRole()}"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-end">Kezdés éve:</div>
+                        <div class="col text-start" th:text="${confirmObj.getKezdesEve()}"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-end">Végzés éve:</div>
+                        <div class="col text-start" th:text="${confirmObj.getVegzesEve()}"></div>
+                    </div>
+                </div>
+                <div class="m-4 mb-0">
+                    <p>Kérem adja meg a megadott jelszót mégegyszer a mentéshez:</p>
+                    <form th:action="@{/admin/edit-user}" method="post">
+                        <input type="hidden" name="psCode" th:value="${confirmObj.getPsCode()}">
+                        <input type="hidden" name="name" th:value="${confirmObj.getName()}">
+                        <input type="hidden" name="password" th:value="${confirmObj.getPassword()}">
+                        <input type="hidden" name="email" th:value="${confirmObj.getEmail()}">
+                        <input type="hidden" name="szakId" th:value="${confirmObj.getSzakId()}">
+                        <input type="hidden" name="role" th:value="${confirmObj.getRole()}">
+                        <input type="hidden" name="kezdes_ev" th:value="${confirmObj.getKezdesEve()}">
+                        <input type="hidden" name="vegzes_ev" th:value="${confirmObj.getVegzesEve()}">
+                        <input type="password" name="password2" style="width: 30%; min-width: 200px;" placeholder="Jelszó újra">
+                        <input class="rounded mx-auto mt-3" style="background-color: green; border:none; color: white; width: 20%; min-width: fit-content; height: 40px; font-size: 20px; display: block;" type="submit" value="Mentés">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <div th:replace="~{fragments/header :: header}"></div>
     <main>
         <div>
@@ -72,7 +125,7 @@
                 <div class="row my-2 mb-4" style="background-color: white; width: 100%; height: 2px;"></div>
                 <!-- Módosítás -->
 
-                <form th:action="@{/admin/edit-user}" method="post" class="row mt-2 mb-4">
+                <form th:action="@{/admin/confirm-register}" method="post" class="row mt-2 mb-4">
                     <div class="col-1">
                         <input style="width: 100%;" type="text" name="psCode" value="BWE8LT">
                     </div>

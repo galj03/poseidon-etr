@@ -74,12 +74,44 @@ public class AdminController {
             @RequestParam("name") String name,
             @RequestParam("email") String email,
             @RequestParam("password") String password,
-            //@RequestParam("password2") String password2,
+            @RequestParam("password2") String password2,
             @RequestParam("szakId") Integer szakId,
             @RequestParam("role") String role,
             @RequestParam("kezdes_ev") Integer kezdEv,
             @RequestParam("vegzes_ev") Integer vegzEv,
             Model model) {
+
+        if (!_encoder.matches(password2, password)) {
+            model.addAttribute("register_error", "The two passwords should be the same!");
+            return "main/auth";
+        }
+
+        var roleEnum = Objects.equals(role, "ROLE_ADMIN") ? UserRoles.ROLE_ADMIN : UserRoles.ROLE_USER;
+
+        IUser newUser = new User()
+                .setPsCode(psCode)
+                .setName(name)
+                .setEmail(email)
+                .setPassword(_encoder.encode(password))
+                .setSzakId(szakId)
+                .setRole(roleEnum)
+                .setKezdesEve(kezdEv)
+                .setVegzesEve(vegzEv);
+        _userDAO.save(newUser);
+
+        return "redirect:/admin";
+    }
+
+    @PostMapping("/admin/confirm-register")
+    public String confirmRegisterDetails(@RequestParam("psCode") String psCode,
+                                         @RequestParam("name") String name,
+                                         @RequestParam("email") String email,
+                                         @RequestParam("password") String password,
+                                         @RequestParam("szakId") Integer szakId,
+                                         @RequestParam("role") String role,
+                                         @RequestParam("kezdes_ev") Integer kezdEv,
+                                         @RequestParam("vegzes_ev") Integer vegzEv,
+                                         Model model) {
         if(kezdEv == null || kezdEv == 0){
             model.addAttribute("error", "Starting year must be given!");
             return "main/error";
@@ -102,12 +134,6 @@ public class AdminController {
             return "main/error";
         }
 
-        //TODO: bekotes utan legyen meg
-//        if (!Objects.equals(password, password2)) {
-//            model.addAttribute("register_error", "The two passwords should be the same!");
-//            return "main/auth";
-//        }
-
         var roleEnum = Objects.equals(role, "ROLE_ADMIN") ? UserRoles.ROLE_ADMIN : UserRoles.ROLE_USER;
 
         IUser newUser = new User()
@@ -119,9 +145,10 @@ public class AdminController {
                 .setRole(roleEnum)
                 .setKezdesEve(kezdEv)
                 .setVegzesEve(vegzEv);
-        _userDAO.save(newUser);
 
-        return "redirect:/admin";
+        model.addAttribute("confirmObj", newUser);
+
+        return "main/admin";
     }
     //endregion Update
 
