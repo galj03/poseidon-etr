@@ -3,7 +3,9 @@ package poseidon.controllers.main;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.dao.DataIntegrityViolationException;
 import poseidon.DAO._Interfaces.*;
+import poseidon.DTO.Kurzus;
 import poseidon.DTO.User;
+import poseidon.DTO._Interfaces.IKurzus;
 import poseidon.DTO._Interfaces.IUser;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -16,6 +18,12 @@ import poseidon.Exceptions.QueryException;
 import poseidon.UserRoles;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Objects;
 
 @Controller
@@ -112,12 +120,12 @@ public class AdminController {
                                          @RequestParam("kezdes_ev") Integer kezdEv,
                                          @RequestParam("vegzes_ev") Integer vegzEv,
                                          Model model) {
-        if(kezdEv == null || kezdEv == 0){
+        if (kezdEv == null || kezdEv == 0) {
             model.addAttribute("error", "Starting year must be given!");
             return "main/error";
         }
 
-        if(vegzEv == null || vegzEv == 0){
+        if (vegzEv == null || vegzEv == 0) {
             vegzEv = kezdEv + 3;
         }
 
@@ -149,6 +157,97 @@ public class AdminController {
         model.addAttribute("confirmObj", newUser);
 
         return "main/admin";
+    }
+
+    @PostMapping("/admin/edit-kurzus")
+    public String saveKurzus(
+            @RequestParam("id") Integer id,
+            @RequestParam("name") String name,
+            @RequestParam("oktato") String oktato,
+            @RequestParam("kezdesNap") String kezdes,//TODO: finish
+            @RequestParam("tantargy") Integer tantargyId,
+            @RequestParam("terem") Integer teremId,
+            @RequestParam("isFelveheto") Boolean isFelveheto,
+            @RequestParam("isVizsga") Boolean isVizsga,
+            Model model) {
+        if (id == null || id <= 0) {
+            model.addAttribute("error", "Id must be given!");
+            return "main/error";
+        }
+
+        if (name == null || name.isEmpty()) {
+            model.addAttribute("error", "Name must be given!");
+            return "main/error";
+        }
+
+        if (oktato == null || oktato.isEmpty()) {
+            model.addAttribute("error", "Name must be given!");
+            return "main/error";
+        }
+        if (_userDAO.getByPsCode(oktato) == null) {
+            model.addAttribute("error", "Oktato not found! Please provide a valid PS-code.");
+            return "main/error";
+        }
+
+        if (kezdes == null || kezdes.isEmpty()) {
+            model.addAttribute("error", "Starting time must be given!");
+            return "main/error";
+        }
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm");
+        Date date;
+        try {
+            date = (Date) formatter.parse(kezdes);
+        } catch (ParseException e) {
+            model.addAttribute("error", "Starting time could not be parsed!");
+            return "main/error";
+        }
+        Calendar c = Calendar.getInstance();
+        c.setTime(date); // yourdate is an object of type Date
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+        //TODO: külön metódus, ami visszaadja magyarul
+
+        if (tantargyId == null || tantargyId <= 0) {
+            model.addAttribute("error", "Tantargy id must be given!");
+            return "main/error";
+        }
+        if (_tantargyDAO.getById(tantargyId) == null) {
+            model.addAttribute("error", "Tantargy not found! Please provide a valid PS-code.");
+            return "main/error";
+        }
+
+        if (teremId == null || teremId <= 0) {
+            model.addAttribute("error", "Terem id must be given!");
+            return "main/error";
+        }
+        if (_teremDAO.getById(teremId) == null) {
+            model.addAttribute("error", "Terem not found! Please provide a valid PS-code.");
+            return "main/error";
+        }
+
+        if (isFelveheto == null) {
+            isFelveheto = false;
+        }
+        if (isVizsga == null) {
+            isVizsga = false;
+        }
+
+        IKurzus kurzus = new Kurzus()
+                //.setKurzusId(id)
+                .setNev(name)
+                .setOktato(oktato)
+                .setKezdesNapja()
+                .setKezdesIdopontja(new Timestamp(date.getTime()))
+                .setTantargyId(tantargyId)
+                .setTeremId(teremId)
+                .setIsFelveheto(isFelveheto)
+                .setIsVizsga(isVizsga);
+        if(_kurzusDAO.getById(id) != null){
+            kurzus = kurzus.setKurzusId(id);
+        }
+
+        _kurzusDAO.save(kurzus);
+
+        return "redirect:/admin";
     }
     //endregion Update
 
