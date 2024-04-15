@@ -3,14 +3,8 @@ package poseidon.controllers.main;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.dao.DataIntegrityViolationException;
 import poseidon.DAO._Interfaces.*;
-import poseidon.DTO.Kurzus;
-import poseidon.DTO.Szak;
-import poseidon.DTO.Tantargy;
-import poseidon.DTO.User;
-import poseidon.DTO._Interfaces.IKurzus;
-import poseidon.DTO._Interfaces.ISzak;
-import poseidon.DTO._Interfaces.ITantargy;
-import poseidon.DTO._Interfaces.IUser;
+import poseidon.DTO.*;
+import poseidon.DTO._Interfaces.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -173,8 +167,7 @@ public class AdminController {
             @RequestParam(value = "isVizsga", required = false) Boolean isVizsga,
             Model model) {
         if (id == null || id <= 0) {
-            model.addAttribute("error", "Id must be given!");
-            return "main/error";
+            id = 0;
         }
 
         if (name == null || name.isEmpty()) {
@@ -254,8 +247,7 @@ public class AdminController {
             @RequestParam("name") String name,
             Model model) {
         if (id == null || id <= 0) {
-            model.addAttribute("error", "Id must be given!");
-            return "main/error";
+            id = 0;
         }
 
         if (name == null || name.isEmpty()) {
@@ -282,8 +274,7 @@ public class AdminController {
             @RequestParam("felelos") String felelos,
             Model model) {
         if (id == null || id <= 0) {
-            model.addAttribute("error", "Id must be given!");
-            return "main/error";
+            id = 0;
         }
 
         if (name == null || name.isEmpty()) {
@@ -304,6 +295,114 @@ public class AdminController {
         }
 
         _tantargyDAO.save(tantargy);
+
+        return "redirect:/admin";
+    }
+
+    @PostMapping("/admin/edit-terem")
+    public String saveTerem(
+            @RequestParam("id") Integer id,
+            @RequestParam("ferohely") Integer ferohely,
+            Model model) {
+        if (id == null || id <= 0) {
+            id = 0;
+        }
+
+        if (ferohely == null || ferohely <= 0) {
+            model.addAttribute("error", "Ferohely must be given!");
+            return "main/error";
+        }
+
+        ITerem terem = new Terem()
+                .setFerohely(ferohely);
+        if (_teremDAO.getById(id) != null) {
+            terem = terem.setTeremId(id);
+        }
+
+        _teremDAO.save(terem);
+
+        return "redirect:/admin";
+    }
+
+    @PostMapping("/admin/edit-poszt")
+    public String savePoszt(
+            @RequestParam("id") Integer id,
+            @RequestParam("psCode") String psCode,
+            @RequestParam("tartalom") String tartalom,
+            Model model) {
+        if (id == null || id <= 0) {
+            id = 0;
+        }
+
+        if (psCode == null || psCode.isEmpty()) {
+            model.addAttribute("error", "PS-code must be given!");
+            return "main/error";
+        }
+        if (_userDAO.getByPsCode(psCode) == null) {
+            model.addAttribute("error", "User with given identifier not found!");
+            return "main/error";
+        }
+
+        if (tartalom == null || tartalom.isEmpty()) {
+            model.addAttribute("error", "Tartalom must be given!");
+            return "main/error";
+        }
+
+        IPoszt poszt = new Poszt()
+                .setPsCode(psCode)
+                .setTartalom(tartalom);
+        if (_posztDAO.getById(id) != null) {
+            poszt = poszt.setPosztId(id);
+        }
+
+        _posztDAO.save(poszt);
+
+        return "redirect:/admin";
+    }
+
+    @PostMapping("/admin/edit-komment")
+    public String saveKomment(
+            @RequestParam("id") Integer id,
+            @RequestParam("posztId") Integer posztId,
+            @RequestParam("psCode") String psCode,
+            @RequestParam("tartalom") String tartalom,
+            Model model) {
+        if (id == null || id <= 0) {
+            id = 0;
+        }
+
+        if (posztId == null || posztId <= 0) {
+            model.addAttribute("error", "Post id is invalid!");
+            return "main/error";
+        }
+        if (_posztDAO.getById(posztId) == null) {
+            model.addAttribute("error", "Post with given identifier not found!");
+            return "main/error";
+        }
+
+        if (psCode == null || psCode.isEmpty()) {
+            model.addAttribute("error", "PS-code must be given!");
+            return "main/error";
+        }
+        if (_userDAO.getByPsCode(psCode) == null) {
+            model.addAttribute("error", "User with given identifier not found!");
+            return "main/error";
+        }
+
+        if (tartalom == null || tartalom.isEmpty()) {
+            model.addAttribute("error", "Tartalom must be given!");
+            return "main/error";
+        }
+
+        IKomment komment = new Komment()
+                .setPosztId(posztId)
+                .setPsCode(psCode)
+                .setTartalom(tartalom);
+        if (_kommentDAO.getById(id) != null) {
+            komment = komment.setKommentId(id);
+        }
+
+        _kommentDAO.save(komment);
 
         return "redirect:/admin";
     }

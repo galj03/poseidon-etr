@@ -425,12 +425,12 @@
                 <div class="row my-2 mb-4" style="background-color: white; width: 100%; height: 2px;"></div>
                 <!-- Módosítás -->
 
-                <form action="" class="row mt-2 mb-4">
+                <form th:action="@{/admin/edit-terem}" method="post" class="row mt-2 mb-4">
                     <div class="col-1">
-                        <input style="width: 100%;" type="text" name="" value="1" readonly>
+                        <input style="width: 100%;" type="number" name="id" value="1">
                     </div>
                     <div class="col">
-                        <input style="width: 100%;" type="text" name="" value="30">
+                        <input style="width: 100%;" type="number" name="ferohely" value="30">
                     </div>
                     <div class="col-1">
                         <input class="rounded" style="background-color: green; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Mentés">
@@ -473,15 +473,15 @@
                 <div class="row my-2 mb-4" style="background-color: white; width: 100%; height: 2px;"></div>
                 <!-- Módosítás -->
 
-                <form action="" class="row mt-2 mb-4">
+                <form th:action="@{/admin/edit-poszt}" method="post" class="row mt-2 mb-4">
                     <div class="col-1">
-                        <input style="width: 100%;" type="text" name="" value="1" readonly>
+                        <input style="width: 100%;" type="number" name="id" value="1">
                     </div>
                     <div class="col">
-                        <input style="width: 100%;" type="text" name="" value="BWE8LT">
+                        <input style="width: 100%;" type="text" name="psCode" value="BWE8LT">
                     </div>
                     <div class="col">
-                        <input style="width: 100%;" type="text" name="" value="I love HTML <3">
+                        <input style="width: 100%;" type="text" name="tartalom" value="I love HTML <3">
                     </div>
                     <div class="col-1">
                         <input class="rounded" style="background-color: green; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Mentés">
@@ -531,18 +531,18 @@
                 <div class="row my-2 mb-4" style="background-color: white; width: 100%; height: 2px;"></div>
                 <!-- Módosítás -->
 
-                <form action="" class="row mt-2 mb-4">
+                <form th:action="@{/admin/edit-komment}" method="post" class="row mt-2 mb-4">
                     <div class="col-1">
-                        <input style="width: 100%;" type="text" name="" value="1" readonly>
+                        <input style="width: 100%;" type="number" name="id" value="1">
                     </div>
                     <div class="col">
-                        <input style="width: 100%;" type="text" name="" value="1">
+                        <input style="width: 100%;" type="number" name="posztId" value="1">
                     </div>
                     <div class="col">
-                        <input style="width: 100%;" type="text" name="" value="BWE8LT">
+                        <input style="width: 100%;" type="text" name="psCode" value="BWE8LT">
                     </div>
                     <div class="col">
-                        <input style="width: 100%;" type="text" name="" value="I love HTML <3">
+                        <input style="width: 100%;" type="text" name="tartalom" value="I love HTML <3">
                     </div>
                     <div class="col-1">
                         <input class="rounded" style="background-color: green; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Mentés">
