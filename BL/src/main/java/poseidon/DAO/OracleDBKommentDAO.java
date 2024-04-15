@@ -49,7 +49,7 @@ public class OracleDBKommentDAO extends JdbcDaoSupport implements IKommentDAO {
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
             try {
-                String sql = "INSERT INTO komment(id, poszt_id, PS_kod, tartalom) VALUES (?, ?, ?, ?)";
+                String sql = "INSERT INTO komment(poszt_id, PS_kod, tartalom) VALUES (?, ?, ?)";
                 getJdbcTemplate().update(connection -> {
                     PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
                     ps.setString(1, komment.getPosztId().toString());

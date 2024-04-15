@@ -50,7 +50,7 @@ public class OracleDBKurzusDAO extends JdbcDaoSupport implements IKurzusDAO {
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
             try {
-                String sql = "INSERT INTO kurzus(id, nev, oktato_PS_kod, kezdes_ideje_nap, kezdes_ideje_idopont, tantargy_id, terem_id, felveheto, vizsga) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                String sql = "INSERT INTO kurzus(nev, oktato_PS_kod, kezdes_ideje_nap, kezdes_ideje_idopont, tantargy_id, terem_id, felveheto, vizsga) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                 getJdbcTemplate().update(connection -> {
                     PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
                     ps.setString(1, kurzus.getNev());

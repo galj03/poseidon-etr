@@ -49,7 +49,7 @@ public class OracleDBTeremDAO extends JdbcDaoSupport implements ITeremDAO {
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
             try {
-                String sql = "INSERT INTO terem(id, ferohely) VALUES (?, ?)";
+                String sql = "INSERT INTO terem(ferohely) VALUES (?)";
                 getJdbcTemplate().update(connection -> {
                     PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
                     ps.setString(1, terem.getFerohely().toString());

@@ -49,7 +49,7 @@ public class OracleDBPosztDAO extends JdbcDaoSupport implements IPosztDAO {
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
             try {
-                String sql = "INSERT INTO poszt(id, PS_kod, tartalom) VALUES (?, ?, ?)";
+                String sql = "INSERT INTO poszt(PS_kod, tartalom) VALUES (?, ?)";
                 getJdbcTemplate().update(connection -> {
                     PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
                     ps.setString(1, poszt.getPsCode());

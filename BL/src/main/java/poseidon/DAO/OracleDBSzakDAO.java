@@ -51,7 +51,7 @@ public class OracleDBSzakDAO extends JdbcDaoSupport implements ISzakDAO {
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
             try {
-                String sql = "INSERT INTO szak(id, nev) VALUES (?, ?)";
+                String sql = "INSERT INTO szak(nev) VALUES (?)";
                 getJdbcTemplate().update(connection -> {
                     PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
                     ps.setString(1, szak.getName());

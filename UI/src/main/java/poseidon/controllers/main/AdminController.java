@@ -4,8 +4,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.dao.DataIntegrityViolationException;
 import poseidon.DAO._Interfaces.*;
 import poseidon.DTO.Kurzus;
+import poseidon.DTO.Szak;
 import poseidon.DTO.User;
 import poseidon.DTO._Interfaces.IKurzus;
+import poseidon.DTO._Interfaces.ISzak;
 import poseidon.DTO._Interfaces.IUser;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -240,6 +242,33 @@ public class AdminController {
         }
 
         _kurzusDAO.save(kurzus);
+
+        return "redirect:/admin";
+    }
+
+    @PostMapping("/admin/edit-szak")
+    public String saveSzak(
+            @RequestParam("id") Integer id,
+            @RequestParam("name") String name,
+            Model model) {
+        if (id == null || id <= 0) {
+            model.addAttribute("error", "Id must be given!");
+            return "main/error";
+        }
+
+        if (name == null || name.isEmpty()) {
+            model.addAttribute("error", "Name must be given!");
+            return "main/error";
+        }
+
+        ISzak szak = new Szak()
+                .setName(name);
+        if (_szakDAO.getById(id) != null) {
+            szak = szak.setSzakId(id);
+        }
+
+        _szakDAO.save(szak);
+
 
         return "redirect:/admin";
     }

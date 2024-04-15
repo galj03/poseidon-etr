@@ -49,7 +49,7 @@ public class OracleDBTantargyDAO extends JdbcDaoSupport implements ITantargyDAO 
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
             try {
-                String sql = "INSERT INTO tantargy(id, nev, targyfelelos) VALUES (?, ?, ?)";
+                String sql = "INSERT INTO tantargy(nev, targyfelelos) VALUES (?, ?)";
                 getJdbcTemplate().update(connection -> {
                     PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
                     ps.setString(1, tantargy.getNev());
