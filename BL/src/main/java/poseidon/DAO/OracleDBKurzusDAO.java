@@ -60,8 +60,8 @@ public class OracleDBKurzusDAO extends JdbcDaoSupport implements IKurzusDAO {
                     ps.setString(4, kurzus.getKezdesIdopontja().toString());
                     ps.setString(5, kurzus.getTantargyId().toString());
                     ps.setString(6, kurzus.getTeremId().toString());
-                    ps.setString(7, kurzus.isFelveheto().toString());
-                    ps.setString(8, kurzus.isVizsga().toString());
+                    ps.setString(7, kurzus.isFelveheto() ? "I" : "N");
+                    ps.setString(8, kurzus.isVizsga() ? "I" : "N");
                     return ps;
                 }, keyHolder);
             } catch (DataAccessException exception) {
@@ -75,7 +75,7 @@ public class OracleDBKurzusDAO extends JdbcDaoSupport implements IKurzusDAO {
         }
 
         try {
-            String sql = "UPDATE komment SET nev=?, oktato_PS_kod=?, kezdes_ideje_nap=?, kezdes_ideje_idopont=?, tantargy_id=?, terem_id=?, felveheto=?, vizsga=? WHERE id=?";
+            String sql = "UPDATE kurzus SET nev=?, oktato_PS_kod=?, kezdes_ideje_nap=?, kezdes_ideje_idopont=?, tantargy_id=?, terem_id=?, felveheto=?, vizsga=? WHERE id=?";
             getJdbcTemplate().update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(sql);
                 ps.setString(1, kurzus.getNev());
@@ -84,8 +84,8 @@ public class OracleDBKurzusDAO extends JdbcDaoSupport implements IKurzusDAO {
                 ps.setString(4, kurzus.getKezdesIdopontja().toString());
                 ps.setString(5, kurzus.getTantargyId().toString());
                 ps.setString(6, kurzus.getTeremId().toString());
-                ps.setString(7, kurzus.isFelveheto().toString());
-                ps.setString(8, kurzus.isVizsga().toString());
+                ps.setString(7, kurzus.isFelveheto() ? "I" : "N");
+                ps.setString(8, kurzus.isVizsga() ? "I" : "N");
                 ps.setString(9, kurzus.getKurzusId().toString());
                 return ps;
             });
