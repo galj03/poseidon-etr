@@ -233,27 +233,39 @@
                         <input style="width: 100%;" type="text" name="name" value="Adatbázis-alapú rendszerek">
                     </div>
                     <div class="col">
-                        <input style="width: 100%;" type="text" name="oktato" value="Gercsó Always">
+                        <input style="width: 100%;" type="text" name="oktato" value="N6J3TQ">
                     </div>
                     <div class="col">
-                        <select class="col-2" name="kezdesNap">
-                            <option value="ROLE_USER" selected>ROLE_USER</option>
-                            <option value="ROLE_ADMIN">ROLE_ADMIN</option>
+                        <select name="kezdesNap" style="width:inherit">
+                            <option value="Hétfő" selected>Hétfő</option>
+                            <option value="Kedd">Kedd</option>
+                            <option value="Szerda">Szerda</option>
+                            <option value="Csütörtök">Csütörtök</option>
+                            <option value="Péntek">Péntek</option>
                         </select>
                         <br>
-                        <input style="width: 100%;" type="time" min="08:00" max="16:00" name="kezdesIdo" value="Szerda, 10:00">
+                        <select name="kezdesIdo" style="width:inherit">
+                            <option value="8" selected>8:00</option>
+                            <option value="9">9:00</option>
+                            <option value="10">10:00</option>
+                            <option value="11">11:00</option>
+                            <option value="12">12:00</option>
+                            <option value="13">13:00</option>
+                            <option value="14">14:00</option>
+                            <option value="15">15:00</option>
+                        </select>
                     </div>
                     <div class="col">
                         <input style="width: 100%;" type="number" name="tantargy" value="1">
                     </div>
                     <div class="col">
-                        <input style="width: 100%;" type="text" name="terem" value="1">
+                        <input style="width: 100%;" type="number" name="terem" value="1">
                     </div>
                     <div class="col">
-                        <input style="width: 100%;" type="checkbox" name="isFelveheto">
+                        <input style="width: 100%;" type="checkbox" name="isFelveheto" checked>
                     </div>
                     <div class="col">
-                        <input style="width: 100%;" type="checkbox" name="isVizsga">
+                        <input style="width: 100%;" type="checkbox" name="isVizsga" checked>
                     </div>
                     <div class="col-1">
                         <input class="rounded" style="background-color: green; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Mentés">
@@ -271,7 +283,7 @@
                         <h3 class="fs-4" th:text="${kurzus.getOktato()}">Gercsó Always</h3>
                     </div>
                     <div class="col">
-                        <h3 class="fs-4" th:text="${kurzus.getKezdesNapja()} + ', ' + ${kurzus.getKezdesIdopontja()}">Szerda,<br> 10:00</h3>
+                        <h3 class="fs-4" th:text="${kurzus.getKezdesNapja()} + ', ' + ${kurzus.getKezdesIdopontja().getHours()} + ':0' + ${kurzus.getKezdesIdopontja().getMinutes()}">Szerda,<br> 10:00</h3>
                     </div>
                     <div class="col">
                         <h3 class="fs-4" th:text="${kurzus.getTantargyId()}">Adatbázis-alapú rendszerek</h3>

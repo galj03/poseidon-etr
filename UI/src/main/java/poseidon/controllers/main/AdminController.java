@@ -19,12 +19,7 @@ import poseidon.UserRoles;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 
 @Controller
 @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -38,6 +33,8 @@ public class AdminController {
     private final ITeremDAO _teremDAO;
     private final BCryptPasswordEncoder _encoder;
     private IUser _user;
+
+    private static final List<String> workDays = List.of("Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek");
 
     public AdminController(IUserDAO userDAO,
                            IKommentDAO kommentDAO,
@@ -164,11 +161,12 @@ public class AdminController {
             @RequestParam("id") Integer id,
             @RequestParam("name") String name,
             @RequestParam("oktato") String oktato,
-            @RequestParam("kezdesNap") String kezdes,//TODO: finish
+            @RequestParam("kezdesNap") String kezdesNap,
+            @RequestParam("kezdesIdo") String kezdesIdo,
             @RequestParam("tantargy") Integer tantargyId,
             @RequestParam("terem") Integer teremId,
-            @RequestParam("isFelveheto") Boolean isFelveheto,
-            @RequestParam("isVizsga") Boolean isVizsga,
+            @RequestParam(value = "isFelveheto", required = false) Boolean isFelveheto,
+            @RequestParam(value = "isVizsga", required = false) Boolean isVizsga,
             Model model) {
         if (id == null || id <= 0) {
             model.addAttribute("error", "Id must be given!");
@@ -189,22 +187,25 @@ public class AdminController {
             return "main/error";
         }
 
-        if (kezdes == null || kezdes.isEmpty()) {
+        if (kezdesNap == null || kezdesNap.isEmpty()) {
+            model.addAttribute("error", "Starting day must be given!");
+            return "main/error";
+        }
+        if (!workDays.contains(kezdesNap)) {
+            model.addAttribute("error", "Starting day is not a valid work day!");
+            return "main/error";
+        }
+
+        if (kezdesIdo == null || kezdesIdo.isEmpty()) {
             model.addAttribute("error", "Starting time must be given!");
             return "main/error";
         }
-        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm");
-        Date date;
-        try {
-            date = (Date) formatter.parse(kezdes);
-        } catch (ParseException e) {
-            model.addAttribute("error", "Starting time could not be parsed!");
-            return "main/error";
-        }
-        Calendar c = Calendar.getInstance();
-        c.setTime(date); // yourdate is an object of type Date
-        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-        //TODO: külön metódus, ami visszaadja magyarul
+//        Calendar cal = Calendar.getInstance();
+//        cal.setTime(new Date());
+        var cal = new GregorianCalendar(2024, Calendar.FEBRUARY,12);
+        cal.add(GregorianCalendar.HOUR, Integer.parseInt(kezdesIdo));
+//        cal.set(Calendar.HOUR, Integer.parseInt(kezdesIdo));
+        var kezdIdo = new Timestamp(cal.getTimeInMillis());
 
         if (tantargyId == null || tantargyId <= 0) {
             model.addAttribute("error", "Tantargy id must be given!");
@@ -235,13 +236,13 @@ public class AdminController {
                 //.setKurzusId(id)
                 .setNev(name)
                 .setOktato(oktato)
-                .setKezdesNapja()
-                .setKezdesIdopontja(new Timestamp(date.getTime()))
+                .setKezdesNapja(kezdesNap)
+                .setKezdesIdopontja(kezdIdo)
                 .setTantargyId(tantargyId)
                 .setTeremId(teremId)
                 .setIsFelveheto(isFelveheto)
                 .setIsVizsga(isVizsga);
-        if(_kurzusDAO.getById(id) != null){
+        if (_kurzusDAO.getById(id) != null) {
             kurzus = kurzus.setKurzusId(id);
         }
 
