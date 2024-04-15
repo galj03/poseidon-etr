@@ -16,7 +16,6 @@ import poseidon.Exceptions.QueryException;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -112,15 +111,15 @@ public class OracleDBKurzusDAO extends JdbcDaoSupport implements IKurzusDAO {
 
             if (rows.isEmpty()) return null;
 
-            Boolean isFelveheto = rows.get(0).get("felveheto") == Constants.TRUE;
-            Boolean isVizsga = rows.get(0).get("vizsga") == Constants.TRUE;
+            Boolean isFelveheto = rows.get(0).get("felveheto").equals(Constants.TRUE);
+            Boolean isVizsga = rows.get(0).get("vizsga").equals(Constants.TRUE);
 
             return new Kurzus()
                     .setKurzusId(((BigDecimal) rows.get(0).get("id")).intValue())
                     .setNev((String) rows.get(0).get("nev"))
                     .setOktato((String) rows.get(0).get("oktato_PS_kod"))
                     .setKezdesNapja((String) rows.get(0).get("kezdes_ideje_nap"))
-                    .setKezdesIdopontja((Timestamp) rows.get(0).get("kezdes_ideje_idopont"))
+                    .setKezdesIdopontja(((BigDecimal) rows.get(0).get("kezdes_ideje_idopont")).intValue())
                     .setTantargyId(((BigDecimal) rows.get(0).get("tantargy_id")).intValue())
                     .setTeremId(((BigDecimal) rows.get(0).get("terem_id")).intValue())
                     .setIsFelveheto(isFelveheto)
@@ -138,8 +137,8 @@ public class OracleDBKurzusDAO extends JdbcDaoSupport implements IKurzusDAO {
             List<IKurzus> result = new ArrayList<>();
 
             for (Map<String, Object> row : rows) {
-                Boolean isFelveheto = row.get("felveheto") == Constants.TRUE;
-                Boolean isVizsga = row.get("vizsga") == Constants.TRUE;
+                Boolean isFelveheto = row.get("felveheto").equals(Constants.TRUE);
+                Boolean isVizsga = row.get("vizsga").equals(Constants.TRUE);
 
                 result.add(
                         new Kurzus()
@@ -147,7 +146,7 @@ public class OracleDBKurzusDAO extends JdbcDaoSupport implements IKurzusDAO {
                                 .setNev((String) row.get("nev"))
                                 .setOktato((String) row.get("oktato_PS_kod"))
                                 .setKezdesNapja((String) row.get("kezdes_ideje_nap"))
-                                .setKezdesIdopontja((Timestamp) row.get("kezdes_ideje_idopont"))
+                                .setKezdesIdopontja(((BigDecimal) row.get("kezdes_ideje_idopont")).intValue())
                                 .setTantargyId(((BigDecimal) row.get("tantargy_id")).intValue())
                                 .setTeremId(row.get("terem_id") == null ? null : ((BigDecimal) row.get("terem_id")).intValue())
                                 .setIsFelveheto(isFelveheto)

@@ -38,7 +38,7 @@ CREATE TABLE kurzus (
     nev VARCHAR2(50) NOT NULL,
     oktato_PS_kod VARCHAR2(20) NOT NULL,
     kezdes_ideje_nap VARCHAR2(15) NOT NULL,
-    kezdes_ideje_idopont TIMESTAMP NOT NULL,
+    kezdes_ideje_idopont NUMBER NOT NULL,
     tantargy_id NUMBER NOT NULL,
     terem_id NUMBER,
     felveheto CHAR(1) NOT NULL,
@@ -284,11 +284,11 @@ INSERT INTO terem VALUES(7, 12);
 
 -- kurzus tabla
 
-INSERT INTO kurzus VALUES(1, 'Webtervezés alapjai EA', 'K3R6BX', 'Szerda', TO_TIMESTAMP('10:00:00', 'HH24:MI:SS'), 1, 1, 'I', 'N');
-INSERT INTO kurzus VALUES(2, 'Diszkrét Matematika EA', 'Z7P4HN', 'Kedd', TO_TIMESTAMP('08:00:00', 'HH24:MI:SS'), 2, 2, 'I', 'N');
-INSERT INTO kurzus VALUES(3, 'Sztochasztika alapjai GY', 'L2T6DO', 'Hétfő', TO_TIMESTAMP('12:00:00', 'HH24:MI:SS'), 3, 3, 'I', 'N');
-INSERT INTO kurzus VALUES(4, 'Programozás alapjai EA', 'M4G8AP', 'Hétfő', TO_TIMESTAMP('14:00:00', 'HH24:MI:SS'), 4, 4, 'I', 'N');
-INSERT INTO kurzus VALUES(5, 'Alkalmazásfejlesztés I. EA', 'R1N9DK', 'Csütörtök', TO_TIMESTAMP('10:00:00', 'HH24:MI:SS'), 5, 5, 'I', 'N');
+INSERT INTO kurzus VALUES(1, 'Webtervezés alapjai EA', 'K3R6BX', 'Szerda', 10, 1, 1, 'I', 'N');
+INSERT INTO kurzus VALUES(2, 'Diszkrét Matematika EA', 'Z7P4HN', 'Kedd', 8, 2, 2, 'I', 'N');
+INSERT INTO kurzus VALUES(3, 'Sztochasztika alapjai GY', 'L2T6DO', 'Hétfő', 12, 3, 3, 'I', 'N');
+INSERT INTO kurzus VALUES(4, 'Programozás alapjai EA', 'M4G8AP', 'Hétfő', 14, 4, 4, 'I', 'N');
+INSERT INTO kurzus VALUES(5, 'Alkalmazásfejlesztés I. EA', 'R1N9DK', 'Csütörtök', 10, 5, 5, 'I', 'N');
 
 -- kotelezo tabla
 

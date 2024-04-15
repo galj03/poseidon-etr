@@ -162,7 +162,7 @@ public class AdminController {
             @RequestParam("name") String name,
             @RequestParam("oktato") String oktato,
             @RequestParam("kezdesNap") String kezdesNap,
-            @RequestParam("kezdesIdo") String kezdesIdo,
+            @RequestParam("kezdesIdo") Integer kezdesIdo,
             @RequestParam("tantargy") Integer tantargyId,
             @RequestParam("terem") Integer teremId,
             @RequestParam(value = "isFelveheto", required = false) Boolean isFelveheto,
@@ -196,17 +196,10 @@ public class AdminController {
             return "main/error";
         }
 
-        if (kezdesIdo == null || kezdesIdo.isEmpty()) {
-            model.addAttribute("error", "Starting time must be given!");
+        if (kezdesIdo == null || kezdesIdo < 8 || kezdesIdo > 15) {
+            model.addAttribute("error", "Starting time is not valid!");
             return "main/error";
         }
-//        Calendar cal = Calendar.getInstance();
-//        cal.setTime(new Date());
-        var cal = new GregorianCalendar(2024, Calendar.FEBRUARY,12);
-        cal.add(GregorianCalendar.HOUR, Integer.parseInt(kezdesIdo));
-//        cal.set(Calendar.HOUR, Integer.parseInt(kezdesIdo));
-        var kezdIdo = new Timestamp(cal.getTimeInMillis());
-
         if (tantargyId == null || tantargyId <= 0) {
             model.addAttribute("error", "Tantargy id must be given!");
             return "main/error";
@@ -237,7 +230,7 @@ public class AdminController {
                 .setNev(name)
                 .setOktato(oktato)
                 .setKezdesNapja(kezdesNap)
-                .setKezdesIdopontja(kezdIdo)
+                .setKezdesIdopontja(kezdesIdo)
                 .setTantargyId(tantargyId)
                 .setTeremId(teremId)
                 .setIsFelveheto(isFelveheto)

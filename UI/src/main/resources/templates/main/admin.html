@@ -283,7 +283,7 @@
                         <h3 class="fs-4" th:text="${kurzus.getOktato()}">Gercsó Always</h3>
                     </div>
                     <div class="col">
-                        <h3 class="fs-4" th:text="${kurzus.getKezdesNapja()} + ', ' + ${kurzus.getKezdesIdopontja().getHours()} + ':0' + ${kurzus.getKezdesIdopontja().getMinutes()}">Szerda,<br> 10:00</h3>
+                        <h3 class="fs-4" th:text="${kurzus.getKezdesNapja()} + ', ' + ${kurzus.getKezdesIdopontja()} + ':00'">Szerda,<br> 10:00</h3>
                     </div>
                     <div class="col">
                         <h3 class="fs-4" th:text="${kurzus.getTantargyId()}">Adatbázis-alapú rendszerek</h3>

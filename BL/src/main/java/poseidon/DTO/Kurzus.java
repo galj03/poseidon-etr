@@ -11,13 +11,13 @@ public class Kurzus implements IKurzus {
     private String _nev;
     private String _oktato;
     private String _kezdesNapja;
-    private Timestamp _kezdesIdopontja;
+    private Integer _kezdesIdopontja;
     private Integer _tantargyId;
     private Integer _teremId;
     private Boolean _isFelveheto;
     private Boolean _isVizsga;
 
-    public Kurzus(Integer _kurzusId, String _nev, String _oktato, String _kezdesNapja, Timestamp _kezdesIdopontja, Integer _tantargyId, Integer _teremId, Boolean _isFelveheto, Boolean _isVizsga) {
+    public Kurzus(Integer _kurzusId, String _nev, String _oktato, String _kezdesNapja, Integer _kezdesIdopontja, Integer _tantargyId, Integer _teremId, Boolean _isFelveheto, Boolean _isVizsga) {
         this._kurzusId = _kurzusId;
         this._nev = _nev;
         this._oktato = _oktato;
@@ -53,7 +53,7 @@ public class Kurzus implements IKurzus {
     }
 
     @Override
-    public Timestamp getKezdesIdopontja() {
+    public Integer getKezdesIdopontja() {
         return _kezdesIdopontja;
     }
 
@@ -109,7 +109,7 @@ public class Kurzus implements IKurzus {
     }
 
     @Override
-    public IKurzus setKezdesIdopontja(Timestamp idopont) throws ArgumentNullException {
+    public IKurzus setKezdesIdopontja(Integer idopont) throws ArgumentNullException {
         if (idopont == null) throw new ArgumentNullException("idopont");
 
         _kezdesIdopontja = idopont;
