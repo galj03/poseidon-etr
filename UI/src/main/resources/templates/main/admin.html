@@ -373,15 +373,15 @@
                 <div class="row my-2 mb-4" style="background-color: white; width: 100%; height: 2px;"></div>
                 <!-- Módosítás -->
 
-                <form action="" class="row mt-2 mb-4">
+                <form th:action="@{/admin/edit-tantargy}" method="post" class="row mt-2 mb-4">
                     <div class="col-1">
-                        <input style="width: 100%;" type="text" name="" value="1" readonly>
+                        <input style="width: 100%;" type="number" name="id" value="1">
                     </div>
                     <div class="col">
-                        <input style="width: 100%;" type="text" name="" value="Adatbázis-alapú rendszerek">
+                        <input style="width: 100%;" type="text" name="name" value="Adatbázis-alapú rendszerek">
                     </div>
                     <div class="col">
-                        <input style="width: 100%;" type="text" name="" value="Gercsó Always">
+                        <input style="width: 100%;" type="text" name="felelos" value="N6J3TQ">
                     </div>
                     <div class="col-1">
                         <input class="rounded" style="background-color: green; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Mentés">

@@ -5,9 +5,11 @@ import org.springframework.dao.DataIntegrityViolationException;
 import poseidon.DAO._Interfaces.*;
 import poseidon.DTO.Kurzus;
 import poseidon.DTO.Szak;
+import poseidon.DTO.Tantargy;
 import poseidon.DTO.User;
 import poseidon.DTO._Interfaces.IKurzus;
 import poseidon.DTO._Interfaces.ISzak;
+import poseidon.DTO._Interfaces.ITantargy;
 import poseidon.DTO._Interfaces.IUser;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -269,6 +271,39 @@ public class AdminController {
 
         _szakDAO.save(szak);
 
+
+        return "redirect:/admin";
+    }
+
+    @PostMapping("/admin/edit-tantargy")
+    public String saveTantargy(
+            @RequestParam("id") Integer id,
+            @RequestParam("name") String name,
+            @RequestParam("felelos") String felelos,
+            Model model) {
+        if (id == null || id <= 0) {
+            model.addAttribute("error", "Id must be given!");
+            return "main/error";
+        }
+
+        if (name == null || name.isEmpty()) {
+            model.addAttribute("error", "Name must be given!");
+            return "main/error";
+        }
+
+        if (felelos == null || felelos.isEmpty()) {
+            model.addAttribute("error", "Targyfelelos must be given!");
+            return "main/error";
+        }
+
+        ITantargy tantargy = new Tantargy()
+                .setNev(name)
+                .setFelelos(felelos);
+        if (_tantargyDAO.getById(id) != null) {
+            tantargy = tantargy.setTantargyId(id);
+        }
+
+        _tantargyDAO.save(tantargy);
 
         return "redirect:/admin";
     }
