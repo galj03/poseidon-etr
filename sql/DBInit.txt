@@ -122,6 +122,7 @@ INSERT INTO szak(nev) VALUES('Vegyészmérnök');
 
 -- felhasznalo tabla
 
+INSERT INTO felhasznalo VALUES('OCS4LF', 'Olasz Csaba', 'olasz.csaba@szte.pos-eidon.hu', '$2a$10$cuUwNt6AuPJigz1SzkWMm.TgsPcD9hq6Gnyla2cT.Vh.ZKcn51FKC', 1, 'ROLE_ADMIN', 2022, 2025);
 INSERT INTO felhasznalo VALUES('BSRKB5', 'Gál József', 'gal.jozsef@szte.pos-eidon.hu', '$2a$10$BV87m0N15u4vQs9CUMEtbOxJCDSGNuize.Gr/3KNHEJKd4HmE7dNy', 1, 'ROLE_ADMIN', 2022, 2025);
 INSERT INTO felhasznalo VALUES('BWE8LT', 'Csonka Valentin Viktor', 'csonka.valentin.viktor@szte.pos-eidon.hu', '$2a$10$aLMPkxGU/5S0sTVAQ/ogQe0AGn9VUHdefuyqH1wJ6oGVYDrbkifcW', 1, 'ROLE_ADMIN', 2022, 2025);
 INSERT INTO felhasznalo VALUES('MK2OVQ', 'Bak Kevin', 'bak.kevin@szte.pos-eidon.hu', '$2a$10$EW9wOyOX42KAFsrODgeyFOuToDsdfWvzD8niLmnWHA2nZ3lrBSxre', 1, 'ROLE_ADMIN', 2022, 2025);
