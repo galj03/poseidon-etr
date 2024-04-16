@@ -77,14 +77,14 @@ public class AdminController {
             @RequestParam("name") String name,
             @RequestParam("email") String email,
             @RequestParam("password") String password,
-            @RequestParam("password2") String password2,
+            @RequestParam(value = "password2", required = false) String password2,
             @RequestParam("szakId") Integer szakId,
             @RequestParam("role") String role,
             @RequestParam("kezdes_ev") Integer kezdEv,
             @RequestParam("vegzes_ev") Integer vegzEv,
             Model model) {
 
-        if (!_encoder.matches(password2, password)) {
+        if (password2 != null && !_encoder.matches(password2, password)) {
             model.addAttribute("error", "The two passwords should be the same!");
             return "main/error";
         }
@@ -95,7 +95,7 @@ public class AdminController {
                 .setPsCode(psCode)
                 .setName(name)
                 .setEmail(email)
-                .setPassword(_encoder.encode(password))
+                .setPassword(password)
                 .setSzakId(szakId)
                 .setRole(roleEnum)
                 .setKezdesEve(kezdEv)
@@ -109,7 +109,7 @@ public class AdminController {
     public String confirmRegisterDetails(@RequestParam("psCode") String psCode,
                                          @RequestParam("name") String name,
                                          @RequestParam("email") String email,
-                                         @RequestParam("password") String password,
+                                         @RequestParam(value = "password", required = false) String password,
                                          @RequestParam("szakId") Integer szakId,
                                          @RequestParam("role") String role,
                                          @RequestParam("kezdes_ev") Integer kezdEv,
@@ -148,6 +148,11 @@ public class AdminController {
                 .setRole(roleEnum)
                 .setKezdesEve(kezdEv)
                 .setVegzesEve(vegzEv);
+
+        if (_userDAO.getByPsCode(psCode) != null && (password == null || password.isEmpty())) {
+            newUser.setPassword(_userDAO.getByPsCode(psCode).getPassword());
+            model.addAttribute("nopass", true);
+        }
 
         model.addAttribute("confirmObj", newUser);
 
@@ -284,6 +289,11 @@ public class AdminController {
 
         if (felelos == null || felelos.isEmpty()) {
             model.addAttribute("error", "Targyfelelos must be given!");
+            return "main/error";
+        }
+
+        if (_userDAO.getByPsCode(felelos) == null) {
+            model.addAttribute("error", "Oktato not found! Please provide a valid PS-code.");
             return "main/error";
         }
 

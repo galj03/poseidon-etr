@@ -67,7 +67,7 @@
                     </div>
                 </div>
                 <div class="m-4 mb-0">
-                    <p>Kérem adja meg a megadott jelszót mégegyszer a mentéshez:</p>
+                    <p th:if="${nopass == null}">Kérem adja meg a megadott jelszót mégegyszer a mentéshez:</p>
                     <form th:action="@{/admin/edit-user}" method="post">
                         <input type="hidden" name="psCode" th:value="${confirmObj.getPsCode()}">
                         <input type="hidden" name="name" th:value="${confirmObj.getName()}">
@@ -77,7 +77,7 @@
                         <input type="hidden" name="role" th:value="${confirmObj.getRole()}">
                         <input type="hidden" name="kezdes_ev" th:value="${confirmObj.getKezdesEve()}">
                         <input type="hidden" name="vegzes_ev" th:value="${confirmObj.getVegzesEve()}">
-                        <input type="password" name="password2" style="width: 30%; min-width: 200px;" placeholder="Jelszó újra">
+                        <input th:if="${nopass == null}" type="password" name="password2" style="width: 30%; min-width: 200px;" placeholder="Jelszó újra">
                         <input class="rounded mx-auto mt-3" style="background-color: green; border:none; color: white; width: 20%; min-width: fit-content; height: 40px; font-size: 20px; display: block;" type="submit" value="Mentés">
                     </form>
                 </div>
