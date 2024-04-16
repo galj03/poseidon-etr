@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import poseidon.Constants;
 import poseidon.DAO._Interfaces.IKurzusDAO;
 import poseidon.DTO.Kurzus;
 import poseidon.DTO._Interfaces.IKurzus;
@@ -15,7 +16,6 @@ import poseidon.Exceptions.QueryException;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +50,7 @@ public class OracleDBKurzusDAO extends JdbcDaoSupport implements IKurzusDAO {
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
             try {
-                String sql = "INSERT INTO kurzus(id, nev, oktato_PS_kod, kezdes_ideje_nap, kezdes_ideje_idopont, tantargy_id, terem_id, felveheto, vizsga) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                String sql = "INSERT INTO kurzus(nev, oktato_PS_kod, kezdes_ideje_nap, kezdes_ideje_idopont, tantargy_id, terem_id, felveheto, vizsga) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                 getJdbcTemplate().update(connection -> {
                     PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
                     ps.setString(1, kurzus.getNev());
@@ -59,8 +59,8 @@ public class OracleDBKurzusDAO extends JdbcDaoSupport implements IKurzusDAO {
                     ps.setString(4, kurzus.getKezdesIdopontja().toString());
                     ps.setString(5, kurzus.getTantargyId().toString());
                     ps.setString(6, kurzus.getTeremId().toString());
-                    ps.setString(7, kurzus.isFelveheto().toString());
-                    ps.setString(8, kurzus.isVizsga().toString());
+                    ps.setString(7, kurzus.isFelveheto() ? "I" : "N");
+                    ps.setString(8, kurzus.isVizsga() ? "I" : "N");
                     return ps;
                 }, keyHolder);
             } catch (DataAccessException exception) {
@@ -74,7 +74,7 @@ public class OracleDBKurzusDAO extends JdbcDaoSupport implements IKurzusDAO {
         }
 
         try {
-            String sql = "UPDATE komment SET nev=?, oktato_PS_kod=?, kezdes_ideje_nap=?, kezdes_ideje_idopont=?, tantargy_id=?, terem_id=?, felveheto=?, vizsga=? WHERE id=?";
+            String sql = "UPDATE kurzus SET nev=?, oktato_PS_kod=?, kezdes_ideje_nap=?, kezdes_ideje_idopont=?, tantargy_id=?, terem_id=?, felveheto=?, vizsga=? WHERE id=?";
             getJdbcTemplate().update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(sql);
                 ps.setString(1, kurzus.getNev());
@@ -83,8 +83,8 @@ public class OracleDBKurzusDAO extends JdbcDaoSupport implements IKurzusDAO {
                 ps.setString(4, kurzus.getKezdesIdopontja().toString());
                 ps.setString(5, kurzus.getTantargyId().toString());
                 ps.setString(6, kurzus.getTeremId().toString());
-                ps.setString(7, kurzus.isFelveheto().toString());
-                ps.setString(8, kurzus.isVizsga().toString());
+                ps.setString(7, kurzus.isFelveheto() ? "I" : "N");
+                ps.setString(8, kurzus.isVizsga() ? "I" : "N");
                 ps.setString(9, kurzus.getKurzusId().toString());
                 return ps;
             });
@@ -111,16 +111,19 @@ public class OracleDBKurzusDAO extends JdbcDaoSupport implements IKurzusDAO {
 
             if (rows.isEmpty()) return null;
 
+            Boolean isFelveheto = rows.get(0).get("felveheto").equals(Constants.TRUE);
+            Boolean isVizsga = rows.get(0).get("vizsga").equals(Constants.TRUE);
+
             return new Kurzus()
                     .setKurzusId(((BigDecimal) rows.get(0).get("id")).intValue())
                     .setNev((String) rows.get(0).get("nev"))
                     .setOktato((String) rows.get(0).get("oktato_PS_kod"))
                     .setKezdesNapja((String) rows.get(0).get("kezdes_ideje_nap"))
-                    .setKezdesIdopontja((Timestamp) rows.get(0).get("kezdes_ideje_idopont"))
+                    .setKezdesIdopontja(((BigDecimal) rows.get(0).get("kezdes_ideje_idopont")).intValue())
                     .setTantargyId(((BigDecimal) rows.get(0).get("tantargy_id")).intValue())
                     .setTeremId(((BigDecimal) rows.get(0).get("terem_id")).intValue())
-                    .setIsFelveheto((Boolean) rows.get(0).get("felveheto"))
-                    .setIsVizsga((Boolean) rows.get(0).get("vizsga"));
+                    .setIsFelveheto(isFelveheto)
+                    .setIsVizsga(isVizsga);
 
         } catch (DataAccessException exception) {
             throw new QueryException("Could not get values from database", exception);
@@ -134,17 +137,20 @@ public class OracleDBKurzusDAO extends JdbcDaoSupport implements IKurzusDAO {
             List<IKurzus> result = new ArrayList<>();
 
             for (Map<String, Object> row : rows) {
+                Boolean isFelveheto = row.get("felveheto").equals(Constants.TRUE);
+                Boolean isVizsga = row.get("vizsga").equals(Constants.TRUE);
+
                 result.add(
                         new Kurzus()
                                 .setKurzusId(((BigDecimal) row.get("id")).intValue())
                                 .setNev((String) row.get("nev"))
                                 .setOktato((String) row.get("oktato_PS_kod"))
                                 .setKezdesNapja((String) row.get("kezdes_ideje_nap"))
-                                .setKezdesIdopontja((Timestamp) row.get("kezdes_ideje_idopont"))
+                                .setKezdesIdopontja(((BigDecimal) row.get("kezdes_ideje_idopont")).intValue())
                                 .setTantargyId(((BigDecimal) row.get("tantargy_id")).intValue())
-                                .setTeremId(((BigDecimal) row.get("terem_id")).intValue())
-                                .setIsFelveheto((Boolean) row.get("felveheto"))
-                                .setIsVizsga((Boolean) row.get("vizsga"))
+                                .setTeremId(row.get("terem_id") == null ? null : ((BigDecimal) row.get("terem_id")).intValue())
+                                .setIsFelveheto(isFelveheto)
+                                .setIsVizsga(isVizsga)
                 );
             }
 

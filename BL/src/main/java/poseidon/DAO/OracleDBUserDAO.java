@@ -14,9 +14,11 @@ import poseidon.UserRoles;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Data access object for the user model in an Oracle database.
@@ -97,7 +99,7 @@ public class OracleDBUserDAO extends JdbcDaoSupport implements IUserDAO {
     }
 
     @Override
-    public void remove(IUser user) throws IllegalArgumentException, QueryException {
+    public void remove(IUser user) throws IllegalArgumentException, QueryException, SQLException {
         if (user == null) throw new ArgumentNullException("user");
         if (user.getPsCode() == null) throw new ArgumentNullException("User must be saved first.");
 
@@ -113,7 +115,7 @@ public class OracleDBUserDAO extends JdbcDaoSupport implements IUserDAO {
 
             if (rows.isEmpty()) return null;
 
-            UserRoles role = rows.get(0).get("jogosultsag").toString() == "ROLE_USER" ? UserRoles.ROLE_USER : UserRoles.ROLE_ADMIN;
+            UserRoles role = Objects.equals(rows.get(0).get("jogosultsag").toString(), "ROLE_USER") ? UserRoles.ROLE_USER : UserRoles.ROLE_ADMIN;
 
             return new User()
                     .setPsCode((String) rows.get(0).get("PS_kod"))
@@ -137,7 +139,7 @@ public class OracleDBUserDAO extends JdbcDaoSupport implements IUserDAO {
             List<IUser> result = new ArrayList<>();
 
             for (Map<String,Object> row: rows) {
-                UserRoles role = row.get("jogosultsag").toString() == "ROLE_USER" ? UserRoles.ROLE_USER : UserRoles.ROLE_ADMIN;
+                UserRoles role = Objects.equals(row.get("jogosultsag"), "ROLE_USER") ? UserRoles.ROLE_USER : UserRoles.ROLE_ADMIN;
 
                 result.add(new User()
                         .setPsCode((String) row.get("PS_kod"))

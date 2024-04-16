@@ -22,13 +22,13 @@ public class IndexController {
 
     @GetMapping("/")
     public String index(Model model) {
-        //TODO: test by listing all users from db
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             String currentUserName = authentication.getName();
-            _user = _userDAO.getByEmail(currentUserName);
+            _user = _userDAO.getByPsCode(currentUserName);
         }
         model.addAttribute("_userDAO", _userDAO);
+        var asd = _user.getAuthorities();
         model.addAttribute("user", _user);
         return "main/index";
     }

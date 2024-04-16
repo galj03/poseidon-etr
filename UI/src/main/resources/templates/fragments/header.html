@@ -3,23 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>Header</title>
-    <link th:href="@{/css/layout.css}" rel="stylesheet" />
 </head>
 <body>
 
 <header th:fragment="header">
-    <a class="logo" th:href="@{../}"><img width="60" th:src="@{/images/dnd_map_logo_background.svg}" alt="dnd_map_logó"/></a>
-    <h1>TTRPG MAP</h1>
-    <div id="dropdown">
-        <img width="60" th:src="@{/images/user-icon.svg}" alt="user-icon" id="user-icon"/>
-        <div id="dropdown-menu">
-            <a th:href="@{../user}" target="_self"><p>Username</p></a>
-            <hr>
-            <form id="header_form" action="#" th:action="@{/logout}" method="post">
-                <button type="submit" id="logout">Logout</button>
-            </form>
-        </div>
-    </div>
+    <nav class='navbar navbar-expand-sm navbar-dark sticky-top justify-content-end' style="background-color: #377ded;">
+        <ul class='navbar-nav' style="font-size: 20px; font-weight: bold;">
+            <li class='nav-item p-1 mx-3'>
+                <a class='nav-link' th:href='@{/}'>Kezdőlap</a>
+            </li>
+            <li class='nav-item p-1 mx-3'>
+                <a class='nav-link' th:href='@{/admin}'>Admin page</a>
+            </li>
+            <li class='nav-item p-1 mx-3'>
+                <form id="header_form" class="m-0 p-0 nav-item" action="#" th:action="@{/logout}" method="post">
+                    <button class='nav-link' type="submit" id="logout">Logout</button>
+                </form>
+            </li>
+        </ul>
+    </nav>
 </header>
 
 </body>
