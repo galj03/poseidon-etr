@@ -85,8 +85,8 @@ public class AdminController {
             Model model) {
 
         if (!_encoder.matches(password2, password)) {
-            model.addAttribute("register_error", "The two passwords should be the same!");
-            return "main/auth";
+            model.addAttribute("error", "The two passwords should be the same!");
+            return "main/error";
         }
 
         var roleEnum = Objects.equals(role, "ROLE_ADMIN") ? UserRoles.ROLE_ADMIN : UserRoles.ROLE_USER;
@@ -113,7 +113,7 @@ public class AdminController {
                                          @RequestParam("szakId") Integer szakId,
                                          @RequestParam("role") String role,
                                          @RequestParam("kezdes_ev") Integer kezdEv,
-                                         @RequestParam("vegzes_ev") Integer vegzEv,
+                                         @RequestParam(value = "vegzes_ev", required = false) Integer vegzEv,
                                          Model model) {
         if (kezdEv == null || kezdEv == 0) {
             model.addAttribute("error", "Starting year must be given!");
