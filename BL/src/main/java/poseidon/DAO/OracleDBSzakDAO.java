@@ -2,6 +2,7 @@ package poseidon.DAO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -15,6 +16,7 @@ import poseidon.Exceptions.QueryException;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +51,7 @@ public class OracleDBSzakDAO extends JdbcDaoSupport implements ISzakDAO {
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
             try {
-                String sql = "INSERT INTO szak(id, nev) VALUES (?, ?)";
+                String sql = "INSERT INTO szak(nev) VALUES (?)";
                 getJdbcTemplate().update(connection -> {
                     PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
                     ps.setString(1, szak.getName());
@@ -81,7 +83,7 @@ public class OracleDBSzakDAO extends JdbcDaoSupport implements ISzakDAO {
     }
 
     @Override
-    public void remove(ISzak szak) throws IllegalArgumentException, QueryException {
+    public void remove(ISzak szak) throws IllegalArgumentException, QueryException, DataIntegrityViolationException {
         if (szak == null) throw new ArgumentNullException("szak");
         if (szak.getSzakId() == null) throw new ArgumentNullException("Szak must be saved first.");
 

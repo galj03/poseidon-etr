@@ -155,7 +155,7 @@ public class User implements IUser {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority(Constants.USER_ROLE));
+        authorities.add(new SimpleGrantedAuthority(_role.name()));
         return authorities;
     }
 

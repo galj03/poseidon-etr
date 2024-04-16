@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.sql.SQLException;
 import java.util.Objects;
 
 @Controller
@@ -146,6 +147,9 @@ public class UserController {
             _userDAO.remove(_user);
         } catch (QueryException e) {
             model.addAttribute("edit_error", "Could not remove user from database.");
+            return "main/edituser";
+        } catch (SQLException e) {
+            model.addAttribute("edit_error", "Could not remove user from database. Check NOT NULL " + e.getMessage());
             return "main/edituser";
         }
 

@@ -50,7 +50,10 @@ public class Tantargy implements ITantargy {
 
     @Override
     public ITantargy setFelelos(String felelos) throws ArgumentNullException {
-        if (felelos == null || felelos.isEmpty()) throw new ArgumentNullException("felelos");
+        if (felelos == null || felelos.isEmpty()) {
+            _felelos = null;
+            return this;
+        }
 
         _felelos = felelos.trim();
         return this;

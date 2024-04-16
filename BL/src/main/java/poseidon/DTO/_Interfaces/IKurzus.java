@@ -10,7 +10,7 @@ public interface IKurzus {
     String getNev();
     String getOktato();
     String getKezdesNapja();
-    Timestamp getKezdesIdopontja();
+    Integer getKezdesIdopontja();
     Integer getTantargyId();
     Integer getTeremId();
     Boolean isFelveheto();
@@ -19,7 +19,7 @@ public interface IKurzus {
     IKurzus setNev(String name) throws ArgumentNullException;
     IKurzus setOktato(String oktato) throws ArgumentNullException;
     IKurzus setKezdesNapja(String nap) throws ArgumentNullException;
-    IKurzus setKezdesIdopontja(Timestamp idopont) throws ArgumentNullException;
+    IKurzus setKezdesIdopontja(Integer idopont) throws ArgumentNullException;
     IKurzus setTantargyId(Integer id) throws ArgumentNullException;
     IKurzus setTeremId(Integer id) throws ArgumentNullException;
     IKurzus setIsFelveheto(Boolean felvehetoE) throws ArgumentNullException;

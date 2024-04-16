@@ -3,6 +3,8 @@ package poseidon.DAO._Interfaces;
 import poseidon.Exceptions.QueryException;
 import poseidon.DTO._Interfaces.IUser;
 
+import java.sql.SQLException;
+
 /**
  * Data access object for the user model.
  */
@@ -43,6 +45,7 @@ public interface IUserDAO {
      * @param user User to remove.
      * @throws IllegalArgumentException If user is null or has no id
      * @throws QueryException If query was unsuccessful.
+     * @throws SQLException If anything went wrong not with the Query but with SQL server.
      */
-    void remove(IUser user) throws IllegalArgumentException, QueryException;
+    void remove(IUser user) throws IllegalArgumentException, QueryException, SQLException;
 }
