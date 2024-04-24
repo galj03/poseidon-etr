@@ -2,7 +2,6 @@ package poseidon.DAO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -20,16 +19,11 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class OracleDBTeremDAO extends JdbcDaoSupport implements ITeremDAO {
-    //region Properties
-    private final DataSource _dataSource;
-    //endregion
-
+public class OracleDBTeremDAO extends BaseDAO implements ITeremDAO {
     //region Constructor
     @Autowired
     public OracleDBTeremDAO(DataSource dataSource) {
-        _dataSource = dataSource;
-        setDataSource(_dataSource);
+        super(dataSource);
     }
     //endregion
 

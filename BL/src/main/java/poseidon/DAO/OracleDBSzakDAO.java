@@ -3,7 +3,6 @@ package poseidon.DAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -16,22 +15,16 @@ import poseidon.Exceptions.QueryException;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Repository
-public class OracleDBSzakDAO extends JdbcDaoSupport implements ISzakDAO {
-    //region Properties
-    private final DataSource _dataSource;
-    //endregion
-
+public class OracleDBSzakDAO extends BaseDAO implements ISzakDAO {
     //region Constructor
     @Autowired
     public OracleDBSzakDAO(DataSource dataSource) {
-        _dataSource = dataSource;
-        setDataSource(_dataSource);
+        super(dataSource);
     }
     //endregion
 
@@ -99,7 +92,7 @@ public class OracleDBSzakDAO extends JdbcDaoSupport implements ISzakDAO {
             if (rows.isEmpty()) return null;
 
             return new Szak()
-                    .setSzakId(((BigDecimal)rows.get(0).get("id")).intValue())
+                    .setSzakId(((BigDecimal) rows.get(0).get("id")).intValue())
                     .setName((String) rows.get(0).get("nev"));
 
         } catch (DataAccessException exception) {
@@ -113,10 +106,10 @@ public class OracleDBSzakDAO extends JdbcDaoSupport implements ISzakDAO {
 
             List<ISzak> result = new ArrayList<>();
 
-            for (Map<String,Object> row: rows) {
+            for (Map<String, Object> row : rows) {
                 result.add(
                         new Szak()
-                                .setSzakId(((BigDecimal)row.get("id")).intValue())
+                                .setSzakId(((BigDecimal) row.get("id")).intValue())
                                 .setName((String) row.get("nev"))
                 );
             }
