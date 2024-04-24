@@ -1,5 +1,8 @@
 package poseidon.DAO;
 
+import poseidon.Constants;
+import poseidon.DTO.Kurzus;
+import poseidon.DTO._Interfaces.IKurzus;
 import poseidon.Exceptions.ArgumentNullException;
 import poseidon.Exceptions.QueryException;
 import poseidon.DAO._Interfaces.IUserDAO;
@@ -18,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import static poseidon.Constants.JOVAHAGYOTT;
 
 /**
  * Data access object for the user model in an Oracle database.
@@ -100,6 +105,36 @@ public class OracleDBUserDAO extends BaseDAO implements IUserDAO {
         String sql = "DELETE FROM felhasznalo WHERE PS_kod=?";
         getJdbcTemplate().update(sql, user.getPsCode());
     }
+
+    public List<IKurzus> currentCourses(IUser user) throws QueryException {
+        String sql = "select * from kurzus, felvette " +
+                String.format("where felvette.kurzus_id=kurzus.id and felvette.PS_kod=? and allapot='%s'", JOVAHAGYOTT);
+        var courseData = super.getCustomRows(sql, user.getPsCode());
+        if (courseData == null) {
+            return new ArrayList<>();
+        }
+
+        var results = new ArrayList<IKurzus>(courseData.size());
+        for (var course : courseData) {
+            Boolean isFelveheto = course.get("felveheto").equals(Constants.TRUE);
+            Boolean isVizsga = course.get("vizsga").equals(Constants.TRUE);
+
+            var courseObj = new Kurzus()
+                    .setKurzusId(((BigDecimal) course.get("id")).intValue())
+                    .setNev((String) course.get("nev"))
+                    .setOktato((String) course.get("oktato_PS_kod"))
+                    .setKezdesNapja((String) course.get("kezdes_ideje_nap"))
+                    .setKezdesIdopontja(((BigDecimal) course.get("kezdes_ideje_idopont")).intValue())
+                    .setTantargyId(((BigDecimal) course.get("tantargy_id")).intValue())
+                    .setTeremId(((BigDecimal) course.get("terem_id")).intValue())
+                    .setIsFelveheto(isFelveheto)
+                    .setIsVizsga(isVizsga);
+
+            results.add(courseObj);
+        }
+
+        return results;
+    }
     //endregion
 
     //region Private members
@@ -116,10 +151,10 @@ public class OracleDBUserDAO extends BaseDAO implements IUserDAO {
                     .setName((String) rows.get(0).get("nev"))
                     .setEmail((String) rows.get(0).get("email"))
                     .setPassword((String) rows.get(0).get("jelszo"))
-                    .setSzakId(((BigDecimal)rows.get(0).get("szak_id")).intValue())
+                    .setSzakId(((BigDecimal) rows.get(0).get("szak_id")).intValue())
                     .setRole(role)
-                    .setKezdesEve(((BigDecimal)rows.get(0).get("kezdes_eve")).intValue())
-                    .setVegzesEve(((BigDecimal)rows.get(0).get("vegzes_ideje")).intValue());
+                    .setKezdesEve(((BigDecimal) rows.get(0).get("kezdes_eve")).intValue())
+                    .setVegzesEve(((BigDecimal) rows.get(0).get("vegzes_ideje")).intValue());
 
         } catch (DataAccessException exception) {
             throw new QueryException("Could not get values from database", exception);
@@ -132,7 +167,7 @@ public class OracleDBUserDAO extends BaseDAO implements IUserDAO {
 
             List<IUser> result = new ArrayList<>();
 
-            for (Map<String,Object> row: rows) {
+            for (Map<String, Object> row : rows) {
                 UserRoles role = Objects.equals(row.get("jogosultsag"), "ROLE_USER") ? UserRoles.ROLE_USER : UserRoles.ROLE_ADMIN;
 
                 result.add(new User()
@@ -140,10 +175,10 @@ public class OracleDBUserDAO extends BaseDAO implements IUserDAO {
                         .setName((String) row.get("nev"))
                         .setEmail((String) row.get("email"))
                         .setPassword((String) row.get("jelszo"))
-                        .setSzakId(((BigDecimal)row.get("szak_id")).intValue())
+                        .setSzakId(((BigDecimal) row.get("szak_id")).intValue())
                         .setRole(role)
-                        .setKezdesEve(((BigDecimal)row.get("kezdes_eve")).intValue())
-                        .setVegzesEve(((BigDecimal)row.get("vegzes_ideje")).intValue())
+                        .setKezdesEve(((BigDecimal) row.get("kezdes_eve")).intValue())
+                        .setVegzesEve(((BigDecimal) row.get("vegzes_ideje")).intValue())
                 );
             }
 
