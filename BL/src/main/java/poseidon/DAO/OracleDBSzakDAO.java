@@ -6,9 +6,14 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import poseidon.Constants;
 import poseidon.DAO._Interfaces.ISzakDAO;
+import poseidon.DTO.Kurzus;
 import poseidon.DTO.Szak;
+import poseidon.DTO.Tantargy;
+import poseidon.DTO._Interfaces.IKurzus;
 import poseidon.DTO._Interfaces.ISzak;
+import poseidon.DTO._Interfaces.ITantargy;
 import poseidon.Exceptions.ArgumentNullException;
 import poseidon.Exceptions.QueryException;
 
@@ -82,6 +87,29 @@ public class OracleDBSzakDAO extends BaseDAO implements ISzakDAO {
 
         String sql = "DELETE FROM szak WHERE id=?";
         getJdbcTemplate().update(sql, szak.getSzakId());
+    }
+
+    @Override
+    public List<ITantargy> getRequiredClasses(ISzak szak) throws QueryException {
+        String sql = "select * from kotelezo, tantargy " +
+                "where kotelezo.szak_id=? and kotelezo.tantargy_id=tantargy.id";
+
+        var requiredSubjectsData = super.getCustomRows(sql, szak.getSzakId());
+        if (requiredSubjectsData == null) {
+            return new ArrayList<>();
+        }
+
+        var results = new ArrayList<ITantargy>(requiredSubjectsData.size());
+        for (var subject : requiredSubjectsData) {
+            var subjectObj = new Tantargy()
+                    .setTantargyId(((BigDecimal) subject.get("id")).intValue())
+                    .setNev((String) subject.get("nev"))
+                    .setFelelos((String) subject.get("targyfelelos"));
+
+            results.add(subjectObj);
+        }
+
+        return results;
     }
 
     //region Private members
