@@ -40,6 +40,37 @@
             </tbody>
         </table>
     </div>
+
+    <div class="m-3 mx-5 p-3 rounded" style="background-color: #377ded; color:white; box-shadow: 2px 2px 2px #377ded;">
+        <div class="row col-12 font-bold" style="text-align: center; justify-content: center; font-size: 40px">
+            Tantervi teljesítések
+        </div>
+        <div style="justify-content: center">
+            <label for="tanterv_percent" style="font-size: 20px; margin: 20px 0; justify-self: left">Teljesített kötelező tantárgyak (%):</label>
+            <div class="progress" style="width: 75vw; margin-left: 8vw">
+                <div class="progress-bar bg-success" id="tanterv_percent" role="progressbar"
+                     th:style="'width: ' + ${completionRate*100} + '%;'"
+                     th:aria-valuenow="${completionRate*100}"
+                     th:text="${completionRate*100} + '%'"
+                     aria-valuemin="0" aria-valuemax="100">25%</div>
+            </div>
+            <label for="tanterv_credit" style="font-size: 20px; margin: 20px 0; justify-self: left">Teljesített kötelező tantárgyak (kredit):</label>
+            <div class="progress" style="width: 75vw; margin-left: 8vw">
+                <div class="progress-bar bg-success" id="tanterv_credit" role="progressbar"
+                     th:style="'width: ' + ${completionRate*100} + '%;'"
+                     th:aria-valuenow="${completionRate}"
+                     th:text="${completedCredits} + '/' + ${requiredCredits}"
+                     aria-valuemin="0" aria-valuemax="100">4/20</div>
+            </div>
+        </div>
+        <div style="margin-top: 50px;">
+            <label for="atlag" style="font-size: 20px; margin: 20px 0; justify-self: left">Tanulmányi átlag:</label>
+            <div id="atlag"
+                 th:text="${normalAvg}">
+                5.0
+            </div>
+        </div>
+    </div>
 </main>
 </body>
 </html>

@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static poseidon.Constants.JOVAHAGYOTT;
+import static poseidon.Constants.TELJESITETT;
 
 /**
  * Data access object for the user model in an Oracle database.
@@ -109,31 +110,19 @@ public class OracleDBUserDAO extends BaseDAO implements IUserDAO {
     public List<IKurzus> currentCourses(IUser user) throws QueryException {
         String sql = "select * from kurzus, felvette " +
                 String.format("where felvette.kurzus_id=kurzus.id and felvette.PS_kod=? and allapot='%s'", JOVAHAGYOTT);
-        var courseData = super.getCustomRows(sql, user.getPsCode());
-        if (courseData == null) {
-            return new ArrayList<>();
+        return getCourses(user, sql);
+    }
+
+    public Integer finishedCoursesCount(IUser user) throws QueryException {
+        String sql = "select count(*) as num, felvette.PS_kod from tantargy, felvette " +
+                String.format("where felvette.tantargy_id=tantargy.id and allapot='%s' ", TELJESITETT)
+                + "group by felvette.PS_kod having felvette.PS_kod=?";
+        var requiredSubjectsData = super.getCustomRows(sql, user.getPsCode());
+        if (requiredSubjectsData == null) {
+            return 0;
         }
 
-        var results = new ArrayList<IKurzus>(courseData.size());
-        for (var course : courseData) {
-            Boolean isFelveheto = course.get("felveheto").equals(Constants.TRUE);
-            Boolean isVizsga = course.get("vizsga").equals(Constants.TRUE);
-
-            var courseObj = new Kurzus()
-                    .setKurzusId(((BigDecimal) course.get("id")).intValue())
-                    .setNev((String) course.get("nev"))
-                    .setOktato((String) course.get("oktato_PS_kod"))
-                    .setKezdesNapja((String) course.get("kezdes_ideje_nap"))
-                    .setKezdesIdopontja(((BigDecimal) course.get("kezdes_ideje_idopont")).intValue())
-                    .setTantargyId(((BigDecimal) course.get("tantargy_id")).intValue())
-                    .setTeremId(((BigDecimal) course.get("terem_id")).intValue())
-                    .setIsFelveheto(isFelveheto)
-                    .setIsVizsga(isVizsga);
-
-            results.add(courseObj);
-        }
-
-        return results;
+        return ((BigDecimal) requiredSubjectsData.get(0).get("num")).intValue();
     }
     //endregion
 
@@ -189,6 +178,34 @@ public class OracleDBUserDAO extends BaseDAO implements IUserDAO {
         } catch (QueryException exception) {
             throw new QueryException("Failed to query a nested value", exception);
         }
+    }
+
+    private List<IKurzus> getCourses(IUser user, String sql) throws QueryException {
+        var courseData = super.getCustomRows(sql, user.getPsCode());
+        if (courseData == null) {
+            return new ArrayList<>();
+        }
+
+        var results = new ArrayList<IKurzus>(courseData.size());
+        for (var course : courseData) {
+            Boolean isFelveheto = course.get("felveheto").equals(Constants.TRUE);
+            Boolean isVizsga = course.get("vizsga").equals(Constants.TRUE);
+
+            var courseObj = new Kurzus()
+                    .setKurzusId(((BigDecimal) course.get("id")).intValue())
+                    .setNev((String) course.get("nev"))
+                    .setOktato((String) course.get("oktato_PS_kod"))
+                    .setKezdesNapja((String) course.get("kezdes_ideje_nap"))
+                    .setKezdesIdopontja(((BigDecimal) course.get("kezdes_ideje_idopont")).intValue())
+                    .setTantargyId(((BigDecimal) course.get("tantargy_id")).intValue())
+                    .setTeremId(((BigDecimal) course.get("terem_id")).intValue())
+                    .setIsFelveheto(isFelveheto)
+                    .setIsVizsga(isVizsga);
+
+            results.add(courseObj);
+        }
+
+        return results;
     }
     //endregion
 }
