@@ -1,5 +1,6 @@
 package poseidon.DAO;
 
+import poseidon.DTO._Interfaces.IKurzus;
 import poseidon.Exceptions.ArgumentNullException;
 import poseidon.Exceptions.QueryException;
 import poseidon.DAO._Interfaces.IUserDAO;
@@ -99,6 +100,10 @@ public class OracleDBUserDAO extends BaseDAO implements IUserDAO {
 
         String sql = "DELETE FROM felhasznalo WHERE PS_kod=?";
         getJdbcTemplate().update(sql, user.getPsCode());
+    }
+
+    public Iterable<IKurzus> currentCourses(IUser user) throws QueryException{
+        
     }
     //endregion
 

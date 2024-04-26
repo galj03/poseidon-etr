@@ -30,6 +30,9 @@ public class IndexController {
         model.addAttribute("_userDAO", _userDAO);
         var asd = _user.getAuthorities();
         model.addAttribute("user", _user);
+
+        //TODO: get all classes for user
+
         return "main/index";
     }
 }
