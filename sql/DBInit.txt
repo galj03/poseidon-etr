@@ -62,8 +62,9 @@ CREATE TABLE elofeltetel (
 
 CREATE TABLE felvette (
     PS_kod VARCHAR2(20) NOT NULL,
+    kurzus_id NUMBER NOT NULL,
     tantargy_id NUMBER NOT NULL,
-    allapot VARCHAR(20) NOT NULL,
+    allapot VARCHAR(20) NOT NULL CHECK (allapot IN ('JOVAHAGYASRA_VAR', 'JOVAHAGYOTT', 'TELJESITETT')),
     jegy NUMBER
 );
 
@@ -103,6 +104,7 @@ ALTER TABLE elofeltetel ADD CONSTRAINT elofeltetel_fk1 FOREIGN KEY(tantargy_id) 
 ALTER TABLE elofeltetel ADD CONSTRAINT elofeltetel_fk2 FOREIGN KEY(feltetel_id) REFERENCES tantargy(id) on delete cascade;
 ALTER TABLE felvette ADD CONSTRAINT felvette_fk1 FOREIGN KEY(PS_kod) REFERENCES felhasznalo(PS_kod) on delete cascade;
 ALTER TABLE felvette ADD CONSTRAINT felvette_fk2 FOREIGN KEY(tantargy_id) REFERENCES tantargy(id) on delete cascade;
+ALTER TABLE felvette ADD CONSTRAINT felvette_fk3 FOREIGN KEY(kurzus_id) REFERENCES kurzus(id) on delete cascade;
 ALTER TABLE poszt ADD CONSTRAINT poszt_fk1 FOREIGN KEY(PS_kod) REFERENCES felhasznalo(PS_kod) on delete cascade;
 ALTER TABLE komment ADD CONSTRAINT komment_fki1 FOREIGN KEY(poszt_id) REFERENCES poszt(id) on delete cascade;
 ALTER TABLE komment ADD CONSTRAINT komment_fki2 FOREIGN KEY(PS_kod) REFERENCES felhasznalo(PS_kod) on delete cascade;
@@ -313,11 +315,11 @@ INSERT INTO elofeltetel VALUES(12, 11);
 
 -- felvette tabla
 
-INSERT INTO felvette VALUES('B8Y4UJ', 1, 'TELJESITETT', 5);
-INSERT INTO felvette VALUES('V2J8RM', 2, 'FELVEVE', NULL);
-INSERT INTO felvette VALUES('C9T1FD', 3, 'FELVEVE', NULL);
-INSERT INTO felvette VALUES('B6N4PH', 4, 'TELJESITETT', 3);
-INSERT INTO felvette VALUES('K1X7LR', 5, 'TELJESITETT', 4);
+INSERT INTO felvette VALUES('B8Y4UJ', 1, 1, 'TELJESITETT', 5);
+INSERT INTO felvette VALUES('V2J8RM', 2, 2, 'JOVAHAGYOTT', NULL);
+INSERT INTO felvette VALUES('C9T1FD', 3, 3, 'JOVAHAGYOTT', NULL);
+INSERT INTO felvette VALUES('B6N4PH', 4, 4, 'TELJESITETT', 3);
+INSERT INTO felvette VALUES('K1X7LR', 5, 5, 'TELJESITETT', 4);
 
 -- poszt tabla
 
