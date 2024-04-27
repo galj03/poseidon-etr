@@ -1,5 +1,6 @@
 package poseidon.controllers.main;
 
+import poseidon.DTO.Kurzus;
 import poseidon.DTO._Interfaces.IKurzus;
 import poseidon.DTO._Interfaces.IUser;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,8 +18,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static poseidon.Constants.MONDAY;
-import static poseidon.Constants.TUESDAY;
+import static poseidon.Constants.*;
 
 @Controller
 @PreAuthorize("authentication.principal.username != null")
@@ -50,11 +50,23 @@ public class IndexController {
     private List<List<IKurzus>> splitList(List<IKurzus> courses) {
         var result = new ArrayList<List<IKurzus>>(15 - 8 + 1);
         for (int i = 8; i < 16; i++) {
-            result.add(new LinkedList<IKurzus>());
+            var l = new ArrayList<IKurzus>(5);
+            for (int j = 0; j < 5; j++) {
+                l.add(new Kurzus());
+            }
+            result.add(l);
         }
 
         for (var course : courses) {
-            result.get(course.getKezdesIdopontja() - 8).add(course);
+            var index = 0;
+            switch (course.getKezdesNapja()){
+                case TUESDAY -> index = 1;
+                case WEDNESDAY -> index = 2;
+                case THURSDAY -> index = 3;
+                case FRIDAY -> index = 4;
+                default -> index = 0;
+            }
+            result.get(course.getKezdesIdopontja() - 8).set(index, course);
         }
 
         return result;

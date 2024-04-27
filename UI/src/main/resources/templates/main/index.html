@@ -8,39 +8,38 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-    <div th:replace="~{fragments/header :: header}"></div>
-    <main>
-        <div class="m-3 mx-5 p-3 rounded" style="background-color: #377ded; color:white; box-shadow: 2px 2px 2px #377ded;">
-            <div class="row col-12 font-bold" style="text-align: center; justify-content: center; font-size: 40px">
-                Órarend
-            </div>
-            <table id="timetable" class="container">
-                <thead>
-                <tr class="row">
-                    <th id="ora" class="col-2"></th>
-                    <th id="Hétfő" class="col-2" style="font-size: 30px">Hétfő</th>
-                    <th id="Kedd" class="col-2" style="font-size: 30px">Kedd</th>
-                    <th id="Szerda" class="col-2" style="font-size: 30px">Szerda</th>
-                    <th id="Csütörtök" class="col-2" style="font-size: 30px">Csütörtök</th>
-                    <th id="Péntek" class="col-2" style="font-size: 30px">Péntek</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="coursesPerHour,stat : ${userCourses}" th:unless="${coursesPerHour.isEmpty()}"
-                    class="row">
-                    <td headers="ora" th:text="${stat.index+8} + ':00'" class="col-1" style="font-size: 30px">8:00</td>
-                    <td th:each="course : ${coursesPerHour}"
-                        th:text="${course.getTeremId()} + ' - ' + ${course.getNev()} + ' - ' + ${course.getOktato()}"
-                        th:headers="${course.getKezdesNapja()}" class="col-2" style="font-size: 30px"></td>
-<!--                    <td headers="Hétfő"></td>-->
-<!--                    <td headers="Kedd"></td>-->
-<!--                    <td headers="Szerda"></td>-->
-<!--                    <td headers="Csütörtök"></td>-->
-<!--                    <td headers="Péntek"></td>-->
-                </tr>
-                </tbody>
-            </table>
+<div th:replace="~{fragments/header :: header}"></div>
+<main>
+    <div class="m-3 mx-5 p-3 rounded" style="background-color: #377ded; color:white; box-shadow: 2px 2px 2px #377ded;">
+        <div class="row col-12 font-bold" style="text-align: center; justify-content: center; font-size: 40px">
+            Órarend
         </div>
-    </main>
+        <table id="timetable" class="container">
+            <thead style="margin-bottom: 20px">
+            <tr class="row">
+                <th id="ora" class="col-2"></th>
+                <th id="Hétfő" class="col-2" style="font-size: 30px; text-align: center;">Hétfő</th>
+                <th id="Kedd" class="col-2" style="font-size: 30px; text-align: center;">Kedd</th>
+                <th id="Szerda" class="col-2" style="font-size: 30px; text-align: center;">Szerda</th>
+                <th id="Csütörtök" class="col-2" style="font-size: 30px; text-align: center;">Csütörtök</th>
+                <th id="Péntek" class="col-2" style="font-size: 30px; text-align: center;">Péntek</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="coursesPerHour,stat : ${userCourses}" th:unless="${coursesPerHour.isEmpty()}"
+                class="row" style="min-height: 50px">
+                <td headers="ora" th:text="${stat.index+8} + ':00'" class="col-2" style="font-size: 20px">8:00</td>
+                <div th:each="course : ${coursesPerHour}">
+                    <td th:if="${course.getKurzusId()} != null"
+                        th:text="${course.getTeremId()} + ' - ' + ${course.getNev()} + ' - ' + ${course.getOktato()}"
+                        th:headers="${course.getKezdesNapja()}" class="col-2" style="font-size: 20px; text-align: center;"></td>
+                    <td th:if="${course.getKurzusId()} == null"
+                        class="col-2" style="font-size: 20px"></td>
+                </div>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
 </body>
 </html>
