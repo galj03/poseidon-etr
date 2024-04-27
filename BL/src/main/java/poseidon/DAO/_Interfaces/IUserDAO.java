@@ -5,6 +5,7 @@ import poseidon.Exceptions.QueryException;
 import poseidon.DTO._Interfaces.IUser;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Data access object for the user model.
@@ -56,5 +57,5 @@ public interface IUserDAO {
      * @return a course list
      * @throws QueryException If anything went wrong not with the Query but with SQL server.
      */
-    Iterable<IKurzus> currentCourses(IUser user) throws QueryException;
+    List<IKurzus> currentCourses(IUser user) throws QueryException;
 }

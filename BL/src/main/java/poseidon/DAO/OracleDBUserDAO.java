@@ -106,8 +106,8 @@ public class OracleDBUserDAO extends BaseDAO implements IUserDAO {
         getJdbcTemplate().update(sql, user.getPsCode());
     }
 
-    public Iterable<IKurzus> currentCourses(IUser user) throws QueryException {
-        String sql = "select * from kurzus, felvette" +
+    public List<IKurzus> currentCourses(IUser user) throws QueryException {
+        String sql = "select * from kurzus, felvette " +
                 String.format("where felvette.kurzus_id=kurzus.id and felvette.PS_kod=? and allapot='%s'", JOVAHAGYOTT);
         var courseData = super.getCustomRows(sql, user.getPsCode());
         if (courseData == null) {
