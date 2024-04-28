@@ -5,8 +5,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import poseidon.Constants;
 import poseidon.DAO._Interfaces.ITantargyDAO;
+import poseidon.DTO.Kurzus;
 import poseidon.DTO.Tantargy;
+import poseidon.DTO._Interfaces.IKurzus;
 import poseidon.DTO._Interfaces.ITantargy;
 import poseidon.Exceptions.ArgumentNullException;
 import poseidon.Exceptions.QueryException;
@@ -15,6 +18,7 @@ import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -83,6 +87,61 @@ public class OracleDBTantargyDAO extends BaseDAO implements ITantargyDAO {
 
         String sql = "DELETE FROM tantargy WHERE id=?";
         getJdbcTemplate().update(sql, tantargy.getTantargyId());
+    }
+
+    @Override
+    public Map<ITantargy, List<IKurzus>> getTeachingSubjects(String ps_kod) {
+        String sql = "SELECT tantargy.id as tantargy_id, tantargy.nev as tantargy_nev, " +
+                "tantargy.targyfelelos, " +
+                "kurzus.id as kurzus_id, kurzus.nev as kurzus_nev, " +
+                "kurzus.oktato_ps_kod, kurzus.kezdes_ideje_nap, kurzus.kezdes_ideje_idopont, " +
+                "kurzus.terem_id, kurzus.felveheto, kurzus.vizsga " +
+                "from tantargy " +
+                "INNER JOIN kurzus ON tantargy.id = kurzus.tantargy_id " +
+                "WHERE targyfelelos=?";
+        var list = super.getCustomRows(sql, ps_kod);
+        Map<ITantargy, List<IKurzus>> tanitottTargyak = new HashMap<>();
+        ITantargy lastTantargy = null;
+        ITantargy tmpTargy = null;
+        IKurzus tmpKurzus = null;
+        List<IKurzus> targyonBeluliKurzusok = new ArrayList<>();
+        for (var item : list) {
+            tmpTargy = new Tantargy()
+                    .setTantargyId(((BigDecimal) item.get("tantargy_id")).intValue())
+                    .setNev((String) item.get("tantargy_nev"))
+                    .setFelelos((String) item.get("targyfelelos"));
+
+            if (lastTantargy == null) {
+                lastTantargy = tmpTargy;
+            }
+
+            Boolean isFelveheto = item.get("felveheto").equals(Constants.TRUE);
+            Boolean isVizsga = item.get("vizsga").equals(Constants.TRUE);
+
+            tmpKurzus = new Kurzus()
+                    .setKurzusId(((BigDecimal) item.get("kurzus_id")).intValue())
+                    .setNev((String) item.get("kurzus_nev"))
+                    .setOktato((String) item.get("oktato_PS_kod"))
+                    .setKezdesNapja((String) item.get("kezdes_ideje_nap"))
+                    .setKezdesIdopontja(((BigDecimal) item.get("kezdes_ideje_idopont")).intValue())
+                    .setTantargyId(((BigDecimal) item.get("tantargy_id")).intValue())
+                    .setTeremId(item.get("terem_id") == null ? null : ((BigDecimal) item.get("terem_id")).intValue())
+                    .setIsFelveheto(isFelveheto)
+                    .setIsVizsga(isVizsga);
+
+            if (tmpTargy.getTantargyId() != lastTantargy.getTantargyId()) {
+                tanitottTargyak.put(lastTantargy,new ArrayList<>(targyonBeluliKurzusok));
+                lastTantargy = tmpTargy;
+                targyonBeluliKurzusok.clear();
+                targyonBeluliKurzusok.add(tmpKurzus);
+            } else {
+                targyonBeluliKurzusok.add(tmpKurzus);
+            }
+        }
+        if (tmpTargy == lastTantargy) {
+            tanitottTargyak.put(lastTantargy, targyonBeluliKurzusok);
+        }
+        return tanitottTargyak;
     }
 
     //region Private members

@@ -8,7 +8,9 @@ import org.springframework.stereotype.Repository;
 import poseidon.Constants;
 import poseidon.DAO._Interfaces.IKurzusDAO;
 import poseidon.DTO.Kurzus;
+import poseidon.DTO.User;
 import poseidon.DTO._Interfaces.IKurzus;
+import poseidon.DTO._Interfaces.IUser;
 import poseidon.Exceptions.ArgumentNullException;
 import poseidon.Exceptions.QueryException;
 
@@ -16,6 +18,7 @@ import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -122,6 +125,43 @@ public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
         } catch (DataAccessException exception) {
             throw new QueryException("Could not get values from database", exception);
         }
+    }
+
+    @Override
+    public Map<IKurzus, Map<IUser, Integer>> getTeachingCourses(String teacher_ps_kod) {
+        String sql = "SELECT kurzus.nev, ps_kod, kurzus_id, jegy FROM kurzus " +
+                "INNER JOIN felvette ON kurzus.id = felvette.kurzus_id " +
+                "WHERE kurzus.oktato_ps_kod =?";
+        var queryResultKurzusok = super.getCustomRows(sql, teacher_ps_kod);
+        Map<IKurzus, Map<IUser, Integer>> hallgatokJegyeKurzusonkent = new HashMap<>();
+        Map<IUser, Integer> hallgatokJegyei = new HashMap<>();
+        IKurzus lastKurzus = null;
+        IKurzus tmpKurzus = null;
+        for (var item : queryResultKurzusok) {
+            tmpKurzus = new Kurzus()
+                    .setKurzusId(((BigDecimal) item.get("kurzus_id")).intValue())
+                    .setNev((String) item.get("nev"));
+
+            if (lastKurzus == null) {
+                lastKurzus = tmpKurzus;
+            }
+
+            IUser tmpUser = new User()
+                    .setPsCode((String)item.get("ps_kod"));
+
+            if (lastKurzus.getKurzusId() != tmpKurzus.getKurzusId()) {
+                hallgatokJegyeKurzusonkent.put(tmpKurzus, new HashMap<>(hallgatokJegyei));
+                lastKurzus = tmpKurzus;
+                hallgatokJegyei.clear();
+                hallgatokJegyei.put(tmpUser, item.get("jegy") == null ? 0 : ((BigDecimal)item.get("jegy")).intValue());
+            } else {
+                hallgatokJegyei.put(tmpUser, item.get("jegy") == null ? 0 : ((BigDecimal)item.get("jegy")).intValue());
+            }
+        }
+        if (lastKurzus == tmpKurzus) {
+            hallgatokJegyeKurzusonkent.put(lastKurzus, new HashMap<>(hallgatokJegyei));
+        }
+        return hallgatokJegyeKurzusonkent;
     }
 
     private List<IKurzus> getRows(String sql, Object... args) throws QueryException {
