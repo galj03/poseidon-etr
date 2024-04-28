@@ -150,7 +150,7 @@ public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
                     .setPsCode((String)item.get("ps_kod"));
 
             if (lastKurzus.getKurzusId() != tmpKurzus.getKurzusId()) {
-                hallgatokJegyeKurzusonkent.put(tmpKurzus, new HashMap<>(hallgatokJegyei));
+                hallgatokJegyeKurzusonkent.put(lastKurzus, new HashMap<>(hallgatokJegyei));
                 lastKurzus = tmpKurzus;
                 hallgatokJegyei.clear();
                 hallgatokJegyei.put(tmpUser, item.get("jegy") == null ? 0 : ((BigDecimal)item.get("jegy")).intValue());

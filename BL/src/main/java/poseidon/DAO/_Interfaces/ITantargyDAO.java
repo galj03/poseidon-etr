@@ -17,4 +17,8 @@ public interface ITantargyDAO {
     void remove(ITantargy tantargy) throws IllegalArgumentException, QueryException;
 
     Map<ITantargy, List<IKurzus>> getTeachingSubjects(String ps_kod);
+
+    boolean saveRequiredSubjects(ITantargy tantargy, List<ITantargy> feltetelek);
+
+    void removeAllRequiredSubjects(ITantargy tantargy);
 }

@@ -17,10 +17,7 @@ import poseidon.Exceptions.QueryException;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class OracleDBTantargyDAO extends BaseDAO implements ITantargyDAO {
@@ -142,6 +139,44 @@ public class OracleDBTantargyDAO extends BaseDAO implements ITantargyDAO {
             tanitottTargyak.put(lastTantargy, targyonBeluliKurzusok);
         }
         return tanitottTargyak;
+    }
+
+    @Override
+    public boolean saveRequiredSubjects(ITantargy tantargy, List<ITantargy> feltetelek) {
+        if (tantargy.getTantargyId() != null) {
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+
+            try {
+                StringBuilder sb = new StringBuilder();
+                sb.append("INSERT ALL");
+
+                for (var item : feltetelek) {
+                    sb.append(" INTO elofeltetel(tantargy_id, feltetel_id) VALUES (?, ?) ");
+                }
+                sb.append("SELECT 1 FROM DUAL");
+                getJdbcTemplate().update(connection -> {
+                    PreparedStatement ps = connection.prepareStatement(sb.toString());
+                    int i = 1;
+                    for (var item : feltetelek) {
+                        ps.setInt(i++, tantargy.getTantargyId());
+                        ps.setInt(i++, item.getTantargyId());
+                    }
+                    return ps;
+                }, keyHolder);
+            } catch (DataAccessException exception) {
+                throw new QueryException("Could not insert value into database", exception);
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void removeAllRequiredSubjects(ITantargy tantargy) {
+        if (tantargy == null) throw new ArgumentNullException("Tantargy must be given!");
+        if (tantargy.getTantargyId() == null) throw new ArgumentNullException("Tantargy must be saved first.");
+
+        String sql = "DELETE FROM elofeltetel WHERE tantargy_id=?";
+        getJdbcTemplate().update(sql, tantargy.getTantargyId());
     }
 
     //region Private members
