@@ -6,7 +6,6 @@ import poseidon.DAO._Interfaces.IUserDAO;
 import poseidon.DTO.User;
 import poseidon.DTO._Interfaces.IUser;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import poseidon.UserRoles;
@@ -24,16 +23,11 @@ import java.util.Objects;
  * Data access object for the user model in an Oracle database.
  */
 @Repository
-public class OracleDBUserDAO extends JdbcDaoSupport implements IUserDAO {
-    //region Properties
-    private final DataSource _dataSource;
-    //endregion
-
+public class OracleDBUserDAO extends BaseDAO implements IUserDAO {
     //region Constructor
     @Autowired
     public OracleDBUserDAO(DataSource dataSource) {
-        _dataSource = dataSource;
-        setDataSource(_dataSource);
+        super(dataSource);
     }
     //endregion
 
