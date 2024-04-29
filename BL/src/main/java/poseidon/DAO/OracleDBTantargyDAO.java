@@ -267,6 +267,14 @@ public class OracleDBTantargyDAO extends BaseDAO implements ITantargyDAO {
         });
     }
 
+    @Override
+    public void removeStudentFromSubject(String ps_kod, Integer tantargyId) {
+        if (ps_kod == null) throw new ArgumentNullException("ps_kod must be given!");
+
+        String sql = "DELETE FROM felvette WHERE ps_kod = ? AND tantargy_id = ?";
+        getJdbcTemplate().update(sql, ps_kod, tantargyId);
+    }
+
     //region Private members
     private ITantargy getRow(String sql, Object... args) throws QueryException {
         try {

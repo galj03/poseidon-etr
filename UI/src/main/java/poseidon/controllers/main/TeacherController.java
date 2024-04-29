@@ -118,4 +118,12 @@ public class TeacherController {
         return "redirect:/teacher";
     }
 
+    @PostMapping("/teacher/remove-student")
+    public String RemoveStudent(@RequestParam("ps_kod") String ps_kod,
+                                @RequestParam("tantargy_id") Integer tantargyId) {
+        _tantargyDAO.removeStudentFromSubject(ps_kod, tantargyId);
+
+        return "redirect:/teacher";
+    }
+
 }
