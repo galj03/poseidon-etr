@@ -23,5 +23,5 @@ public interface ITantargyDAO {
 
     void removeAllRequiredSubjects(ITantargy tantargy);
 
-    void approveStudents(List<IUser> students);
+    void approveStudents(List<String> students, int tantargyId);
 }

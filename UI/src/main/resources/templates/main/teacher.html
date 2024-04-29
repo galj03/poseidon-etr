@@ -51,21 +51,20 @@
                         <input type="hidden" name="tantargyId" th:value="${targy.getKey().getTantargyId()}">
                         <input class="rounded mt-1" style="background-color: green; border:none; color: white; width: 100px; min-width: fit-content; height: 30px; display: block;" type="submit" value="Beállítás">
                     </form>
-                    <form action="" method="post" class="col">
-                        <fieldset>
-                            <legend>Jelentkezett hallgatók</legend>
-                            <select style="width:fit-content;" name="jelentkezett" id="jelentkezett" multiple>
-                                <option value="Diszkrét matematika1" class="p-1">BWE8LT</option>
-                                <option value="Diszkrét matematika1" class="p-1">BWE8LT</option>
-                                <option value="Diszkrét matematika1" class="p-1">BWE8LT</option>
-                                <option value="Diszkrét matematika1" class="p-1">BWE8LT</option>
-                                <option value="Diszkrét matematika1" class="p-1">BWE8LT</option>
-                                <option value="Diszkrét matematika1" class="p-1">BWE8LT</option>
-                                <option value="Diszkrét matematika1" class="p-1">BWE8LT</option>
-                            </select>
-                        </fieldset>
-                        <input class="rounded mt-1" style="background-color: green; border:none; color: white; width: 100px; min-width: fit-content; height: 30px; display: block;" type="submit" value="Elfogadás">
-                    </form>
+                    <div th:if="${elfogadasraVaroHallgatok != null}" th:with="filteredHallgatok=${filterer.filter(elfogadasraVaroHallgatok, targy.getKey().getTantargyId())}" class="col">
+                        <form th:each="hallgatokMap : ${filteredHallgatok}" th:action="@{teacher/approve-students}" action="" method="post">
+                            <div th:with="hallgatok = ${hallgatokMap.entrySet().iterator().next()}">
+                                <fieldset>
+                                    <legend>Jelentkezett hallgatók</legend>
+                                    <select style="width:fit-content;" name="studentsToApprove" id="studentsToApprove" multiple>
+                                        <option th:each="hallgato : ${hallgatok.getValue()}" th:value="${hallgato.getPsCode()}" th:text="${hallgato.getPsCode()}" value="NONE" class="p-1">NONE</option>
+                                    </select>
+                                </fieldset>
+                                <input type="hidden" name="tantargy_id" th:value="${targy.getKey().getTantargyId()}">
+                                <input class="rounded mt-1" style="background-color: green; border:none; color: white; width: 100px; min-width: fit-content; height: 30px; display: block;" type="submit" value="Elfogadás">
+                            </div>
+                        </form>
+                    </div>
                 </div>
 
                 <div>
@@ -144,7 +143,7 @@
                     </div>
                 </div>
                 <hr style="background-color: white; height: 3px; width: 100%; border: none; color: white;">
-            </div>    
+            </div>
         </div>
     </div>
     <div class="m-3 mx-5 p-3 rounded" style="background-color: #377ded; color:white; box-shadow: 2px 2px 2px #377ded;">

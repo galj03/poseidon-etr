@@ -190,25 +190,81 @@ public class OracleDBTantargyDAO extends BaseDAO implements ITantargyDAO {
         getJdbcTemplate().update(sql, tantargy.getTantargyId());
     }
 
+    public List<Map<Integer, List<IUser>>> listStudentsToApprove(String targyfelelos_ps_kod) {
+        String sql = "SELECT ps_kod, Tantargy_id FROM felvette " +
+                "INNER JOIN tantargy ON felvette.tantargy_id = tantargy.id " +
+                "WHERE targyfelelos = ? AND allapot= ? " +
+                "ORDER BY tantargy_id";
+        var result = super.getCustomRows(sql, targyfelelos_ps_kod, Constants.JOVAHAGYASRA_VAR);
 
-    public List<IUser> listStudentsToApprove(ITantargy tantargy) {
-        String sql = "SELECT ps_kod FROM felvette WHERE tantargy_id = ? and allapot = ?";
-        var result = super.getCustomRows(sql, tantargy.getTantargyId(), Constants.JOVAHAGYASRA_VAR);
-        List<IUser> hallgatok = new ArrayList<>();
-        for (var item : result) {
-            hallgatok.add(new User()
-                    .setPsCode((String) item.get("ps_kod"))
-            );
+        if (result == null) {
+            return null;
         }
-        return hallgatok;
+
+        List<Map<Integer, List<IUser>>> hallgatokByTargy = new ArrayList<>();
+        Map<Integer, List<IUser>> hallgatokForTargy = new HashMap<>();
+        List<IUser> hallgatok = new ArrayList<>();
+        ITantargy lastTargy = null;
+        ITantargy tmpTargy = null;
+        IUser tmpUser = null;
+        for (var item : result) {
+            tmpTargy = new Tantargy()
+                    .setTantargyId(((BigDecimal) item.get("tantargy_id")).intValue());
+
+            if (lastTargy == null) {
+                lastTargy = tmpTargy;
+            }
+
+            tmpUser = new User()
+                    .setPsCode((String) item.get("ps_kod"));
+
+            if (lastTargy.getTantargyId() != tmpTargy.getTantargyId()) {
+                hallgatokForTargy.put(lastTargy.getTantargyId(), new ArrayList<>(hallgatok));
+                hallgatokByTargy.add(new HashMap<>(hallgatokForTargy));
+                hallgatokForTargy.clear();
+                hallgatok.clear();
+                lastTargy = tmpTargy;
+                hallgatok.add(tmpUser);
+            } else {
+                hallgatok.add(tmpUser);
+            }
+
+        }
+        if (lastTargy.getTantargyId() == tmpTargy.getTantargyId()) {
+            hallgatokForTargy.put(lastTargy.getTantargyId(), new ArrayList<>(hallgatok));
+            hallgatokByTargy.add(new HashMap<>(hallgatokForTargy));
+        }
+
+        return hallgatokByTargy;
     }
 
     @Override
-    public void approveStudents(List<IUser> students) {
+    public void approveStudents(List<String> students, int tantargyId) {
         if (students == null) throw new ArgumentNullException("Students must be given");
+        StringBuilder sb = new StringBuilder();
+//        "UPDATE felvette SET allapot = 'JOVAHAGYASRA_VAR' " +
+//                "WHERE (ps_kod = ? or ps_kod = ? or ps_kod = ?) " +
+//                "AND tantargy_id = ?"
+        sb.append("UPDATE felvette SET allapot = 'JOVAHAGYOTT' " +
+                "WHERE (");
+        for (int i = 0; i < students.size(); i++) {
+            if (i == students.size()-1) {
+                sb.append("ps_kod = ? ");
+                continue;
+            }
+            sb.append("ps_kod = ? OR ");
+        }
+        sb.append(") AND tantargy_id = ?");
+        getJdbcTemplate().update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sb.toString());
+            int i = 1;
+            for (String student : students) {
+                ps.setString(i++, student);
+            }
+            ps.setInt(i, tantargyId);
 
-
-
+            return ps;
+        });
     }
 
     //region Private members

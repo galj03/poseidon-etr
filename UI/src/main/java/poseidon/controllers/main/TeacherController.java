@@ -44,8 +44,22 @@ public class TeacherController {
 
         List<Map<IKurzus, Map<IUser, Integer>>> oktatottKurzusok = _kurzusDAO.getTeachingCourses(principal.getName());
         if (oktatottKurzusok != null) {
-            model.addAttribute("oktatottKurzusok", _kurzusDAO.getTeachingCourses(principal.getName()));
+            model.addAttribute("oktatottKurzusok", oktatottKurzusok);
         }
+
+        List<Map<Integer, List<IUser>>> elfogadasraVaroHallgatok = _tantargyDAO.listStudentsToApprove(principal.getName());
+        if (elfogadasraVaroHallgatok != null) {
+            model.addAttribute("elfogadasraVaroHallgatok", elfogadasraVaroHallgatok);
+        }
+
+        class FilterOut {
+
+            public static List<Map<Integer, List<IUser>>> filter(List<Map<Integer, List<IUser>>> in, Integer tantargy_id) {
+                return in.stream().filter(x->x.keySet().contains(tantargy_id)).toList();
+            }
+        }
+
+        model.addAttribute("filterer", new FilterOut());
 
         model.addAttribute("allTargy", _tantargyDAO.getAll());
         return "main/teacher";
@@ -96,8 +110,9 @@ public class TeacherController {
     }
 
     @PostMapping("/teacher/approve-students")
-    public String approveStudents() {
-
+    public String approveStudents(@RequestParam("studentsToApprove") List<String> studentsToApprove,
+                                  @RequestParam("tantargy_id") Integer tantargyId) {
+        _tantargyDAO.approveStudents(studentsToApprove, tantargyId);
 
 
         return "redirect:/teacher";
