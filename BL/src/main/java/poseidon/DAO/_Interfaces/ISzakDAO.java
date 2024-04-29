@@ -17,5 +17,5 @@ public interface ISzakDAO {
 
     void remove(ISzak szak) throws IllegalArgumentException, QueryException, DataIntegrityViolationException;
 
-    List<ITantargy> getRequiredClasses(ISzak szak) throws QueryException;
+    Integer getRequiredClassesCount(ISzak szak) throws QueryException;
 }

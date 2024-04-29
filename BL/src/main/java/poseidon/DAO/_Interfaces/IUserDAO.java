@@ -65,5 +65,5 @@ public interface IUserDAO {
      * @return a course list
      * @throws QueryException If anything went wrong not with the Query but with SQL server.
      */
-    List<IKurzus> finishedCourses(IUser user) throws QueryException;
+    Integer finishedCoursesCount(IUser user) throws QueryException;
 }

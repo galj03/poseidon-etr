@@ -59,7 +59,7 @@
                 <div class="progress-bar bg-success" id="tanterv_credit" role="progressbar"
                      th:style="'width: ' + ${completionRate*100} + '%;'"
                      th:aria-valuenow="${completionRate}"
-                     th:text="${completedCredits.size()} + '/' + ${requiredCredits.size()}"
+                     th:text="${completedCredits} + '/' + ${requiredCredits}"
                      aria-valuemin="0" aria-valuemax="100">4/20</div>
             </div>
         </div>

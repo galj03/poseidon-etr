@@ -90,26 +90,17 @@ public class OracleDBSzakDAO extends BaseDAO implements ISzakDAO {
     }
 
     @Override
-    public List<ITantargy> getRequiredClasses(ISzak szak) throws QueryException {
-        String sql = "select * from kotelezo, tantargy " +
-                "where kotelezo.szak_id=? and kotelezo.tantargy_id=tantargy.id";
+    public Integer getRequiredClassesCount(ISzak szak) throws QueryException {
+        String sql = "select count(*) as num, kotelezo.szak_id from kotelezo, tantargy " +
+                "where kotelezo.tantargy_id=tantargy.id " +
+                "group by kotelezo.szak_id having kotelezo.szak_id=?";
 
         var requiredSubjectsData = super.getCustomRows(sql, szak.getSzakId());
         if (requiredSubjectsData == null) {
-            return new ArrayList<>();
+            return 0;
         }
 
-        var results = new ArrayList<ITantargy>(requiredSubjectsData.size());
-        for (var subject : requiredSubjectsData) {
-            var subjectObj = new Tantargy()
-                    .setTantargyId(((BigDecimal) subject.get("id")).intValue())
-                    .setNev((String) subject.get("nev"))
-                    .setFelelos((String) subject.get("targyfelelos"));
-
-            results.add(subjectObj);
-        }
-
-        return results;
+        return ((BigDecimal) requiredSubjectsData.get(0).get("num")).intValue();
     }
 
     //region Private members

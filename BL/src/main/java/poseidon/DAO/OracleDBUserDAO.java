@@ -113,10 +113,16 @@ public class OracleDBUserDAO extends BaseDAO implements IUserDAO {
         return getCourses(user, sql);
     }
 
-    public List<IKurzus> finishedCourses(IUser user) throws QueryException {
-        String sql = "select * from kurzus, felvette " +
-                String.format("where felvette.kurzus_id=kurzus.id and felvette.PS_kod=? and allapot='%s'", TELJESITETT);
-        return getCourses(user, sql);
+    public Integer finishedCoursesCount(IUser user) throws QueryException {
+        String sql = "select count(*) as num, felvette.PS_kod from tantargy, felvette " +
+                String.format("where felvette.tantargy_id=tantargy.id and allapot='%s' ", TELJESITETT)
+                + "group by felvette.PS_kod having felvette.PS_kod=?";
+        var requiredSubjectsData = super.getCustomRows(sql, user.getPsCode());
+        if (requiredSubjectsData == null) {
+            return 0;
+        }
+
+        return ((BigDecimal) requiredSubjectsData.get(0).get("num")).intValue();
     }
     //endregion
 

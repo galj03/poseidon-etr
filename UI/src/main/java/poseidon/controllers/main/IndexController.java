@@ -46,11 +46,11 @@ public class IndexController {
         model.addAttribute("userCourses", splittedCourses);
 
         // degree progress
-        var allRequiredCredits = _szakDAO.getRequiredClasses(_szakDAO.getById(_user.getSzakId()));
-        var allCompletedCredits = _userDAO.finishedCourses(_user);
+        var allRequiredCredits = _szakDAO.getRequiredClassesCount(_szakDAO.getById(_user.getSzakId()));
+        var allCompletedCredits = _userDAO.finishedCoursesCount(_user);
         model.addAttribute("requiredCredits", allRequiredCredits);
         model.addAttribute("completedCredits", allCompletedCredits);
-        model.addAttribute("completionRate", (float)allCompletedCredits.size()/ allRequiredCredits.size());
+        model.addAttribute("completionRate", (float)allCompletedCredits/ allRequiredCredits);
 
         return "main/index";
     }
