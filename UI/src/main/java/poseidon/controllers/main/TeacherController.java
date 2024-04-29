@@ -12,6 +12,8 @@ import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.lang.Integer.parseInt;
+
 @Controller
 public class TeacherController {
 
@@ -67,6 +69,16 @@ public class TeacherController {
                                Model model) {
 
         _adminController.saveKurzus(id, name, oktato, kezdesNap, kezdesIdo, tantargyId, teremId, isFelveheto != null, isVizsga != null, model);
+
+        return "redirect:/teacher";
+    }
+
+    @PostMapping("/teacher/update-grade")
+    public String updateGrade(@RequestParam("tantargyId") Integer tantargyId,
+                              @RequestParam("ps_kod") String psKod,
+                              @RequestParam("grade") String grade) {
+
+        _kurzusDAO.saveGrade(psKod, tantargyId, "Nincs jegy".equals(grade) ? null : parseInt(grade));
 
         return "redirect:/teacher";
     }

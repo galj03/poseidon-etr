@@ -15,5 +15,7 @@ public interface IKurzusDAO {
 
     void remove(IKurzus kurzus) throws IllegalArgumentException, QueryException;
 
+    void saveGrade(String psCode, Integer tantargyId, Integer grade);
+
     Map<IKurzus, Map<IUser, Integer>> getTeachingCourses(String teacher_ps_kod);
 }
