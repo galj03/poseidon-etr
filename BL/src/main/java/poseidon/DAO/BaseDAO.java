@@ -36,4 +36,17 @@ public class BaseDAO extends JdbcDaoSupport {
             throw new QueryException("Could not get values from database", exception);
         }
     }
+
+    public List<Map<String, Object>> getCustomRows(String sql, Object... args) throws QueryException {
+        try {
+            List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sql, args);
+
+            if (rows.isEmpty()) return null;
+
+            return rows;
+
+        } catch (DataAccessException exception) {
+            throw new QueryException("Could not get values from database", exception);
+        }
+    }
 }
