@@ -9,8 +9,10 @@ import poseidon.Constants;
 import poseidon.DAO._Interfaces.ITantargyDAO;
 import poseidon.DTO.Kurzus;
 import poseidon.DTO.Tantargy;
+import poseidon.DTO.User;
 import poseidon.DTO._Interfaces.IKurzus;
 import poseidon.DTO._Interfaces.ITantargy;
+import poseidon.DTO._Interfaces.IUser;
 import poseidon.Exceptions.ArgumentNullException;
 import poseidon.Exceptions.QueryException;
 
@@ -87,7 +89,7 @@ public class OracleDBTantargyDAO extends BaseDAO implements ITantargyDAO {
     }
 
     @Override
-    public Map<ITantargy, List<IKurzus>> getTeachingSubjects(String ps_kod) {
+    public List<Map<ITantargy, List<IKurzus>>> getTeachingSubjects(String ps_kod) {
         String sql = "SELECT tantargy.id as tantargy_id, tantargy.nev as tantargy_nev, " +
                 "tantargy.targyfelelos, " +
                 "kurzus.id as kurzus_id, kurzus.nev as kurzus_nev, " +
@@ -97,6 +99,12 @@ public class OracleDBTantargyDAO extends BaseDAO implements ITantargyDAO {
                 "INNER JOIN kurzus ON tantargy.id = kurzus.tantargy_id " +
                 "WHERE targyfelelos=?";
         var list = super.getCustomRows(sql, ps_kod);
+
+        if (list == null) {
+            return null;
+        }
+
+        List<Map<ITantargy, List<IKurzus>>> tanitottTargyakList = new ArrayList<>();
         Map<ITantargy, List<IKurzus>> tanitottTargyak = new HashMap<>();
         ITantargy lastTantargy = null;
         ITantargy tmpTargy = null;
@@ -128,8 +136,10 @@ public class OracleDBTantargyDAO extends BaseDAO implements ITantargyDAO {
 
             if (tmpTargy.getTantargyId() != lastTantargy.getTantargyId()) {
                 tanitottTargyak.put(lastTantargy,new ArrayList<>(targyonBeluliKurzusok));
+                tanitottTargyakList.add(new HashMap<>(tanitottTargyak));
                 lastTantargy = tmpTargy;
                 targyonBeluliKurzusok.clear();
+                tanitottTargyak.clear();
                 targyonBeluliKurzusok.add(tmpKurzus);
             } else {
                 targyonBeluliKurzusok.add(tmpKurzus);
@@ -137,8 +147,9 @@ public class OracleDBTantargyDAO extends BaseDAO implements ITantargyDAO {
         }
         if (tmpTargy == lastTantargy) {
             tanitottTargyak.put(lastTantargy, targyonBeluliKurzusok);
+            tanitottTargyakList.add(new HashMap<>(tanitottTargyak));
         }
-        return tanitottTargyak;
+        return tanitottTargyakList;
     }
 
     @Override
@@ -177,6 +188,27 @@ public class OracleDBTantargyDAO extends BaseDAO implements ITantargyDAO {
 
         String sql = "DELETE FROM elofeltetel WHERE tantargy_id=?";
         getJdbcTemplate().update(sql, tantargy.getTantargyId());
+    }
+
+
+    public List<IUser> listStudentsToApprove(ITantargy tantargy) {
+        String sql = "SELECT ps_kod FROM felvette WHERE tantargy_id = ? and allapot = ?";
+        var result = super.getCustomRows(sql, tantargy.getTantargyId(), Constants.JOVAHAGYASRA_VAR);
+        List<IUser> hallgatok = new ArrayList<>();
+        for (var item : result) {
+            hallgatok.add(new User()
+                    .setPsCode((String) item.get("ps_kod"))
+            );
+        }
+        return hallgatok;
+    }
+
+    @Override
+    public void approveStudents(List<IUser> students) {
+        if (students == null) throw new ArgumentNullException("Students must be given");
+
+
+
     }
 
     //region Private members

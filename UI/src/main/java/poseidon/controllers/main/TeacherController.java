@@ -7,9 +7,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import poseidon.DAO.OracleDBKurzusDAO;
 import poseidon.DAO.OracleDBTantargyDAO;
+import poseidon.DTO._Interfaces.IKurzus;
+import poseidon.DTO._Interfaces.ITantargy;
+import poseidon.DTO._Interfaces.IUser;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
@@ -33,8 +37,16 @@ public class TeacherController {
     @GetMapping("/teacher")
     public String openTeacherPage(Model model, Principal principal) {
 
-        model.addAttribute("tanitottTargyak", _tantargyDAO.getTeachingSubjects(principal.getName()).entrySet());
-        model.addAttribute("oktatottKurzusok", _kurzusDAO.getTeachingCourses(principal.getName()).entrySet());
+        List<Map<ITantargy, List<IKurzus>>> tanitottTargyak = _tantargyDAO.getTeachingSubjects(principal.getName());
+        if (tanitottTargyak != null) {
+            model.addAttribute("tanitottTargyak", tanitottTargyak);
+        }
+
+        List<Map<IKurzus, Map<IUser, Integer>>> oktatottKurzusok = _kurzusDAO.getTeachingCourses(principal.getName());
+        if (oktatottKurzusok != null) {
+            model.addAttribute("oktatottKurzusok", _kurzusDAO.getTeachingCourses(principal.getName()));
+        }
+
         model.addAttribute("allTargy", _tantargyDAO.getAll());
         return "main/teacher";
     }
@@ -79,6 +91,14 @@ public class TeacherController {
                               @RequestParam("grade") String grade) {
 
         _kurzusDAO.saveGrade(psKod, tantargyId, "Nincs jegy".equals(grade) ? null : parseInt(grade));
+
+        return "redirect:/teacher";
+    }
+
+    @PostMapping("/teacher/approve-students")
+    public String approveStudents() {
+
+
 
         return "redirect:/teacher";
     }

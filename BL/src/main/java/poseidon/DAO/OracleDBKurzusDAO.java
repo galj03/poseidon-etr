@@ -123,11 +123,17 @@ public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
     }
 
     @Override
-    public Map<IKurzus, Map<IUser, Integer>> getTeachingCourses(String teacher_ps_kod) {
+    public List<Map<IKurzus, Map<IUser, Integer>>> getTeachingCourses(String teacher_ps_kod) {
         String sql = "SELECT kurzus.nev, ps_kod, felvette.tantargy_id, kurzus_id, jegy FROM kurzus " +
                 "INNER JOIN felvette ON kurzus.id = felvette.kurzus_id " +
                 "WHERE kurzus.oktato_ps_kod =?";
         var queryResultKurzusok = super.getCustomRows(sql, teacher_ps_kod);
+
+        if (queryResultKurzusok == null) {
+            return null;
+        }
+
+        List<Map<IKurzus, Map<IUser, Integer>>> hallgatokJegyeKurzusonkentList = new ArrayList<>();
         Map<IKurzus, Map<IUser, Integer>> hallgatokJegyeKurzusonkent = new HashMap<>();
         Map<IUser, Integer> hallgatokJegyei = new HashMap<>();
         IKurzus lastKurzus = null;
@@ -147,8 +153,10 @@ public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
 
             if (lastKurzus.getKurzusId() != tmpKurzus.getKurzusId()) {
                 hallgatokJegyeKurzusonkent.put(lastKurzus, new HashMap<>(hallgatokJegyei));
+                hallgatokJegyeKurzusonkentList.add(new HashMap<>(hallgatokJegyeKurzusonkent));
                 lastKurzus = tmpKurzus;
                 hallgatokJegyei.clear();
+                hallgatokJegyeKurzusonkent.clear();
                 hallgatokJegyei.put(tmpUser, item.get("jegy") == null ? 0 : ((BigDecimal)item.get("jegy")).intValue());
             } else {
                 hallgatokJegyei.put(tmpUser, item.get("jegy") == null ? 0 : ((BigDecimal)item.get("jegy")).intValue());
@@ -156,8 +164,9 @@ public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
         }
         if (lastKurzus == tmpKurzus) {
             hallgatokJegyeKurzusonkent.put(lastKurzus, new HashMap<>(hallgatokJegyei));
+            hallgatokJegyeKurzusonkentList.add(new HashMap<>(hallgatokJegyeKurzusonkent));
         }
-        return hallgatokJegyeKurzusonkent;
+        return hallgatokJegyeKurzusonkentList;
     }
 
     //region Private members

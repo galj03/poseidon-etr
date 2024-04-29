@@ -37,8 +37,8 @@
         <h2 class="font-bold" style="font-weight: bold; display: flex; float: left;">Oktatott tárgyak</h2>
         <hr style="background-color: white; height: 3px; width: 100%; border: none; color: white;">
         <div id="oktatoiTable" class="container" style="max-height: 400px; overflow-y: auto; display: block;">
-            <div th:each="tantargy : ${tanitottTargyak}" style="height: fit-content; width: 100%;">
-                <h2 style="font-weight: bold;" th:text="${tantargy.getKey().getNev()}">Diszkrét matematika II Gyak.</h2>
+            <div th:each="tantargy : ${tanitottTargyak}" th:with="targy=${tantargy.entrySet().iterator().next()}" style="height: fit-content; width: 100%;">
+                <h2 style="font-weight: bold;" th:text="${targy.getKey().getNev()}">Diszkrét matematika II Gyak.</h2>
                 
                 <div class="container row">
                     <form th:action="@{teacher/save-required-subjects}" method="post" class="col-3">
@@ -48,7 +48,7 @@
                                 <option th:each="elofeltetelTargy : ${allTargy}" th:text="${elofeltetelTargy.getNev()}" th:value="${elofeltetelTargy.getTantargyId()}" value="Diszkrét matematika1" class="p-1">Diszkrét matematika1</option>
                             </select>
                         </fieldset>
-                        <input type="hidden" name="tantargyId" th:value="${tantargy.getKey().getTantargyId()}">
+                        <input type="hidden" name="tantargyId" th:value="${targy.getKey().getTantargyId()}">
                         <input class="rounded mt-1" style="background-color: green; border:none; color: white; width: 100px; min-width: fit-content; height: 30px; display: block;" type="submit" value="Beállítás">
                     </form>
                     <form action="" method="post" class="col">
@@ -95,7 +95,7 @@
                             </div>
                             <div class="col-1"></div>
                         </div>
-                        <form th:action="@{teacher/modify-kurzus}" method="post" th:each="kurzus : ${tantargy.getValue()}" class="row my-3">
+                        <form th:action="@{teacher/modify-kurzus}" method="post" th:each="kurzus : ${targy.getValue()}" class="row my-3">
                             <div class="col-1">
                                 <span style="width: 100%;" th:text="${kurzus.getKurzusId()}">-1</span>
                             </div>
@@ -152,7 +152,7 @@
         <h2 class="font-bold" style="font-weight: bold; display: flex; float: left;">Oktatott kurzusok</h2>
         <hr style="background-color: white; height: 3px; width: 100%; border: none; color: white;">
         <div id="oktatottKurzusTable" class="container" style="max-height: 400px; overflow-y: auto; display: block;">
-            <div th:each="kurzus : ${oktatottKurzusok}" style="height: fit-content; width: 100%;">
+            <div th:each="kurzusEntry : ${oktatottKurzusok}" th:with="kurzus=${kurzusEntry.entrySet().iterator().next()}" style="height: fit-content; width: 100%;">
                 <h2 th:text="${kurzus.getKey().getNev()}" style="font-weight: bold;">Diszkrét matematika II Gyak.</h2>
                 
                 <hr style="background-color: white; height: 3px; width: 100%; border: none; color: white;">

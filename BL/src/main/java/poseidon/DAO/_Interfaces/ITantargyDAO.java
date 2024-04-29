@@ -2,6 +2,7 @@ package poseidon.DAO._Interfaces;
 
 import poseidon.DTO._Interfaces.IKurzus;
 import poseidon.DTO._Interfaces.ITantargy;
+import poseidon.DTO._Interfaces.IUser;
 import poseidon.Exceptions.QueryException;
 
 import java.util.List;
@@ -16,9 +17,11 @@ public interface ITantargyDAO {
 
     void remove(ITantargy tantargy) throws IllegalArgumentException, QueryException;
 
-    Map<ITantargy, List<IKurzus>> getTeachingSubjects(String ps_kod);
+    List<Map<ITantargy, List<IKurzus>>> getTeachingSubjects(String ps_kod);
 
     boolean saveRequiredSubjects(ITantargy tantargy, List<ITantargy> feltetelek);
 
     void removeAllRequiredSubjects(ITantargy tantargy);
+
+    void approveStudents(List<IUser> students);
 }
