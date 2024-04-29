@@ -43,7 +43,7 @@
                 <div class="container row">
                     <form th:action="@{teacher/save-required-subjects}" method="post" class="col-3">
                         <fieldset>
-                            <legend>Előféletételek</legend>
+                            <legend>Előfeltételek</legend>
                             <select style="width:fit-content;" name="elofeltetel" id="elofeltetel" multiple>
                                 <option th:each="elofeltetelTargy : ${allTargy}" th:text="${elofeltetelTargy.getNev()}" th:value="${elofeltetelTargy.getTantargyId()}" value="Diszkrét matematika1" class="p-1">Diszkrét matematika1</option>
                             </select>

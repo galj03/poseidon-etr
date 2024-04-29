@@ -162,7 +162,7 @@ public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
                 hallgatokJegyei.put(tmpUser, item.get("jegy") == null ? 0 : ((BigDecimal)item.get("jegy")).intValue());
             }
         }
-        if (lastKurzus == tmpKurzus) {
+        if (lastKurzus.getKurzusId() == tmpKurzus.getKurzusId()) {
             hallgatokJegyeKurzusonkent.put(lastKurzus, new HashMap<>(hallgatokJegyei));
             hallgatokJegyeKurzusonkentList.add(new HashMap<>(hallgatokJegyeKurzusonkent));
         }

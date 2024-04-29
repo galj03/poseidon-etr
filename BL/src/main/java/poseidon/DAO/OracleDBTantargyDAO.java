@@ -198,7 +198,7 @@ public class OracleDBTantargyDAO extends BaseDAO implements ITantargyDAO {
         var result = super.getCustomRows(sql, targyfelelos_ps_kod, Constants.JOVAHAGYASRA_VAR);
 
         if (result == null) {
-            return null;
+            return new ArrayList<>();
         }
 
         List<Map<Integer, List<IUser>>> hallgatokByTargy = new ArrayList<>();
