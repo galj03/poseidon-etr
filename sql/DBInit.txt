@@ -116,6 +116,7 @@ ALTER TABLE komment ADD CONSTRAINT komment_fki2 FOREIGN KEY(PS_kod) REFERENCES f
 
 create or replace type students as table of student_obj;
 /
+
 create or replace type student_obj as OBJECT (
     PS_kod VARCHAR2(20),
     nev VARCHAR2(50),
@@ -127,6 +128,8 @@ create or replace type student_obj as OBJECT (
     vegzes_ideje NUMBER
 );
 /
+
+
 -- eljarasok
 
 create or replace procedure inc_felvette_counter(x_ps_kod in felhasznalo.PS_kod%type)
@@ -157,6 +160,7 @@ begin
     return v_students;
 end;
 /
+
 create or replace function is_university_finished (x_ps_kod in felhasznalo.PS_kod%type)
 return boolean
 is
@@ -179,6 +183,26 @@ begin
     return (v_finished_count = v_required_count);
 end;
 /
+
+CREATE OR REPLACE FUNCTION countStudentsOnCourse (kurzusID IN kurzus.ID%TYPE) RETURN NUMBER
+IS
+    v_result NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_result FROM felvette WHERE kurzus_id = kurzusID;
+    RETURN v_result;
+END;
+/
+
+CREATE OR REPLACE FUNCTION capacity (kurzusID IN kurzus.ID%TYPE) RETURN NUMBER
+IS
+    v_result NUMBER;
+BEGIN
+    select ferohely into v_result from kurzus, terem where kurzus.terem_id=terem.id and kurzus.id=kurzusID;
+    RETURN v_result;
+END;
+/
+
+
 -- triggerek
 
 create or replace trigger add_user_to_felvette_counter
@@ -202,6 +226,19 @@ begin
         update felhasznalo set vegzes_ideje = EXTRACT(YEAR FROM sysdate) where ps_kod = :NEW.PS_kod;
     end if;
 end;
+/
+
+CREATE OR REPLACE TRIGGER changeFelvehetoStatus
+AFTER INSERT
+ON felvette
+FOR EACH ROW
+BEGIN
+    IF countStudentsOnCourse(:NEW.kurzus_id) >= capacity(:NEW.kurzus_id) THEN
+        UPDATE kurzus
+        SET felveheto = 'N'
+        WHERE id = :NEW.kurzus_id;
+    END IF;
+END;
 /
 
 /* ---------- ALAPREKORDOK ---------- */
@@ -452,31 +489,3 @@ select * from komment;
 
 -- TRIGGEREK
 
-CREATE OR REPLACE FUNCTION countStudentsOnCourse (kurzusID IN kurzus.ID%TYPE) RETURN NUMBER
-IS
-    v_result NUMBER;
-BEGIN
-    SELECT COUNT(*) INTO v_result FROM felvette WHERE kurzus_id = kurzusID;
-    RETURN v_result;
-END;
-/
-CREATE OR REPLACE FUNCTION capacity (kurzusID IN kurzus.ID%TYPE) RETURN NUMBER
-IS
-    v_result NUMBER;
-BEGIN
-    select ferohely into v_result from kurzus, terem where kurzus.terem_id=terem.id and kurzus.id=kurzusID;
-    RETURN v_result;
-END;
-
-/
-CREATE OR REPLACE TRIGGER changeFelvehetoStatus
-AFTER INSERT
-ON felvette
-FOR EACH ROW
-BEGIN
-    IF countStudentsOnCourse(:NEW.kurzus_id) >= capacity(:NEW.kurzus_id) THEN
-        UPDATE kurzus
-        SET felveheto = 'N'
-        WHERE id = :NEW.kurzus_id;
-    END IF;
-END;
