@@ -48,8 +48,15 @@ public class CourseController {
         return "main/courselisting";
     }
 
-//    @GetMapping("/enrollcourse")
-//    public String enrollCourse() {
-//        return "";
-//    }
+    @GetMapping("/enrollcourse")
+    public String enrollCourse(@RequestParam("kurzusId") Integer kurzusId, Model model, Principal principal) {
+        _kurzusDAO.enrollCourse(kurzusId, principal.getName());
+        return "redirect:/subjectlisting";
+    }
+
+    @GetMapping("/leavecourse")
+    public String leaveCourse(@RequestParam("kurzusId") Integer kurzusId, Model model, Principal principal) {
+        _kurzusDAO.removeFromCourse(principal.getName(), kurzusId);
+        return "redirect:/subjectlisting";
+    }
 }

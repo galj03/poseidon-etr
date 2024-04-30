@@ -19,6 +19,8 @@
         <div class="header-data">Dátum</div>
         <div class="header-data">Vizsga</div>
         <div class="header-data">Telítettség</div>
+        <div class="header-data">Felvehető</div>
+        <div class="header-data"></div>
         <div class="header-data"></div>
     </div>
     <div th:each="course : ${kurzusok}" class="card-container">
@@ -27,10 +29,17 @@
         <div th:text="${course.getNap()} + ' - ' + ${course.getKezdesIdeje()} + ' óra'" class="card-data"></div>
         <div th:text="${course.getVizsga() eq 'I' ? 'Igen' : 'Nem'}" class="card-data"></div>
         <div th:text="${course.getAktualisLetszam()} + '/' + ${course.getFerohely()}" class="card-data"></div>
+        <div th:text="${course.getFelveheto() ? 'Igen' : 'Nem'}" class="card-data"></div>
         <div class="card-data" style="text-align: right;">
-            <form th:action="@{/subjectlisting/courselisting}" method="GET">
-                <input hidden type="number" name="tantargyId" th:value="${course.getKurzusId()}">
+            <form th:action="@{/enrollcourse}" method="GET">
+                <input hidden type="number" name="kurzusId" th:value="${course.getKurzusId()}">
                 <input type="submit" value="Jelentkezés">
+            </form>
+        </div>
+        <div class="card-data" style="text-align: right;">
+            <form th:action="@{/leavecourse}" method="GET">
+                <input hidden type="number" name="kurzusId" th:value="${course.getKurzusId()}">
+                <input type="submit" value="Lejelentkezés">
             </form>
         </div>
     </div>

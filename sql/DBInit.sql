@@ -10,6 +10,7 @@ DROP TABLE tantargy;
 DROP TABLE Felhasznalo;
 DROP TABLE szak;
 DROP TABLE felvette_counter;
+DROP TABLE hallgatok_a_kurzuson_counter;
 
 /* ---------- Táblák létrehozása ---------- */
 CREATE TABLE felhasznalo (
@@ -82,10 +83,16 @@ CREATE TABLE komment (
     tartalom VARCHAR(200)
 );
 
-create table felvette_counter(
+CREATE TABLE hallgatok_a_kurzuson_counter (
+    v_kurzus_id NUMBER NOT NULL PRIMARY KEY,
+    v_value NUMBER NOT NULL
+);
+
+CREATE TABLE felvette_counter(
     v_PS_kod VARCHAR2(20) NOT NULL PRIMARY KEY,
     v_value NUMBER NOT NULL
-); 
+);
+
 
 /* ---------- Elsődleges kulcsok hozzárendelése táblákhoz ---------- */
 ALTER TABLE felhasznalo ADD CONSTRAINT felhasznalo_pk PRIMARY KEY (PS_kod);
@@ -120,8 +127,7 @@ ALTER TABLE komment ADD CONSTRAINT komment_fki2 FOREIGN KEY(PS_kod) REFERENCES f
 
 -- tipusok letrehozasa
 
-create or replace type students as table of student_obj;
-/
+drop type students;
 
 create or replace type student_obj as OBJECT (
     PS_kod VARCHAR2(20),
@@ -135,6 +141,9 @@ create or replace type student_obj as OBJECT (
 );
 /
 
+create or replace type students as table of student_obj;
+/
+
 
 -- eljarasok
 
@@ -142,6 +151,13 @@ create or replace procedure inc_felvette_counter(x_ps_kod in felhasznalo.PS_kod%
 is
 begin
     update felvette_counter set v_value=v_value+1 where v_ps_kod=x_ps_kod;
+end;
+/
+
+create or replace procedure inc_hallgatok_a_kurzuson_counter(kurzusID IN kurzus.ID%TYPE)
+is
+begin
+    update hallgatok_a_kurzuson_counter set v_value=v_value+1 where v_kurzus_id=kurzusID;
 end;
 /
 
@@ -194,7 +210,7 @@ CREATE OR REPLACE FUNCTION countStudentsOnCourse (kurzusID IN kurzus.ID%TYPE) RE
 IS
     v_result NUMBER;
 BEGIN
-    SELECT COUNT(*) INTO v_result FROM felvette WHERE kurzus_id = kurzusID;
+    SELECT v_value INTO v_result FROM hallgatok_a_kurzuson_counter WHERE v_kurzus_id = kurzusID;
     RETURN v_result;
 END;
 /
@@ -220,6 +236,15 @@ begin
 end;
 /
 
+create or replace trigger add_course_to_hallgatok_a_kurzuson_counter
+    after insert or update of id
+    on kurzus
+    for each row
+begin
+    insert into hallgatok_a_kurzuson_counter values(:NEW.id, 0);
+end;
+/
+
 create or replace trigger finish_university
 after insert or update of allapot
 on felvette
@@ -239,6 +264,8 @@ AFTER INSERT
 ON felvette
 FOR EACH ROW
 BEGIN
+    inc_hallgatok_a_kurzuson_counter(:NEW.kurzus_id);
+
     IF countStudentsOnCourse(:NEW.kurzus_id) >= capacity(:NEW.kurzus_id) THEN
         UPDATE kurzus
         SET felveheto = 'N'
@@ -492,6 +519,5 @@ select * from kotelezo;
 select * from felvette;
 select * from poszt;
 select * from komment;
-
--- TRIGGEREK
-
+select * from felvette_counter;
+select * from hallgatok_a_kurzuson_counter;
