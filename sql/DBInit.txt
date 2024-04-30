@@ -9,6 +9,7 @@ DROP TABLE poszt;
 DROP TABLE tantargy;
 DROP TABLE Felhasznalo;
 DROP TABLE szak;
+DROP TABLE felvette_counter;
 
 /* ---------- Táblák létrehozása ---------- */
 CREATE TABLE felhasznalo (
@@ -80,6 +81,11 @@ CREATE TABLE komment (
     PS_kod VARCHAR(20) NOT NULL,
     tartalom VARCHAR(200)
 );
+
+create table felvette_counter(
+    v_PS_kod VARCHAR2(20) NOT NULL PRIMARY KEY,
+    v_value NUMBER NOT NULL
+); 
 
 /* ---------- Elsődleges kulcsok hozzárendelése táblákhoz ---------- */
 ALTER TABLE felhasznalo ADD CONSTRAINT felhasznalo_pk PRIMARY KEY (PS_kod);
