@@ -470,6 +470,7 @@ INSERT INTO kotelezo VALUES(2, 4);
 INSERT INTO kotelezo VALUES(2, 8);
 INSERT INTO kotelezo VALUES(2, 10);
 INSERT INTO kotelezo VALUES(3, 1);
+INSERT INTO kotelezo VALUES(3, 4);
 
 -- feltetel tabla
 
