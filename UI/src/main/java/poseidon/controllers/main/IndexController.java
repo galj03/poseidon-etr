@@ -38,6 +38,7 @@ public class IndexController {
             _user = _userDAO.getByPsCode(currentUserName);
         }
         model.addAttribute("_userDAO", _userDAO);
+        var asd = _user.getAuthorities();
         model.addAttribute("user", _user);
 
         // timetable
