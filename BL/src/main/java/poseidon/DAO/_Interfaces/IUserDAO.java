@@ -58,4 +58,12 @@ public interface IUserDAO {
      * @throws QueryException If anything went wrong not with the Query but with SQL server.
      */
     List<IKurzus> currentCourses(IUser user) throws QueryException;
+
+    /**
+     * Get all courses that the given user has completed.
+     * @param user User whose courses are queried.
+     * @return a course list
+     * @throws QueryException If anything went wrong not with the Query but with SQL server.
+     */
+    Integer finishedCoursesCount(IUser user) throws QueryException;
 }

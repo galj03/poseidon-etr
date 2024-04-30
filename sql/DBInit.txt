@@ -109,6 +109,101 @@ ALTER TABLE poszt ADD CONSTRAINT poszt_fk1 FOREIGN KEY(PS_kod) REFERENCES felhas
 ALTER TABLE komment ADD CONSTRAINT komment_fki1 FOREIGN KEY(poszt_id) REFERENCES poszt(id) on delete cascade;
 ALTER TABLE komment ADD CONSTRAINT komment_fki2 FOREIGN KEY(PS_kod) REFERENCES felhasznalo(PS_kod) on delete cascade;
 
+
+/* ---------- Eljárások, függvények, triggerek, és a hozzájuk tartozó segéd objektumok ---------- */
+
+-- tipusok letrehozasa
+
+create or replace type students as table of student_obj;
+/
+create or replace type student_obj as OBJECT (
+    PS_kod VARCHAR2(20),
+    nev VARCHAR2(50),
+    email VARCHAR2(50),
+    jelszo VARCHAR2(500),
+    szak_id NUMBER,
+    jogosultsag VARCHAR2(50),
+    kezdes_eve NUMBER,
+    vegzes_ideje NUMBER
+);
+/
+-- eljarasok
+
+create or replace procedure inc_felvette_counter(x_ps_kod in felhasznalo.PS_kod%type)
+is
+begin
+    update felvette_counter set v_value=v_value+1 where v_ps_kod=x_ps_kod;
+end;
+/
+
+-- fuggvenyek
+
+create or replace function get_students_for_szak (v_szak_id IN szak.id%type)
+return students
+is
+    v_students students;
+begin
+    select  student_obj(PS_KOD ,
+            NEV ,
+            EMAIL ,
+            JELSZO ,
+            SZAK_ID ,
+            JOGOSULTSAG ,
+            KEZDES_EVE ,
+            VEGZES_IDEJE)
+    bulk collect into v_students
+    from felhasznalo
+    where szak_id=v_szak_id;
+    return v_students;
+end;
+/
+create or replace function is_university_finished (x_ps_kod in felhasznalo.PS_kod%type)
+return boolean
+is
+    v_ps_kod felhasznalo.PS_kod%type;
+    v_finished_count NUMBER;
+
+    v_id szak.id%type;
+    v_required_count NUMBER;
+begin
+    select v_value, v_PS_kod into v_finished_count, v_ps_kod
+    from felvette_counter
+    where v_PS_kod=x_ps_kod;
+
+    select szak_id into v_id from felhasznalo where PS_kod=x_ps_kod;
+
+    select count(*) as num, kotelezo.szak_id into v_required_count, v_id
+    from kotelezo, tantargy
+    where kotelezo.tantargy_id=tantargy.id
+    group by kotelezo.szak_id having kotelezo.szak_id=v_id;
+    return (v_finished_count = v_required_count);
+end;
+/
+-- triggerek
+
+create or replace trigger add_user_to_felvette_counter
+after insert or update of PS_kod
+on felhasznalo
+for each row
+begin
+    insert into felvette_counter values(:NEW.PS_kod, 0);
+end;
+/
+
+create or replace trigger finish_university
+after insert or update of allapot
+on felvette
+for each row
+when (NEW.allapot='TELJESITETT')
+begin
+    inc_felvette_counter(:NEW.PS_kod);
+
+    if is_university_finished(:NEW.PS_kod)=true then
+        update felhasznalo set vegzes_ideje = EXTRACT(YEAR FROM sysdate) where ps_kod = :NEW.PS_kod;
+    end if;
+end;
+/
+
 /* ---------- ALAPREKORDOK ---------- */
 
 -- szak tabla
@@ -304,6 +399,7 @@ INSERT INTO kotelezo VALUES(2, 1);
 INSERT INTO kotelezo VALUES(2, 4);
 INSERT INTO kotelezo VALUES(2, 8);
 INSERT INTO kotelezo VALUES(2, 10);
+INSERT INTO kotelezo VALUES(3, 1);
 
 -- feltetel tabla
 
@@ -323,7 +419,7 @@ INSERT INTO felvette VALUES('K1X7LR', 5, 5, 'TELJESITETT', 4);
 INSERT INTO felvette VALUES('OCS4LF', 1, 1, 'JOVAHAGYOTT', NULL);
 INSERT INTO felvette VALUES('OCS4LF', 2, 2, 'JOVAHAGYOTT', NULL);
 INSERT INTO felvette VALUES('OCS4LF', 3, 3, 'JOVAHAGYOTT', NULL);
-INSERT INTO felvette VALUES('OCS4LF', 4, 4, 'JOVAHAGYOTT', NULL);
+INSERT INTO felvette VALUES('OCS4LF', 4, 4, 'TELJESITETT', 5);
 INSERT INTO felvette VALUES('OCS4LF', 5, 5, 'JOVAHAGYOTT', NULL);
 
 -- poszt tabla
