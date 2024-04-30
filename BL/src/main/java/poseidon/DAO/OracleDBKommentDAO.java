@@ -20,16 +20,11 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class OracleDBKommentDAO extends JdbcDaoSupport implements IKommentDAO {
-    //region Properties
-    private final DataSource _dataSource;
-    //endregion
-
+public class OracleDBKommentDAO extends BaseDAO implements IKommentDAO {
     //region Constructor
     @Autowired
     public OracleDBKommentDAO(DataSource dataSource) {
-        _dataSource = dataSource;
-        setDataSource(_dataSource);
+        super(dataSource);
     }
     //endregion
 

@@ -2,35 +2,33 @@ package poseidon.DAO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import poseidon.Constants;
 import poseidon.DAO._Interfaces.IKurzusDAO;
 import poseidon.DTO.Kurzus;
+import poseidon.DTO.User;
 import poseidon.DTO._Interfaces.IKurzus;
+import poseidon.DTO._Interfaces.IUser;
 import poseidon.Exceptions.ArgumentNullException;
 import poseidon.Exceptions.QueryException;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
+import java.sql.Types;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Repository
-public class OracleDBKurzusDAO extends JdbcDaoSupport implements IKurzusDAO {
-    //region Properties
-    private final DataSource _dataSource;
-    //endregion
-
+public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
     //region Constructor
     @Autowired
     public OracleDBKurzusDAO(DataSource dataSource) {
-        _dataSource = dataSource;
-        setDataSource(_dataSource);
+        super(dataSource);
     }
     //endregion
 
@@ -104,7 +102,75 @@ public class OracleDBKurzusDAO extends JdbcDaoSupport implements IKurzusDAO {
         getJdbcTemplate().update(sql, kurzus.getKurzusId());
     }
 
+    @Override
+    public void saveGrade(String psCode, Integer tantargyId, Integer grade) {
+        try {
+            String sql = "UPDATE felvette SET jegy = ? WHERE ps_kod = ? AND tantargy_id = ?";
+            getJdbcTemplate().update(connection -> {
+                PreparedStatement ps = connection.prepareStatement(sql);
+                if (grade == null) {
+                    ps.setNull(1, Types.NUMERIC);
+                } else {
+                    ps.setInt(1, grade);
+                }
+                ps.setString(2, psCode);
+                ps.setInt(3, tantargyId);
+                return ps;
+            });
+        } catch (DataAccessException exception) {
+            throw new QueryException("Could not insert value into database", exception);
+        }
+    }
+
+    @Override
+    public List<Map<IKurzus, Map<IUser, Integer>>> getTeachingCourses(String teacher_ps_kod) {
+        String sql = "SELECT kurzus.nev, ps_kod, felvette.tantargy_id, kurzus_id, jegy FROM kurzus " +
+                "INNER JOIN felvette ON kurzus.id = felvette.kurzus_id " +
+                "WHERE kurzus.oktato_ps_kod =?";
+        var queryResultKurzusok = super.getCustomRows(sql, teacher_ps_kod);
+
+        if (queryResultKurzusok == null) {
+            return null;
+        }
+
+        List<Map<IKurzus, Map<IUser, Integer>>> hallgatokJegyeKurzusonkentList = new ArrayList<>();
+        Map<IKurzus, Map<IUser, Integer>> hallgatokJegyeKurzusonkent = new HashMap<>();
+        Map<IUser, Integer> hallgatokJegyei = new HashMap<>();
+        IKurzus lastKurzus = null;
+        IKurzus tmpKurzus = null;
+        for (var item : queryResultKurzusok) {
+            tmpKurzus = new Kurzus()
+                    .setKurzusId(((BigDecimal) item.get("kurzus_id")).intValue())
+                    .setNev((String) item.get("nev"))
+                    .setTantargyId(((BigDecimal) item.get("tantargy_id")).intValue());
+
+            if (lastKurzus == null) {
+                lastKurzus = tmpKurzus;
+            }
+
+            IUser tmpUser = new User()
+                    .setPsCode((String)item.get("ps_kod"));
+
+            if (lastKurzus.getKurzusId() != tmpKurzus.getKurzusId()) {
+                hallgatokJegyeKurzusonkent.put(lastKurzus, new HashMap<>(hallgatokJegyei));
+                hallgatokJegyeKurzusonkentList.add(new HashMap<>(hallgatokJegyeKurzusonkent));
+                lastKurzus = tmpKurzus;
+                hallgatokJegyei.clear();
+                hallgatokJegyeKurzusonkent.clear();
+                hallgatokJegyei.put(tmpUser, item.get("jegy") == null ? 0 : ((BigDecimal)item.get("jegy")).intValue());
+            } else {
+                hallgatokJegyei.put(tmpUser, item.get("jegy") == null ? 0 : ((BigDecimal)item.get("jegy")).intValue());
+            }
+        }
+        if (lastKurzus.getKurzusId() == tmpKurzus.getKurzusId()) {
+            hallgatokJegyeKurzusonkent.put(lastKurzus, new HashMap<>(hallgatokJegyei));
+            hallgatokJegyeKurzusonkentList.add(new HashMap<>(hallgatokJegyeKurzusonkent));
+        }
+        return hallgatokJegyeKurzusonkentList;
+    }
+
     //region Private members
+
     private IKurzus getRow(String sql, Object... args) throws QueryException {
         try {
             List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sql, args);

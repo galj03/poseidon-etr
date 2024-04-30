@@ -1,9 +1,11 @@
 package poseidon.DAO._Interfaces;
 
+import poseidon.DTO._Interfaces.IKurzus;
 import poseidon.Exceptions.QueryException;
 import poseidon.DTO._Interfaces.IUser;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Data access object for the user model.
@@ -48,4 +50,20 @@ public interface IUserDAO {
      * @throws SQLException If anything went wrong not with the Query but with SQL server.
      */
     void remove(IUser user) throws IllegalArgumentException, QueryException, SQLException;
+
+    /**
+     * Get all courses that the given user in currently enrolled in.
+     * @param user User whose courses are queried.
+     * @return a course list
+     * @throws QueryException If anything went wrong not with the Query but with SQL server.
+     */
+    List<IKurzus> currentCourses(IUser user) throws QueryException;
+
+    /**
+     * Get all courses that the given user has completed.
+     * @param user User whose courses are queried.
+     * @return a course list
+     * @throws QueryException If anything went wrong not with the Query but with SQL server.
+     */
+    Integer finishedCoursesCount(IUser user) throws QueryException;
 }
