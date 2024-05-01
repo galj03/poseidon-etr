@@ -62,7 +62,7 @@ public class IndexController {
         model.addAttribute("allNormalAvg", avgAll.values().stream()
                                                                       .mapToDouble(a -> a)
                                                                       .average().getAsDouble());
-        var completedCoursesForSzak = _szakDAO.finishedCoursesCountForSzak(szak);
+        var completedCoursesForSzak = _szakDAO.finishedCoursesCountForEvfolyam(szak, _user.getKezdesEve());
         model.addAttribute("completedCoursesForSzak", completedCoursesForSzak);
         var usersCount = _szakDAO.getAllUsersForSzak(szak).size();
         model.addAttribute("averageCoursesForUserInSzak", (float)completedCoursesForSzak/usersCount);

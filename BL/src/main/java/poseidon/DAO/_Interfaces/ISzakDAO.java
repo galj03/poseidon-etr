@@ -2,12 +2,10 @@ package poseidon.DAO._Interfaces;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import poseidon.DTO._Interfaces.ISzak;
-import poseidon.DTO._Interfaces.ITantargy;
 import poseidon.DTO._Interfaces.IUser;
 import poseidon.DTO._Interfaces.ITantargyData;
 import poseidon.Exceptions.QueryException;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -28,5 +26,5 @@ public interface ISzakDAO {
 
     Map<String, Float> getAveragesForAll(ISzak szak) throws QueryException;
 
-    Integer finishedCoursesCountForSzak(ISzak szak) throws QueryException;
+    Integer finishedCoursesCountForEvfolyam(ISzak szak, Integer kezdEv) throws QueryException;
 }

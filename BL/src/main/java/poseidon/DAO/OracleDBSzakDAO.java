@@ -211,11 +211,11 @@ public class OracleDBSzakDAO extends BaseDAO implements ISzakDAO {
     }
 
     @Override
-    public Integer finishedCoursesCountForSzak(ISzak szak) throws QueryException {
+    public Integer finishedCoursesCountForEvfolyam(ISzak szak, Integer kezdEv) throws QueryException {
         String sql = "select count(*) as num, felvette.PS_kod from tantargy, felvette, felhasznalo " +
-                String.format("where felvette.tantargy_id=tantargy.id and felvette.PS_kod=felhasznalo.PS_kod and allapot='%s' and felhasznalo.szak_id=? ", TELJESITETT)
+                String.format("where felvette.tantargy_id=tantargy.id and felvette.PS_kod=felhasznalo.PS_kod and allapot='%s' and felhasznalo.szak_id=? and felhasznalo.kezdes_eve=? ", TELJESITETT)
                 + "group by felvette.PS_kod";
-        var finishedCoursesData = super.getCustomRows(sql, szak.getSzakId());
+        var finishedCoursesData = super.getCustomRows(sql, szak.getSzakId(), kezdEv);
         if (finishedCoursesData == null) {
             return 0;
         }
