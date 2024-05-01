@@ -168,6 +168,35 @@ public class OracleDBSzakDAO extends BaseDAO implements ISzakDAO {
     }
 
     @Override
+    public List<IUser> getAllYearlyGraduatesForSzak(ISzak szak, Integer vegzesEv) throws QueryException {
+        String sql = "select * from felhasznalo where szak_id=? and vegzes_ideje=?";
+
+        var graduates = super.getCustomRows(sql, szak.getSzakId(), vegzesEv);
+        if (graduates == null) {
+            return new ArrayList<>();
+        }
+
+        List<IUser> result = new ArrayList<>();
+
+        for (var graduate : graduates) {
+            UserRoles role = Objects.equals(graduate.get("jogosultsag"), "ROLE_USER") ? UserRoles.ROLE_USER : UserRoles.ROLE_ADMIN;
+
+            result.add(new User()
+                    .setPsCode((String) graduate.get("PS_kod"))
+                    .setName((String) graduate.get("nev"))
+                    .setEmail((String) graduate.get("email"))
+                    .setPassword((String) graduate.get("jelszo"))
+                    .setSzakId(((BigDecimal) graduate.get("szak_id")).intValue())
+                    .setRole(role)
+                    .setKezdesEve(((BigDecimal) graduate.get("kezdes_eve")).intValue())
+                    .setVegzesEve(((BigDecimal) graduate.get("vegzes_ideje")).intValue())
+            );
+        }
+
+        return result;
+    }
+
+    @Override
     public Integer getRequiredClassesCount(ISzak szak) throws QueryException {
         String sql = "select count(*) as num, kotelezo.szak_id from kotelezo, tantargy " +
                 "where kotelezo.tantargy_id=tantargy.id " +

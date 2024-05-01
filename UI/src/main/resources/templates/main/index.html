@@ -105,6 +105,28 @@
             </div>
         </div>
     </div>
+
+    <div class="m-3 mx-5 p-3 rounded" style="background-color: #377ded; color:white; box-shadow: 2px 2px 2px #377ded;">
+        <div class="row col-12 font-bold" style="text-align: center; justify-content: center; font-size: 40px"
+        th:text="'Idei diplomastatisztikák - ' + ${szak.getName()}">
+        </div>
+        <div class="row" style="margin-top: 50px;">
+            <div class="col-6">
+                <label for="grad_num" style="font-size: 20px; margin: 20px 0; justify-self: left">Idén végzett hallgatók száma:</label>
+                <div id="grad_num"
+                     th:text="${graduateCount}">
+                    0.0
+                </div>
+            </div>
+            <div class="col-6">
+                <label for="grad_avg" style="font-size: 20px; margin: 20px 0; justify-self: left">Az idén végzett hallgatók összesített átlaga:</label>
+                <div id="grad_avg"
+                     th:text="${gradAvg}">
+                    0.0
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 </body>
 </html>

@@ -13,7 +13,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static poseidon.Constants.*;
@@ -46,6 +48,7 @@ public class IndexController {
         model.addAttribute("userCourses", splittedCourses);
 
         var szak = _szakDAO.getById(_user.getSzakId());
+        model.addAttribute("szak", szak);
 
         // degree progress
         var allRequiredCredits = _szakDAO.getRequiredClassesCount(szak);
@@ -66,6 +69,14 @@ public class IndexController {
         model.addAttribute("completedCoursesForSzak", completedCoursesForSzak);
         var usersCount = _szakDAO.getAllUsersForSzak(szak).size();
         model.addAttribute("averageCoursesForUserInSzak", (float)completedCoursesForSzak/usersCount);
+
+        // graduates
+        var graduates = _szakDAO.getAllYearlyGraduatesForSzak(szak, LocalDateTime.now().getYear());
+        model.addAttribute("graduateCount", graduates.size());
+        var avgGraduates =_userDAO.graduatesAverage(szak, LocalDateTime.now().getYear());
+        model.addAttribute("gradAvg", avgGraduates.values().stream()
+                .mapToDouble(a -> a)
+                .average().getAsDouble());
 
         return "main/index";
     }

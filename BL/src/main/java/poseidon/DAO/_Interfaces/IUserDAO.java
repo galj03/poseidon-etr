@@ -1,11 +1,13 @@
 package poseidon.DAO._Interfaces;
 
 import poseidon.DTO._Interfaces.IKurzus;
+import poseidon.DTO._Interfaces.ISzak;
 import poseidon.Exceptions.QueryException;
 import poseidon.DTO._Interfaces.IUser;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Data access object for the user model.
@@ -66,4 +68,6 @@ public interface IUserDAO {
      * @throws QueryException If anything went wrong not with the Query but with SQL server.
      */
     Integer finishedCoursesCount(IUser user) throws QueryException;
+
+    Map<String, Float> graduatesAverage(ISzak szak, Integer vegzesEve) throws QueryException;
 }

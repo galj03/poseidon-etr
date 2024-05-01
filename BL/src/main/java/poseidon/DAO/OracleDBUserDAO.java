@@ -3,6 +3,7 @@ package poseidon.DAO;
 import poseidon.Constants;
 import poseidon.DTO.Kurzus;
 import poseidon.DTO._Interfaces.IKurzus;
+import poseidon.DTO._Interfaces.ISzak;
 import poseidon.Exceptions.ArgumentNullException;
 import poseidon.Exceptions.QueryException;
 import poseidon.DAO._Interfaces.IUserDAO;
@@ -17,10 +18,7 @@ import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static poseidon.Constants.JOVAHAGYOTT;
 import static poseidon.Constants.TELJESITETT;
@@ -123,6 +121,27 @@ public class OracleDBUserDAO extends BaseDAO implements IUserDAO {
         }
 
         return ((BigDecimal) requiredSubjectsData.get(0).get("num")).intValue();
+    }
+
+    @Override
+    public Map<String, Float> graduatesAverage(ISzak szak, Integer vegzesEve) throws QueryException {
+        String sql = "select avg(jegy) as avg_jegy, felhasznalo.PS_kod as PS_kod from felhasznalo, felvette " +
+                String.format("where felhasznalo.szak_id=? and felhasznalo.vegzes_ideje=? and felvette.PS_kod=felhasznalo.PS_kod and allapot='%s' ", TELJESITETT)
+                + "group by felhasznalo.PS_kod";
+        var avgData = super.getCustomRows(sql, szak.getSzakId(), vegzesEve);
+        if (avgData == null) {
+            return new HashMap<>();
+        }
+
+        var results = new HashMap<String, Float>(avgData.size());
+
+        for (var avgRecord : avgData) {
+            var avg = ((BigDecimal) avgRecord.get("avg_jegy")).floatValue();
+
+            results.put((String) avgRecord.get("PS_kod"), avg);
+        }
+
+        return results;
     }
     //endregion
 
