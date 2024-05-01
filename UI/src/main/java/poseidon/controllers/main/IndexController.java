@@ -38,7 +38,6 @@ public class IndexController {
             _user = _userDAO.getByPsCode(currentUserName);
         }
         model.addAttribute("_userDAO", _userDAO);
-        var asd = _user.getAuthorities();
         model.addAttribute("user", _user);
 
         // timetable
@@ -46,16 +45,27 @@ public class IndexController {
         var splittedCourses = splitCoursesForTimetable(userCourses);
         model.addAttribute("userCourses", splittedCourses);
 
+        var szak = _szakDAO.getById(_user.getSzakId());
+
         // degree progress
-        var allRequiredCredits = _szakDAO.getRequiredClassesCount(_szakDAO.getById(_user.getSzakId()));
+        var allRequiredCredits = _szakDAO.getRequiredClassesCount(szak);
         var allCompletedCredits = _userDAO.finishedCoursesCount(_user);
         model.addAttribute("requiredCredits", allRequiredCredits);
         model.addAttribute("completedCredits", allCompletedCredits);
         model.addAttribute("completionRate", (float)allCompletedCredits/ allRequiredCredits);
 
-        // averages
-        var avg = _szakDAO.getAveragesForAll(_szakDAO.getById(_user.getSzakId()));
-        model.addAttribute("normalAvg", avg.get(_user.getPsCode()).toString());
+        // averages for current user
+        var avgAll = _szakDAO.getAveragesForAll(szak);
+        model.addAttribute("userNormalAvg", avgAll.get(_user.getPsCode()).toString());
+
+        // averages for all users
+        model.addAttribute("allNormalAvg", avgAll.values().stream()
+                                                                      .mapToDouble(a -> a)
+                                                                      .average().getAsDouble());
+        var completedCoursesForSzak = _szakDAO.finishedCoursesCountForSzak(szak);
+        model.addAttribute("completedCoursesForSzak", completedCoursesForSzak);
+        var usersCount = _szakDAO.getAllUsersForSzak(szak).size();
+        model.addAttribute("averageCoursesForUserInSzak", (float)completedCoursesForSzak/usersCount);
 
         return "main/index";
     }

@@ -22,7 +22,11 @@ public interface ISzakDAO {
 
     void remove(ISzak szak) throws IllegalArgumentException, QueryException, DataIntegrityViolationException;
 
+    List<IUser> getAllUsersForSzak(ISzak szak) throws QueryException;
+
     Integer getRequiredClassesCount(ISzak szak) throws QueryException;
 
     Map<String, Float> getAveragesForAll(ISzak szak) throws QueryException;
+
+    Integer finishedCoursesCountForSzak(ISzak szak) throws QueryException;
 }
