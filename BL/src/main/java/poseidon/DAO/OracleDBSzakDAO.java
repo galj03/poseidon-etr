@@ -141,6 +141,33 @@ public class OracleDBSzakDAO extends BaseDAO implements ISzakDAO {
     }
 
     @Override
+    public List<IUser> getAllUsersForSzak(ISzak szak) throws QueryException {
+        var userData = getRawUsersForSzak(szak);
+        if (userData == null) {
+            return new ArrayList<>();
+        }
+
+        List<IUser> result = new ArrayList<>();
+
+        for (var user : userData) {
+            UserRoles role = Objects.equals(user.get("jogosultsag"), "ROLE_USER") ? UserRoles.ROLE_USER : UserRoles.ROLE_ADMIN;
+
+            result.add(new User()
+                    .setPsCode((String) user.get("PS_kod"))
+                    .setName((String) user.get("nev"))
+                    .setEmail((String) user.get("email"))
+                    .setPassword((String) user.get("jelszo"))
+                    .setSzakId(((BigDecimal) user.get("szak_id")).intValue())
+                    .setRole(role)
+                    .setKezdesEve(((BigDecimal) user.get("kezdes_eve")).intValue())
+                    .setVegzesEve(((BigDecimal) user.get("vegzes_ideje")).intValue())
+            );
+        }
+
+        return result;
+    }
+
+    @Override
     public Integer getRequiredClassesCount(ISzak szak) throws QueryException {
         String sql = "select count(*) as num, kotelezo.szak_id from kotelezo, tantargy " +
                 "where kotelezo.tantargy_id=tantargy.id " +
@@ -156,13 +183,12 @@ public class OracleDBSzakDAO extends BaseDAO implements ISzakDAO {
 
     @Override
     public Map<String, Float> getAveragesForAll(ISzak szak) throws QueryException {
-        String sql = "select * from get_students_for_szak (?)";
-        var userData = super.getCustomRows(sql, szak.getSzakId());
+        var userData = getRawUsersForSzak(szak);
         if (userData == null) {
             return new HashMap<>();
         }
 
-        sql = "select avg(jegy) as avg_jegy, felhasznalo.PS_kod as PS_kod from felhasznalo, felvette " +
+        String sql = "select avg(jegy) as avg_jegy, felhasznalo.PS_kod as PS_kod from felhasznalo, felvette " +
                 String.format("where felhasznalo.szak_id=? and felvette.PS_kod=felhasznalo.PS_kod and allapot='%s' ", TELJESITETT)
                 + "group by felhasznalo.PS_kod";
         var avgData = super.getCustomRows(sql, szak.getSzakId());
@@ -182,6 +208,24 @@ public class OracleDBSzakDAO extends BaseDAO implements ISzakDAO {
         }
 
         return results;
+    }
+
+    @Override
+    public Integer finishedCoursesCountForEvfolyam(ISzak szak, Integer kezdEv) throws QueryException {
+        String sql = "select count(*) as num, felvette.PS_kod from tantargy, felvette, felhasznalo " +
+                String.format("where felvette.tantargy_id=tantargy.id and felvette.PS_kod=felhasznalo.PS_kod and allapot='%s' and felhasznalo.szak_id=? and felhasznalo.kezdes_eve=? ", TELJESITETT)
+                + "group by felvette.PS_kod";
+        var finishedCoursesData = super.getCustomRows(sql, szak.getSzakId(), kezdEv);
+        if (finishedCoursesData == null) {
+            return 0;
+        }
+
+        var sum = 0;
+        for (var finishedCourse : finishedCoursesData) {
+            sum += ((BigDecimal) finishedCourse.get("num")).intValue();
+        }
+
+        return sum;
     }
 
     //region Private members
@@ -221,6 +265,11 @@ public class OracleDBSzakDAO extends BaseDAO implements ISzakDAO {
         } catch (QueryException exception) {
             throw new QueryException("Failed to query a nested value", exception);
         }
+    }
+
+    private List<Map<String, Object>> getRawUsersForSzak(ISzak szak){
+        String sql = "select * from get_students_for_szak (?)";
+        return super.getCustomRows(sql, szak.getSzakId());
     }
     //endregion
 }

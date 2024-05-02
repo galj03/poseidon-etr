@@ -1,3 +1,5 @@
+-- noinspection SqlNoDataSourceInspectionForFile
+
 /* ---------- Táblák törlése ---------- */
 DROP TABLE felvette;
 DROP TABLE kurzus;
@@ -200,9 +202,9 @@ begin
 
     select count(*) as num, kotelezo.szak_id into v_required_count, v_id
     from kotelezo, tantargy
-    where kotelezo.tantargy_id=tantargy.id
-    group by kotelezo.szak_id having kotelezo.szak_id=v_id;
-    return (v_finished_count = v_required_count);
+    where kotelezo.tantargy_id=tantargy.id and kotelezo.szak_id=v_id
+    group by kotelezo.szak_id;
+    return (v_finished_count >= v_required_count);
 end;
 /
 
