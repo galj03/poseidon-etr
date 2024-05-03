@@ -5,6 +5,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import poseidon.Constants;
 import poseidon.DAO._Interfaces.IPosztDAO;
 import poseidon.DTO.Poszt;
 import poseidon.DTO._Interfaces.IPoszt;
@@ -43,11 +44,12 @@ public class OracleDBPosztDAO extends BaseDAO implements IPosztDAO {
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
             try {
-                String sql = "INSERT INTO poszt(PS_kod, tartalom) VALUES (?, ?)";
+                String sql = "INSERT INTO poszt(PS_kod, tartalom, isForBoard) VALUES (?, ?, ?)";
                 getJdbcTemplate().update(connection -> {
                     PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
                     ps.setString(1, poszt.getPsCode());
                     ps.setString(2, poszt.getTartalom());
+                    ps.setString(3, poszt.isForBoard() ? "I" : "N");
                     return ps;
                 }, keyHolder);
             } catch (DataAccessException exception) {
@@ -61,12 +63,13 @@ public class OracleDBPosztDAO extends BaseDAO implements IPosztDAO {
         }
 
         try {
-            String sql = "UPDATE poszt SET PS_kod=?, tartalom=? WHERE id=?";
+            String sql = "UPDATE poszt SET PS_kod=?, tartalom=?, isForBoard=? WHERE id=?";
             getJdbcTemplate().update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(sql);
                 ps.setString(1, poszt.getPsCode());
                 ps.setString(2, poszt.getTartalom());
-                ps.setString(3, poszt.getPosztId().toString());
+                ps.setString(3, poszt.isForBoard() ? "I" : "N");
+                ps.setString(4, poszt.getPosztId().toString());
                 return ps;
             });
         } catch (DataAccessException exception) {
@@ -92,10 +95,13 @@ public class OracleDBPosztDAO extends BaseDAO implements IPosztDAO {
 
             if (rows.isEmpty()) return null;
 
+            Boolean isForBoard = rows.get(0).get("isForBoard").equals(Constants.TRUE);
+
             return new Poszt()
                     .setPosztId(((BigDecimal) rows.get(0).get("id")).intValue())
                     .setPsCode((String) rows.get(0).get("PS_kod"))
-                    .setTartalom((String) rows.get(0).get("tartalom"));
+                    .setTartalom((String) rows.get(0).get("tartalom"))
+                    .setIsForBoard(isForBoard);
 
         } catch (DataAccessException exception) {
             throw new QueryException("Could not get values from database", exception);
@@ -109,11 +115,14 @@ public class OracleDBPosztDAO extends BaseDAO implements IPosztDAO {
             List<IPoszt> result = new ArrayList<>();
 
             for (Map<String, Object> row : rows) {
+                Boolean isForBoard = row.get("isForBoard").equals(Constants.TRUE);
+
                 result.add(
                         new Poszt()
                                 .setPosztId(((BigDecimal) row.get("id")).intValue())
                                 .setPsCode((String) row.get("PS_kod"))
                                 .setTartalom((String) row.get("tartalom"))
+                                .setIsForBoard(isForBoard)
                 );
             }
 
