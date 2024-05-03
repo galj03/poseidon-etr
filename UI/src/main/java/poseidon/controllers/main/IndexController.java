@@ -62,9 +62,10 @@ public class IndexController {
         model.addAttribute("userNormalAvg", avgAll.get(_user.getPsCode()).toString());
 
         // averages for all users
-        model.addAttribute("allNormalAvg", avgAll.values().stream()
-                                                                      .mapToDouble(a -> a)
-                                                                      .average().getAsDouble());
+        var normalAvg = avgAll.values().stream()
+                .mapToDouble(a -> a)
+                .average();
+        model.addAttribute("allNormalAvg", normalAvg.isPresent() ? normalAvg.getAsDouble() : 0);
         var completedCoursesForSzak = _szakDAO.finishedCoursesCountForEvfolyam(szak, _user.getKezdesEve());
         model.addAttribute("completedCoursesForSzak", completedCoursesForSzak);
         var usersCount = _szakDAO.getAllUsersForSzak(szak).size();
@@ -74,9 +75,10 @@ public class IndexController {
         var graduates = _szakDAO.getAllYearlyGraduatesForSzak(szak, LocalDateTime.now().getYear());
         model.addAttribute("graduateCount", graduates.size());
         var avgGraduates =_userDAO.graduatesAverage(szak, LocalDateTime.now().getYear());
-        model.addAttribute("gradAvg", avgGraduates.values().stream()
+        var gradAvg = avgGraduates.values().stream()
                 .mapToDouble(a -> a)
-                .average().getAsDouble());
+                .average();
+        model.addAttribute("gradAvg", gradAvg.isPresent() ? gradAvg.getAsDouble() : 0);
 
         return "main/index";
     }
