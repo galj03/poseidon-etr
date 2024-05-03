@@ -30,7 +30,7 @@ public class OracleDBPosztDAO extends BaseDAO implements IPosztDAO {
 
     @Override
     public Iterable<IPoszt> getAll() throws QueryException {
-        return getRows("select * from poszt");
+        return getRows("select * from poszt order by id desc");
     }
 
     @Override

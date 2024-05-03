@@ -509,6 +509,7 @@ INSERT INTO poszt(PS_kod, tartalom, isForBoard) VALUES('K7S9AK', 'Problémám va
 
 INSERT INTO komment(poszt_id, PS_kod, tartalom) VALUES(1, 'MK2OVQ', 'Egyetértek! A Neptunnak leáldozott!');
 INSERT INTO komment(poszt_id, PS_kod, tartalom) VALUES(2, 'BWE8LT', 'Május 17-én kezdődik, a kari naptárban bármikor megtalálod, ha a jövőben is szükséged lesz rá.');
+INSERT INTO komment(poszt_id, PS_kod, tartalom) VALUES(2, 'R8K3SN', 'Oké. Köszi a segítséget!');
 INSERT INTO komment(poszt_id, PS_kod, tartalom) VALUES(3, 'BSRKB5', 'Létezik, csak átalakult! Javítani fogjuk, köszönjük a visszajelzést!');
 INSERT INTO komment(poszt_id, PS_kod, tartalom) VALUES(4, 'Y9Z2TW', 'Igen, néha nem tökéletes a navbar, de amúgy még így is sokkal jobb, mint a Neptun!');
 INSERT INTO komment(poszt_id, PS_kod, tartalom) VALUES(5, 'J4C8MT', 'Szerintem vedd fel a kapcsolatot a TO-s nénivel, itt maximum csak szóban tudunk reagálni a problémáidra, tenni nem sokmindent tudunk sajnos.');
