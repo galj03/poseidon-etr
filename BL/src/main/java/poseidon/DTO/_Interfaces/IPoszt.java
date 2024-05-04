@@ -10,9 +10,13 @@ public interface IPoszt {
 
     String getTartalom();
 
+    Boolean isForBoard();
+
     IPoszt setPosztId(Integer id) throws IllegalOperationException;
 
     IPoszt setPsCode(String psCode) throws ArgumentNullException;
 
     IPoszt setTartalom(String tartalom) throws ArgumentNullException;
+
+    IPoszt setIsForBoard(Boolean isForBoard) throws ArgumentNullException;
 }

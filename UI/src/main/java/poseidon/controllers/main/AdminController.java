@@ -339,6 +339,7 @@ public class AdminController {
             @RequestParam("id") Integer id,
             @RequestParam("psCode") String psCode,
             @RequestParam("tartalom") String tartalom,
+            @RequestParam(value = "isForBoard", required = false) Boolean isForBoard,
             Model model) {
         if (id == null || id <= 0) {
             id = 0;
@@ -358,9 +359,14 @@ public class AdminController {
             return "main/error";
         }
 
+        if (isForBoard == null) {
+            isForBoard = false;
+        }
+
         IPoszt poszt = new Poszt()
                 .setPsCode(psCode)
-                .setTartalom(tartalom);
+                .setTartalom(tartalom)
+                .setIsForBoard(isForBoard);
         if (_posztDAO.getById(id) != null) {
             poszt = poszt.setPosztId(id);
         }

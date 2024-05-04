@@ -8,6 +8,7 @@ public class Poszt implements IPoszt {
     private Integer _posztId;
     private String _psCode;
     private String _tartalom;
+    private Boolean _isForBoard;
 
     public Poszt(Integer posztId, String psCode, String tartalom) {
         this._posztId = posztId;
@@ -34,6 +35,11 @@ public class Poszt implements IPoszt {
     }
 
     @Override
+    public Boolean isForBoard() {
+        return _isForBoard;
+    }
+
+    @Override
     public IPoszt setPosztId(Integer id) throws IllegalOperationException {
         if (_posztId != null) throw new IllegalOperationException("Id cannot be changed");
         _posztId = id;
@@ -53,6 +59,13 @@ public class Poszt implements IPoszt {
         if (tartalom == null || tartalom.isEmpty()) throw new ArgumentNullException("tartalom");
 
         _tartalom = tartalom;
+        return this;
+    }
+
+    @Override
+    public IPoszt setIsForBoard(Boolean isForBoard) throws ArgumentNullException {
+        if (isForBoard == null) throw new ArgumentNullException("isForBoard");
+        _isForBoard = isForBoard;
         return this;
     }
 }

@@ -32,546 +32,621 @@
     </script>
 </head>
 <body>
-    <div th:if="${confirmObj != null}" class="m-0 p-0">
-        <div class="text-light d-flex justify-content-center flex-column text-center" style="width: 100%; height: 100%; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 2; display: block; background-color: rgba(0,0,0,0.5);">
-            <div class="m-auto rounded p-2 d-flex justify-content-center flex-column text-center" style="width: 50%; min-width: 300px; height: 50%; min-height: 450px; background-color: #377ded; border: 2px solid white; box-shadow: 0px 0px 10px 1px white;">
-                <h3>Regisztráció konfirmálása</h3>
-                <p>Ön regisztrálni kíván egy felhasználót a következő adatokkal:</p>
-                <div class="container rounded">
-                    <div class="row">
-                        <div class="col text-end">PS-kód:</div>
-                        <div class="col text-start" th:text="${confirmObj.getPsCode()}"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col text-end">Név:</div>
-                        <div class="col text-start" th:text="${confirmObj.getName()}"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col text-end">Email:</div>
-                        <div class="col text-start" th:text="${confirmObj.getEmail()}"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col text-end">Szak:</div>
-                        <div class="col text-start" th:text="${confirmObj.getSzakId()}"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col text-end">Jogosultság:</div>
-                        <div class="col text-start" th:text="${confirmObj.getRole()}"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col text-end">Kezdés éve:</div>
-                        <div class="col text-start" th:text="${confirmObj.getKezdesEve()}"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col text-end">Végzés éve:</div>
-                        <div class="col text-start" th:text="${confirmObj.getVegzesEve()}"></div>
-                    </div>
+<div th:if="${confirmObj != null}" class="m-0 p-0">
+    <div class="text-light d-flex justify-content-center flex-column text-center"
+         style="width: 100%; height: 100%; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 2; display: block; background-color: rgba(0,0,0,0.5);">
+        <div class="m-auto rounded p-2 d-flex justify-content-center flex-column text-center"
+             style="width: 50%; min-width: 300px; height: 50%; min-height: 450px; background-color: #377ded; border: 2px solid white; box-shadow: 0px 0px 10px 1px white;">
+            <h3>Regisztráció konfirmálása</h3>
+            <p>Ön regisztrálni kíván egy felhasználót a következő adatokkal:</p>
+            <div class="container rounded">
+                <div class="row">
+                    <div class="col text-end">PS-kód:</div>
+                    <div class="col text-start" th:text="${confirmObj.getPsCode()}"></div>
                 </div>
-                <div class="m-4 mb-0">
-                    <p th:if="${nopass == null}">Kérem adja meg a megadott jelszót mégegyszer a mentéshez:</p>
-                    <form th:action="@{/admin/edit-user}" method="post">
-                        <input type="hidden" name="psCode" th:value="${confirmObj.getPsCode()}">
-                        <input type="hidden" name="name" th:value="${confirmObj.getName()}">
-                        <input type="hidden" name="password" th:value="${confirmObj.getPassword()}">
-                        <input type="hidden" name="email" th:value="${confirmObj.getEmail()}">
-                        <input type="hidden" name="szakId" th:value="${confirmObj.getSzakId()}">
-                        <input type="hidden" name="role" th:value="${confirmObj.getRole()}">
-                        <input type="hidden" name="kezdes_ev" th:value="${confirmObj.getKezdesEve()}">
-                        <input type="hidden" name="vegzes_ev" th:value="${confirmObj.getVegzesEve()}">
-                        <input th:if="${nopass == null}" type="password" name="password2" style="width: 30%; min-width: 200px;" placeholder="Jelszó újra">
-                        <input class="rounded mx-auto mt-3" style="background-color: green; border:none; color: white; width: 20%; min-width: fit-content; height: 40px; font-size: 20px; display: block;" type="submit" value="Mentés">
+                <div class="row">
+                    <div class="col text-end">Név:</div>
+                    <div class="col text-start" th:text="${confirmObj.getName()}"></div>
+                </div>
+                <div class="row">
+                    <div class="col text-end">Email:</div>
+                    <div class="col text-start" th:text="${confirmObj.getEmail()}"></div>
+                </div>
+                <div class="row">
+                    <div class="col text-end">Szak:</div>
+                    <div class="col text-start" th:text="${confirmObj.getSzakId()}"></div>
+                </div>
+                <div class="row">
+                    <div class="col text-end">Jogosultság:</div>
+                    <div class="col text-start" th:text="${confirmObj.getRole()}"></div>
+                </div>
+                <div class="row">
+                    <div class="col text-end">Kezdés éve:</div>
+                    <div class="col text-start" th:text="${confirmObj.getKezdesEve()}"></div>
+                </div>
+                <div class="row">
+                    <div class="col text-end">Végzés éve:</div>
+                    <div class="col text-start" th:text="${confirmObj.getVegzesEve()}"></div>
+                </div>
+            </div>
+            <div class="m-4 mb-0">
+                <p th:if="${nopass == null}">Kérem adja meg a megadott jelszót mégegyszer a mentéshez:</p>
+                <form th:action="@{/admin/edit-user}" method="post">
+                    <input type="hidden" name="psCode" th:value="${confirmObj.getPsCode()}">
+                    <input type="hidden" name="name" th:value="${confirmObj.getName()}">
+                    <input type="hidden" name="password" th:value="${confirmObj.getPassword()}">
+                    <input type="hidden" name="email" th:value="${confirmObj.getEmail()}">
+                    <input type="hidden" name="szakId" th:value="${confirmObj.getSzakId()}">
+                    <input type="hidden" name="role" th:value="${confirmObj.getRole()}">
+                    <input type="hidden" name="kezdes_ev" th:value="${confirmObj.getKezdesEve()}">
+                    <input type="hidden" name="vegzes_ev" th:value="${confirmObj.getVegzesEve()}">
+                    <input th:if="${nopass == null}" type="password" name="password2"
+                           style="width: 30%; min-width: 200px;" placeholder="Jelszó újra">
+                    <input class="rounded mx-auto mt-3"
+                           style="background-color: green; border:none; color: white; width: 20%; min-width: fit-content; height: 40px; font-size: 20px; display: block;"
+                           type="submit" value="Mentés">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="~{fragments/header :: header}"></div>
+<main>
+    <div>
+        <h1 class="text-center p-3"> Admin panel</h1>
+    </div>
+    <div class="m-3 mx-5 p-3 rounded" style="background-color: #377ded; color:white; box-shadow: 2px 2px 2px #377ded;">
+        <button onclick="collapse('felhTable', 'felhCollapseBtn')" class="m-0 mb-1 mx-2 px-1 fs-4 rounded text-center"
+                style="border: 2px solid white; background-color: white; color: #377ded; height: 40px; width: 30px; font-weight: bold; display: flex; float: left;"
+                id="felhCollapseBtn">+
+        </button>
+        <h2 class="font-bold" style="font-weight: bold; display: flex; float: left;">Felhasználó tábla</h2>
+        <hr style="background-color: white; height: 3px; width: 100%; border: none; color: white;">
+        <div id="felhTable" class="container" style="max-height: 400px; overflow-y: auto; display: none;">
+            <div class="row">
+                <div class="col-1">
+                    <h3 style="font-weight: bold;">Ps-kód</h3>
+                </div>
+                <div class="col-1">
+                    <h3 style="font-weight: bold;">Név</h3>
+                </div>
+                <div class="col-1">
+                    <h3 style="font-weight: bold;">Jelszó</h3>
+                </div>
+                <div class="col-3">
+                    <h3 style="font-weight: bold;">Email</h3>
+                </div>
+                <div class="col-1">
+                    <h3 style="font-weight: bold;">Szak</h3>
+                </div>
+                <div class="col-2">
+                    <h3 style="font-weight: bold;">Jogosultság</h3>
+                </div>
+                <div class="col-1">
+                    <h3 style="font-weight: bold;">Kezdés éve</h3>
+                </div>
+                <div class="col-1">
+                    <h3 style="font-weight: bold;">Végzés éve</h3>
+                </div>
+                <div class="col-1"></div>
+            </div>
+            <div class="row my-2 mb-4" style="background-color: white; width: 100%; height: 2px;"></div>
+            <!-- Módosítás -->
+
+            <form th:action="@{/admin/confirm-register}" method="post" class="row mt-2 mb-4">
+                <div class="col-1">
+                    <input style="width: 100%;" type="text" name="psCode" value="BWE8LT">
+                </div>
+                <div class="col-1">
+                    <input style="width: 100%;" type="text" name="name" value="Csonka Valentin Viktor">
+                </div>
+                <div class="col-1">
+                    <input style="width: 100%;" type="password" name="password" value="password123">
+                </div>
+                <div class="col-3">
+                    <input style="width: 100%;" type="text" name="email" value="example@asd.com">
+                </div>
+                <div class="col-1">
+                    <input style="width: 100%;" type="number" name="szakId" value="1">
+                </div>
+                <select class="col-2" name="role">
+                    <option value="ROLE_USER" selected>ROLE_USER</option>
+                    <option value="ROLE_ADMIN">ROLE_ADMIN</option>
+                </select>
+                <div class="col-1">
+                    <input style="width: 100%;" type="number" name="kezdes_ev" value="2022">
+                </div>
+                <div class="col-1">
+                    <input style="width: 100%;" type="number" name="vegzes_ev" value="-">
+                </div>
+                <div class="col-1">
+                    <input class="rounded"
+                           style="background-color: green; border:none; color: white; width: 100%; height: 100%; font-size: 20px;"
+                           type="submit" value="Mentés">
+                </div>
+            </form>
+
+            <div th:each="user,iter : ${users}" class="row mt-0 mb-4">
+                <div class="col-1">
+                    <h3 class="fs-4" th:text="${user.getPsCode()}">BWE8LT</h3>
+                </div>
+                <div class="col-1">
+                    <h3 class="fs-4" th:text="${user.getName()}">Csonka Valentin VIktor</h3>
+                </div>
+                <div class="col-1">
+                    <h3 class="fs-4"></h3>
+                </div>
+                <div class="col-3">
+                    <h3 class="fs-4" th:text="${user.getEmail()}">example@asd.com</h3>
+                </div>
+                <div class="col-1">
+                    <h3 class="fs-4 text-center" th:text="${user.getSzakId()}">1</h3>
+                </div>
+                <div class="col-2">
+                    <h3 class="fs-4" th:text="${user.getRole()}">Hallgató</h3>
+                </div>
+                <div class="col-1">
+                    <h3 class="fs-4" th:text="${user.getKezdesEve()}">2021</h3>
+                </div>
+                <div class="col-1">
+                    <h3 class="fs-4" th:text="${user.getVegzesEve()}">-</h3>
+                </div>
+                <div class="col-1">
+                    <form th:action="@{/admin/delete-user}" method="post"
+                          style="height: 60%; min-height: 50px; width: 100%;">
+                        <input hidden type="text" name="key" th:value="${user.getPsCode()}">
+                        <input class="rounded"
+                               style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;"
+                               type="submit" value="Törlés">
                     </form>
                 </div>
             </div>
         </div>
     </div>
-    <div th:replace="~{fragments/header :: header}"></div>
-    <main>
-        <div>
-            <h1 class="text-center p-3"> Admin panel</h1>
-        </div>
-        <div class="m-3 mx-5 p-3 rounded" style="background-color: #377ded; color:white; box-shadow: 2px 2px 2px #377ded;">
-            <button onclick="collapse('felhTable', 'felhCollapseBtn')" class="m-0 mb-1 mx-2 px-1 fs-4 rounded text-center" style="border: 2px solid white; background-color: white; color: #377ded; height: 40px; width: 30px; font-weight: bold; display: flex; float: left;" id="felhCollapseBtn">+</button>
-            <h2 class="font-bold" style="font-weight: bold; display: flex; float: left;">Felhasználó tábla</h2>
-            <hr style="background-color: white; height: 3px; width: 100%; border: none; color: white;">
-            <div id="felhTable" class="container" style="max-height: 400px; overflow-y: auto; display: none;">
-                <div class="row">
-                    <div class="col-1">
-                        <h3 style="font-weight: bold;">Ps-kód</h3>
-                    </div>
-                    <div class="col-1">
-                        <h3 style="font-weight: bold;">Név</h3>
-                    </div>
-                    <div class="col-1">
-                        <h3 style="font-weight: bold;">Jelszó</h3>
-                    </div>
-                    <div class="col-3">
-                        <h3 style="font-weight: bold;">Email</h3>
-                    </div>
-                    <div class="col-1">
-                        <h3 style="font-weight: bold;">Szak</h3>
-                    </div>
-                    <div class="col-2">
-                        <h3 style="font-weight: bold;">Jogosultság</h3>
-                    </div>
-                    <div class="col-1">
-                        <h3 style="font-weight: bold;">Kezdés éve</h3>
-                    </div>
-                    <div class="col-1">
-                        <h3 style="font-weight: bold;">Végzés éve</h3>
-                    </div>
-                    <div class="col-1"></div>
-                </div>
-                <div class="row my-2 mb-4" style="background-color: white; width: 100%; height: 2px;"></div>
-                <!-- Módosítás -->
 
-                <form th:action="@{/admin/confirm-register}" method="post" class="row mt-2 mb-4">
-                    <div class="col-1">
-                        <input style="width: 100%;" type="text" name="psCode" value="BWE8LT">
-                    </div>
-                    <div class="col-1">
-                        <input style="width: 100%;" type="text" name="name" value="Csonka Valentin Viktor">
-                    </div>
-                    <div class="col-1">
-                        <input style="width: 100%;" type="password" name="password" value="password123">
-                    </div>
-                    <div class="col-3">
-                        <input style="width: 100%;" type="text" name="email" value="example@asd.com">
-                    </div>
-                    <div class="col-1">
-                        <input style="width: 100%;" type="number" name="szakId" value="1">
-                    </div>
-                    <select class="col-2" name="role">
-                        <option value="ROLE_USER" selected>ROLE_USER</option>
-                        <option value="ROLE_ADMIN">ROLE_ADMIN</option>
+    <div class="m-3 mx-5 p-3 rounded" style="background-color: #377ded; color:white; box-shadow: 2px 2px 2px #377ded;">
+        <button onclick="collapse('kurzusTable', 'kurzusCollapseBtn')"
+                class="m-0 mb-1 mx-2 px-1 fs-4 rounded text-center"
+                style="border: 2px solid white; background-color: white; color: #377ded; height: 40px; width: 30px; font-weight: bold; display: flex; float: left;"
+                id="kurzusCollapseBtn">+
+        </button>
+        <h2 class="font-bold" style="font-weight: bold; display: flex; float: left;">Kurzus tábla</h2>
+        <hr style="background-color: white; height: 3px; width: 100%; border: none; color: white;">
+        <div id="kurzusTable" class="container" style="max-height: 400px; overflow-y: auto; display: none;">
+            <div class="row">
+                <div class="col-1">
+                    <h3 style="font-weight: bold;">ID</h3>
+                </div>
+                <div class="col">
+                    <h3 style="font-weight: bold;">Név</h3>
+                </div>
+                <div class="col">
+                    <h3 style="font-weight: bold;">Oktató</h3>
+                </div>
+                <div class="col">
+                    <h3 style="font-weight: bold;">Kezdés</h3>
+                </div>
+                <div class="col">
+                    <h3 style="font-weight: bold;">Tantárgy</h3>
+                </div>
+                <div class="col">
+                    <h3 style="font-weight: bold;">Terem</h3>
+                </div>
+                <div class="col">
+                    <h3 style="font-weight: bold;">Felvehető</h3>
+                </div>
+                <div class="col">
+                    <h3 style="font-weight: bold;">Vizsga</h3>
+                </div>
+                <div class="col-1"></div>
+            </div>
+            <div class="row my-2 mb-4" style="background-color: white; width: 100%; height: 2px;"></div>
+            <!-- Módosítás -->
+
+            <form th:action="@{/admin/edit-kurzus}" method="post" class="row mt-2 mb-4">
+                <div class="col-1">
+                    <input style="width: 100%;" type="number" name="id" value="1">
+                </div>
+                <div class="col">
+                    <input style="width: 100%;" type="text" name="name" value="Adatbázis-alapú rendszerek">
+                </div>
+                <div class="col">
+                    <input style="width: 100%;" type="text" name="oktato" value="N6J3TQ">
+                </div>
+                <div class="col">
+                    <select name="kezdesNap" style="width:inherit">
+                        <option value="Hétfő" selected>Hétfő</option>
+                        <option value="Kedd">Kedd</option>
+                        <option value="Szerda">Szerda</option>
+                        <option value="Csütörtök">Csütörtök</option>
+                        <option value="Péntek">Péntek</option>
                     </select>
-                    <div class="col-1">
-                        <input style="width: 100%;" type="number" name="kezdes_ev" value="2022">
-                    </div>
-                    <div class="col-1">
-                        <input style="width: 100%;" type="number" name="vegzes_ev" value="-">
-                    </div>
-                    <div class="col-1">
-                        <input class="rounded" style="background-color: green; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Mentés">
-                    </div>
-                </form>
+                    <br>
+                    <select name="kezdesIdo" style="width:inherit">
+                        <option value="8" selected>8:00</option>
+                        <option value="9">9:00</option>
+                        <option value="10">10:00</option>
+                        <option value="11">11:00</option>
+                        <option value="12">12:00</option>
+                        <option value="13">13:00</option>
+                        <option value="14">14:00</option>
+                        <option value="15">15:00</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <input style="width: 100%;" type="number" name="tantargy" value="1">
+                </div>
+                <div class="col">
+                    <input style="width: 100%;" type="number" name="terem" value="1">
+                </div>
+                <div class="col">
+                    <input style="width: 100%;" type="checkbox" name="isFelveheto" checked>
+                </div>
+                <div class="col">
+                    <input style="width: 100%;" type="checkbox" name="isVizsga" checked>
+                </div>
+                <div class="col-1">
+                    <input class="rounded"
+                           style="background-color: green; border:none; color: white; width: 100%; height: 100%; font-size: 20px;"
+                           type="submit" value="Mentés">
+                </div>
+            </form>
 
-                <div th:each="user,iter : ${users}" class="row mt-0 mb-4">
-                    <div class="col-1">
-                        <h3 class="fs-4" th:text="${user.getPsCode()}">BWE8LT</h3>
-                    </div>
-                    <div class="col-1">
-                        <h3 class="fs-4" th:text="${user.getName()}">Csonka Valentin VIktor</h3>
-                    </div>
-                    <div class="col-1">
-                        <h3 class="fs-4"></h3>
-                    </div>
-                    <div class="col-3">
-                        <h3 class="fs-4" th:text="${user.getEmail()}">example@asd.com</h3>
-                    </div>
-                    <div class="col-1">
-                        <h3 class="fs-4 text-center" th:text="${user.getSzakId()}">1</h3>
-                    </div>
-                    <div class="col-2">
-                        <h3 class="fs-4" th:text="${user.getRole()}">Hallgató</h3>
-                    </div>
-                    <div class="col-1">
-                        <h3 class="fs-4" th:text="${user.getKezdesEve()}">2021</h3>
-                    </div>
-                    <div class="col-1">
-                        <h3 class="fs-4" th:text="${user.getVegzesEve()}">-</h3>
-                    </div>
-                    <div class="col-1">
-                        <form th:action="@{/admin/delete-user}" method="post" style="height: 60%; min-height: 50px; width: 100%;">
-                            <input hidden type="text" name="key" th:value="${user.getPsCode()}">
-                            <input class="rounded" style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Törlés">
-                        </form>
-                    </div>
+            <div th:each="kurzus,iter : ${kurzusok}" class="row mt-0 mb-4">
+                <div class="col-1">
+                    <h3 class="fs-4" th:text="${kurzus.getKurzusId()}">1</h3>
+                </div>
+                <div class="col">
+                    <h3 class="fs-4" th:text="${kurzus.getNev()}">Adatbázis-alapú rendszerek</h3>
+                </div>
+                <div class="col">
+                    <h3 class="fs-4" th:text="${kurzus.getOktato()}">Gercsó Always</h3>
+                </div>
+                <div class="col">
+                    <h3 class="fs-4"
+                        th:text="${kurzus.getKezdesNapja()} + ', ' + ${kurzus.getKezdesIdopontja()} + ':00'">Szerda,<br>
+                        10:00</h3>
+                </div>
+                <div class="col">
+                    <h3 class="fs-4" th:text="${kurzus.getTantargyId()}">Adatbázis-alapú rendszerek</h3>
+                </div>
+                <div class="col">
+                    <h3 class="fs-4" th:text="${kurzus.getTeremId()}">Irinyi, 225</h3>
+                </div>
+                <div class="col">
+                    <h3 class="fs-4" th:text="${kurzus.isFelveheto()}">Igen</h3>
+                </div>
+                <div class="col">
+                    <h3 class="fs-4" th:text="${kurzus.isVizsga()}">Nem</h3>
+                </div>
+                <div class="col-1">
+                    <form th:action="@{/admin/delete-kurzus}" method="post"
+                          style="height: 60%; min-height: 50px; width: 100%;">
+                        <input hidden type="text" name="key" th:value="${kurzus.getKurzusId()}">
+                        <input class="rounded"
+                               style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;"
+                               type="submit" value="Törlés">
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="m-3 mx-5 p-3 rounded" style="background-color: #377ded; color:white; box-shadow: 2px 2px 2px #377ded;">
-            <button onclick="collapse('kurzusTable', 'kurzusCollapseBtn')" class="m-0 mb-1 mx-2 px-1 fs-4 rounded text-center" style="border: 2px solid white; background-color: white; color: #377ded; height: 40px; width: 30px; font-weight: bold; display: flex; float: left;" id="kurzusCollapseBtn">+</button>
-            <h2 class="font-bold" style="font-weight: bold; display: flex; float: left;">Kurzus tábla</h2>
-            <hr style="background-color: white; height: 3px; width: 100%; border: none; color: white;">
-            <div id="kurzusTable" class="container" style="max-height: 400px; overflow-y: auto; display: none;">
-                <div class="row">
-                    <div class="col-1">
-                        <h3 style="font-weight: bold;">ID</h3>
-                    </div>
-                    <div class="col">
-                        <h3 style="font-weight: bold;">Név</h3>
-                    </div>
-                    <div class="col">
-                        <h3 style="font-weight: bold;">Oktató</h3>
-                    </div>
-                    <div class="col">
-                        <h3 style="font-weight: bold;">Kezdés</h3>
-                    </div>
-                    <div class="col">
-                        <h3 style="font-weight: bold;">Tantárgy</h3>
-                    </div>
-                    <div class="col">
-                        <h3 style="font-weight: bold;">Terem</h3>
-                    </div>
-                    <div class="col">
-                        <h3 style="font-weight: bold;">Felvehető</h3>
-                    </div>
-                    <div class="col">
-                        <h3 style="font-weight: bold;">Vizsga</h3>
-                    </div>
-                    <div class="col-1"></div>
+    <div class="m-3 mx-5 p-3 rounded" style="background-color: #377ded; color:white; box-shadow: 2px 2px 2px #377ded;">
+        <button onclick="collapse('szakTable', 'szakCollapseBtn')" class="m-0 mb-1 mx-2 px-1 fs-4 rounded text-center"
+                style="border: 2px solid white; background-color: white; color: #377ded; height: 40px; width: 30px; font-weight: bold; display: flex; float: left;"
+                id="szakCollapseBtn">+
+        </button>
+        <h2 class="font-bold" style="font-weight: bold; display: flex; float: left;">Szak tábla</h2>
+        <hr style="background-color: white; height: 3px; width: 100%; border: none; color: white;">
+        <div id="szakTable" class="container" style="max-height: 400px; overflow-y: auto; display: none;">
+            <div class="row">
+                <div class="col-1">
+                    <h3 style="font-weight: bold;">ID</h3>
                 </div>
-                <div class="row my-2 mb-4" style="background-color: white; width: 100%; height: 2px;"></div>
-                <!-- Módosítás -->
+                <div class="col">
+                    <h3 style="font-weight: bold;">Név</h3>
+                </div>
+                <div class="col-1"></div>
+            </div>
+            <div class="row my-2 mb-4" style="background-color: white; width: 100%; height: 2px;"></div>
+            <!-- Módosítás -->
 
-                <form th:action="@{/admin/edit-kurzus}" method="post" class="row mt-2 mb-4">
-                    <div class="col-1">
-                        <input style="width: 100%;" type="number" name="id" value="1">
-                    </div>
-                    <div class="col">
-                        <input style="width: 100%;" type="text" name="name" value="Adatbázis-alapú rendszerek">
-                    </div>
-                    <div class="col">
-                        <input style="width: 100%;" type="text" name="oktato" value="N6J3TQ">
-                    </div>
-                    <div class="col">
-                        <select name="kezdesNap" style="width:inherit">
-                            <option value="Hétfő" selected>Hétfő</option>
-                            <option value="Kedd">Kedd</option>
-                            <option value="Szerda">Szerda</option>
-                            <option value="Csütörtök">Csütörtök</option>
-                            <option value="Péntek">Péntek</option>
-                        </select>
-                        <br>
-                        <select name="kezdesIdo" style="width:inherit">
-                            <option value="8" selected>8:00</option>
-                            <option value="9">9:00</option>
-                            <option value="10">10:00</option>
-                            <option value="11">11:00</option>
-                            <option value="12">12:00</option>
-                            <option value="13">13:00</option>
-                            <option value="14">14:00</option>
-                            <option value="15">15:00</option>
-                        </select>
-                    </div>
-                    <div class="col">
-                        <input style="width: 100%;" type="number" name="tantargy" value="1">
-                    </div>
-                    <div class="col">
-                        <input style="width: 100%;" type="number" name="terem" value="1">
-                    </div>
-                    <div class="col">
-                        <input style="width: 100%;" type="checkbox" name="isFelveheto" checked>
-                    </div>
-                    <div class="col">
-                        <input style="width: 100%;" type="checkbox" name="isVizsga" checked>
-                    </div>
-                    <div class="col-1">
-                        <input class="rounded" style="background-color: green; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Mentés">
-                    </div>
-                </form>
+            <form th:action="@{/admin/edit-szak}" method="post" class="row mt-2 mb-4">
+                <div class="col-1">
+                    <input style="width: 100%;" type="number" name="id" value="1">
+                </div>
+                <div class="col">
+                    <input style="width: 100%;" type="text" name="name" value="Programtervező informatikus">
+                </div>
+                <div class="col-1">
+                    <input class="rounded"
+                           style="background-color: green; border:none; color: white; width: 100%; height: 100%; font-size: 20px;"
+                           type="submit" value="Mentés">
+                </div>
+            </form>
 
-                <div th:each="kurzus,iter : ${kurzusok}" class="row mt-0 mb-4">
-                    <div class="col-1">
-                        <h3 class="fs-4" th:text="${kurzus.getKurzusId()}">1</h3>
-                    </div>
-                    <div class="col">
-                        <h3 class="fs-4" th:text="${kurzus.getNev()}">Adatbázis-alapú rendszerek</h3>
-                    </div>
-                    <div class="col">
-                        <h3 class="fs-4" th:text="${kurzus.getOktato()}">Gercsó Always</h3>
-                    </div>
-                    <div class="col">
-                        <h3 class="fs-4" th:text="${kurzus.getKezdesNapja()} + ', ' + ${kurzus.getKezdesIdopontja()} + ':00'">Szerda,<br> 10:00</h3>
-                    </div>
-                    <div class="col">
-                        <h3 class="fs-4" th:text="${kurzus.getTantargyId()}">Adatbázis-alapú rendszerek</h3>
-                    </div>
-                    <div class="col">
-                        <h3 class="fs-4" th:text="${kurzus.getTeremId()}">Irinyi, 225</h3>
-                    </div>
-                    <div class="col">
-                        <h3 class="fs-4" th:text="${kurzus.isFelveheto()}">Igen</h3>
-                    </div>
-                    <div class="col">
-                        <h3 class="fs-4" th:text="${kurzus.isVizsga()}">Nem</h3>
-                    </div>
-                    <div class="col-1">
-                        <form th:action="@{/admin/delete-kurzus}" method="post" style="height: 60%; min-height: 50px; width: 100%;">
-                            <input hidden type="text" name="key" th:value="${kurzus.getKurzusId()}">
-                            <input class="rounded" style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Törlés">
-                        </form>
-                    </div>
+            <div th:each="szak,iter : ${szakok}" class="row mt-0 mb-4">
+                <div class="col-1">
+                    <h3 class="fs-4" th:text="${szak.getSzakId()}">1</h3>
+                </div>
+                <div class="col">
+                    <h3 class="fs-4" th:text="${szak.getName()}">Programtervező informatikus</h3>
+                </div>
+                <div class="col-1">
+                    <form th:action="@{/admin/delete-szak}" method="post"
+                          style="height: 60%; min-height: 50px; width: 100%;">
+                        <input hidden type="text" name="key" th:value="${szak.getSzakId()}">
+                        <input class="rounded"
+                               style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;"
+                               type="submit" value="Törlés">
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="m-3 mx-5 p-3 rounded" style="background-color: #377ded; color:white; box-shadow: 2px 2px 2px #377ded;">
-            <button onclick="collapse('szakTable', 'szakCollapseBtn')" class="m-0 mb-1 mx-2 px-1 fs-4 rounded text-center" style="border: 2px solid white; background-color: white; color: #377ded; height: 40px; width: 30px; font-weight: bold; display: flex; float: left;" id="szakCollapseBtn">+</button>
-            <h2 class="font-bold" style="font-weight: bold; display: flex; float: left;">Szak tábla</h2>
-            <hr style="background-color: white; height: 3px; width: 100%; border: none; color: white;">
-            <div id="szakTable" class="container" style="max-height: 400px; overflow-y: auto; display: none;">
-                <div class="row">
-                    <div class="col-1">
-                        <h3 style="font-weight: bold;">ID</h3>
-                    </div>
-                    <div class="col">
-                        <h3 style="font-weight: bold;">Név</h3>
-                    </div>
-                    <div class="col-1"></div>
+    <div class="m-3 mx-5 p-3 rounded" style="background-color: #377ded; color:white; box-shadow: 2px 2px 2px #377ded;">
+        <button onclick="collapse('tantargyTable', 'tantargyCollapseBtn')"
+                class="m-0 mb-1 mx-2 px-1 fs-4 rounded text-center"
+                style="border: 2px solid white; background-color: white; color: #377ded; height: 40px; width: 30px; font-weight: bold; display: flex; float: left;"
+                id="tantargyCollapseBtn">+
+        </button>
+        <h2 class="font-bold" style="font-weight: bold; display: flex; float: left;">Tantárgy tábla</h2>
+        <hr style="background-color: white; height: 3px; width: 100%; border: none; color: white;">
+        <div id="tantargyTable" class="container" style="max-height: 400px; overflow-y: auto; display: none;">
+            <div class="row">
+                <div class="col-1">
+                    <h3 style="font-weight: bold;">ID</h3>
                 </div>
-                <div class="row my-2 mb-4" style="background-color: white; width: 100%; height: 2px;"></div>
-                <!-- Módosítás -->
+                <div class="col">
+                    <h3 style="font-weight: bold;">Név</h3>
+                </div>
+                <div class="col">
+                    <h3 style="font-weight: bold;">Tárgyfelelős</h3>
+                </div>
+                <div class="col-1"></div>
+            </div>
+            <div class="row my-2 mb-4" style="background-color: white; width: 100%; height: 2px;"></div>
+            <!-- Módosítás -->
 
-                <form th:action="@{/admin/edit-szak}" method="post" class="row mt-2 mb-4">
-                    <div class="col-1">
-                        <input style="width: 100%;" type="number" name="id" value="1">
-                    </div>
-                    <div class="col">
-                        <input style="width: 100%;" type="text" name="name" value="Programtervező informatikus">
-                    </div>
-                    <div class="col-1">
-                        <input class="rounded" style="background-color: green; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Mentés">
-                    </div>
-                </form>
+            <form th:action="@{/admin/edit-tantargy}" method="post" class="row mt-2 mb-4">
+                <div class="col-1">
+                    <input style="width: 100%;" type="number" name="id" value="1">
+                </div>
+                <div class="col">
+                    <input style="width: 100%;" type="text" name="name" value="Adatbázis-alapú rendszerek">
+                </div>
+                <div class="col">
+                    <input style="width: 100%;" type="text" name="felelos" value="N6J3TQ">
+                </div>
+                <div class="col-1">
+                    <input class="rounded"
+                           style="background-color: green; border:none; color: white; width: 100%; height: 100%; font-size: 20px;"
+                           type="submit" value="Mentés">
+                </div>
+            </form>
 
-                <div th:each="szak,iter : ${szakok}" class="row mt-0 mb-4">
-                    <div class="col-1">
-                        <h3 class="fs-4" th:text="${szak.getSzakId()}">1</h3>
-                    </div>
-                    <div class="col">
-                        <h3 class="fs-4" th:text="${szak.getName()}">Programtervező informatikus</h3>
-                    </div>
-                    <div class="col-1">
-                        <form th:action="@{/admin/delete-szak}" method="post" style="height: 60%; min-height: 50px; width: 100%;">
-                            <input hidden type="text" name="key" th:value="${szak.getSzakId()}">
-                            <input class="rounded" style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Törlés">
-                        </form>
-                    </div>
+            <div th:each="tantargy,iter : ${tantargyak}" class="row mt-0 mb-4">
+                <div class="col-1">
+                    <h3 class="fs-4" th:text="${tantargy.getTantargyId()}">1</h3>
+                </div>
+                <div class="col">
+                    <h3 class="fs-4" th:text="${tantargy.getNev()}">Adatbázis-alapú rendszerek</h3>
+                </div>
+                <div class="col">
+                    <h3 class="fs-4" th:text="${tantargy.getFelelos()}">Gercsó Always</h3>
+                </div>
+                <div class="col-1">
+                    <form th:action="@{/admin/delete-tantargy}" method="post"
+                          style="height: 60%; min-height: 50px; width: 100%;">
+                        <input hidden type="text" name="key" th:value="${tantargy.getTantargyId()}">
+                        <input class="rounded"
+                               style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;"
+                               type="submit" value="Törlés">
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="m-3 mx-5 p-3 rounded" style="background-color: #377ded; color:white; box-shadow: 2px 2px 2px #377ded;">
-            <button onclick="collapse('tantargyTable', 'tantargyCollapseBtn')" class="m-0 mb-1 mx-2 px-1 fs-4 rounded text-center" style="border: 2px solid white; background-color: white; color: #377ded; height: 40px; width: 30px; font-weight: bold; display: flex; float: left;" id="tantargyCollapseBtn">+</button>
-            <h2 class="font-bold" style="font-weight: bold; display: flex; float: left;">Tantárgy tábla</h2>
-            <hr style="background-color: white; height: 3px; width: 100%; border: none; color: white;">
-            <div id="tantargyTable" class="container" style="max-height: 400px; overflow-y: auto; display: none;">
-                <div class="row">
-                    <div class="col-1">
-                        <h3 style="font-weight: bold;">ID</h3>
-                    </div>
-                    <div class="col">
-                        <h3 style="font-weight: bold;">Név</h3>
-                    </div>
-                    <div class="col">
-                        <h3 style="font-weight: bold;">Tárgyfelelős</h3>
-                    </div>
-                    <div class="col-1"></div>
+    <div class="m-3 mx-5 p-3 rounded" style="background-color: #377ded; color:white; box-shadow: 2px 2px 2px #377ded;">
+        <button onclick="collapse('teremTable', 'teremCollapseBtn')" class="m-0 mb-1 mx-2 px-1 fs-4 rounded text-center"
+                style="border: 2px solid white; background-color: white; color: #377ded; height: 40px; width: 30px; font-weight: bold; display: flex; float: left;"
+                id="teremCollapseBtn">+
+        </button>
+        <h2 class="font-bold" style="font-weight: bold; display: flex; float: left;">Terem tábla</h2>
+        <hr style="background-color: white; height: 3px; width: 100%; border: none; color: white;">
+        <div id="teremTable" class="container" style="max-height: 400px; overflow-y: auto; display: none;">
+            <div class="row">
+                <div class="col-1">
+                    <h3 style="font-weight: bold;">ID</h3>
                 </div>
-                <div class="row my-2 mb-4" style="background-color: white; width: 100%; height: 2px;"></div>
-                <!-- Módosítás -->
+                <div class="col">
+                    <h3 style="font-weight: bold;">Férőhely</h3>
+                </div>
+                <div class="col-1"></div>
+            </div>
+            <div class="row my-2 mb-4" style="background-color: white; width: 100%; height: 2px;"></div>
+            <!-- Módosítás -->
 
-                <form th:action="@{/admin/edit-tantargy}" method="post" class="row mt-2 mb-4">
-                    <div class="col-1">
-                        <input style="width: 100%;" type="number" name="id" value="1">
-                    </div>
-                    <div class="col">
-                        <input style="width: 100%;" type="text" name="name" value="Adatbázis-alapú rendszerek">
-                    </div>
-                    <div class="col">
-                        <input style="width: 100%;" type="text" name="felelos" value="N6J3TQ">
-                    </div>
-                    <div class="col-1">
-                        <input class="rounded" style="background-color: green; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Mentés">
-                    </div>
-                </form>
+            <form th:action="@{/admin/edit-terem}" method="post" class="row mt-2 mb-4">
+                <div class="col-1">
+                    <input style="width: 100%;" type="number" name="id" value="1">
+                </div>
+                <div class="col">
+                    <input style="width: 100%;" type="number" name="ferohely" value="30">
+                </div>
+                <div class="col-1">
+                    <input class="rounded"
+                           style="background-color: green; border:none; color: white; width: 100%; height: 100%; font-size: 20px;"
+                           type="submit" value="Mentés">
+                </div>
+            </form>
 
-                <div th:each="tantargy,iter : ${tantargyak}" class="row mt-0 mb-4">
-                    <div class="col-1">
-                        <h3 class="fs-4" th:text="${tantargy.getTantargyId()}">1</h3>
-                    </div>
-                    <div class="col">
-                        <h3 class="fs-4" th:text="${tantargy.getNev()}">Adatbázis-alapú rendszerek</h3>
-                    </div>
-                    <div class="col">
-                        <h3 class="fs-4" th:text="${tantargy.getFelelos()}">Gercsó Always</h3>
-                    </div>
-                    <div class="col-1">
-                        <form th:action="@{/admin/delete-tantargy}" method="post" style="height: 60%; min-height: 50px; width: 100%;">
-                            <input hidden type="text" name="key" th:value="${tantargy.getTantargyId()}">
-                            <input class="rounded" style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Törlés">
-                        </form>
-                    </div>
+            <div th:each="terem,iter : ${termek}" class="row mt-0 mb-4">
+                <div class="col-1">
+                    <h3 class="fs-4" th:text="${terem.getTeremId()}">1</h3>
+                </div>
+                <div class="col">
+                    <h3 class="fs-4" th:text="${terem.getFerohely()}">30</h3>
+                </div>
+                <div class="col-1">
+                    <form th:action="@{/admin/delete-terem}" method="post"
+                          style="height: 60%; min-height: 50px; width: 100%;">
+                        <input hidden type="text" name="key" th:value="${terem.getTeremId()}">
+                        <input class="rounded"
+                               style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;"
+                               type="submit" value="Törlés">
+                    </form>
                 </div>
             </div>
         </div>
-
-        <div class="m-3 mx-5 p-3 rounded" style="background-color: #377ded; color:white; box-shadow: 2px 2px 2px #377ded;">
-            <button onclick="collapse('teremTable', 'teremCollapseBtn')" class="m-0 mb-1 mx-2 px-1 fs-4 rounded text-center" style="border: 2px solid white; background-color: white; color: #377ded; height: 40px; width: 30px; font-weight: bold; display: flex; float: left;" id="teremCollapseBtn">+</button>
-            <h2 class="font-bold" style="font-weight: bold; display: flex; float: left;">Terem tábla</h2>
-            <hr style="background-color: white; height: 3px; width: 100%; border: none; color: white;">
-            <div id="teremTable" class="container" style="max-height: 400px; overflow-y: auto; display: none;">
-                <div class="row">
-                    <div class="col-1">
-                        <h3 style="font-weight: bold;">ID</h3>
-                    </div>
-                    <div class="col">
-                        <h3 style="font-weight: bold;">Férőhely</h3>
-                    </div>
-                    <div class="col-1"></div>
+    </div>
+    <div class="m-3 mx-5 p-3 rounded" style="background-color: #377ded; color:white; box-shadow: 2px 2px 2px #377ded;">
+        <button onclick="collapse('posztTable', 'posztCollapseBtn')" class="m-0 mb-1 mx-2 px-1 fs-4 rounded text-center"
+                style="border: 2px solid white; background-color: white; color: #377ded; height: 40px; width: 30px; font-weight: bold; display: flex; float: left;"
+                id="posztCollapseBtn">+
+        </button>
+        <h2 class="font-bold" style="font-weight: bold; display: flex; float: left;">Poszt tábla</h2>
+        <hr style="background-color: white; height: 3px; width: 100%; border: none; color: white;">
+        <div id="posztTable" class="container" style="max-height: 400px; overflow-y: auto; display: none;">
+            <div class="row">
+                <div class="col-1">
+                    <h3 style="font-weight: bold;">ID</h3>
                 </div>
-                <div class="row my-2 mb-4" style="background-color: white; width: 100%; height: 2px;"></div>
-                <!-- Módosítás -->
+                <div class="col">
+                    <h3 style="font-weight: bold;">PS-kód</h3>
+                </div>
+                <div class="col">
+                    <h3 style="font-weight: bold;">tartalom</h3>
+                </div>
+                <div class="col">
+                    <h3 style="font-weight: bold;">Üzenőfalas-e</h3>
+                </div>
+                <div class="col-1"></div>
+            </div>
+            <div class="row my-2 mb-4" style="background-color: white; width: 100%; height: 2px;"></div>
+            <!-- Módosítás -->
 
-                <form th:action="@{/admin/edit-terem}" method="post" class="row mt-2 mb-4">
-                    <div class="col-1">
-                        <input style="width: 100%;" type="number" name="id" value="1">
-                    </div>
-                    <div class="col">
-                        <input style="width: 100%;" type="number" name="ferohely" value="30">
-                    </div>
-                    <div class="col-1">
-                        <input class="rounded" style="background-color: green; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Mentés">
-                    </div>
-                </form>
+            <form th:action="@{/admin/edit-poszt}" method="post" class="row mt-2 mb-4">
+                <div class="col-1">
+                    <input style="width: 100%;" type="number" name="id" value="1">
+                </div>
+                <div class="col">
+                    <input style="width: 100%;" type="text" name="psCode" value="BWE8LT">
+                </div>
+                <div class="col">
+                    <input style="width: 100%;" type="text" name="tartalom" value="I love HTML <3">
+                </div>
+                <div class="col">
+                    <input style="width: 100%;" type="checkbox" name="isForBoard" checked>
+                </div>
+                <div class="col-1">
+                    <input class="rounded"
+                           style="background-color: green; border:none; color: white; width: 100%; height: 100%; font-size: 20px;"
+                           type="submit" value="Mentés">
+                </div>
+            </form>
 
-                <div th:each="terem,iter : ${termek}" class="row mt-0 mb-4">
-                    <div class="col-1">
-                        <h3 class="fs-4" th:text="${terem.getTeremId()}">1</h3>
-                    </div>
-                    <div class="col">
-                        <h3 class="fs-4" th:text="${terem.getFerohely()}">30</h3>
-                    </div>
-                    <div class="col-1">
-                        <form th:action="@{/admin/delete-terem}" method="post" style="height: 60%; min-height: 50px; width: 100%;">
-                            <input hidden type="text" name="key" th:value="${terem.getTeremId()}">
-                            <input class="rounded" style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Törlés">
-                        </form>
-                    </div>
+            <div th:each="poszt,iter : ${posztok}" class="row mt-0 mb-4">
+                <div class="col-1">
+                    <h3 class="fs-4" th:text="${poszt.getPosztId()}">1</h3>
+                </div>
+                <div class="col">
+                    <h3 class="fs-4" th:text="${poszt.getPsCode()}">BWE8LT</h3>
+                </div>
+                <div class="col">
+                    <h3 class="fs-4" th:text="${poszt.getTartalom()}">I love HTML <3</h3>
+                </div>
+                <div class="col">
+                    <h3 class="fs-4" th:text="${poszt.isForBoard()}">Igen</h3>
+                </div>
+                <div class="col-1">
+                    <form th:action="@{/admin/delete-poszt}" method="post"
+                          style="height: 60%; min-height: 50px; width: 100%;">
+                        <input hidden type="text" name="key" th:value="${poszt.getPosztId()}">
+                        <input class="rounded"
+                               style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;"
+                               type="submit" value="Törlés">
+                    </form>
                 </div>
             </div>
         </div>
-        <div class="m-3 mx-5 p-3 rounded" style="background-color: #377ded; color:white; box-shadow: 2px 2px 2px #377ded;">
-            <button onclick="collapse('posztTable', 'posztCollapseBtn')" class="m-0 mb-1 mx-2 px-1 fs-4 rounded text-center" style="border: 2px solid white; background-color: white; color: #377ded; height: 40px; width: 30px; font-weight: bold; display: flex; float: left;" id="posztCollapseBtn">+</button>
-            <h2 class="font-bold" style="font-weight: bold; display: flex; float: left;">Poszt tábla</h2>
-            <hr style="background-color: white; height: 3px; width: 100%; border: none; color: white;">
-            <div id="posztTable" class="container" style="max-height: 400px; overflow-y: auto; display: none;">
-                <div class="row">
-                    <div class="col-1">
-                        <h3 style="font-weight: bold;">ID</h3>
-                    </div>
-                    <div class="col">
-                        <h3 style="font-weight: bold;">PS-kód</h3>
-                    </div>
-                    <div class="col">
-                        <h3 style="font-weight: bold;">tartalom</h3>
-                    </div>
-                    <div class="col-1"></div>
+    </div>
+
+    <div class="m-3 mx-5 p-3 rounded" style="background-color: #377ded; color:white; box-shadow: 2px 2px 2px #377ded;">
+        <button onclick="collapse('kommentekTable', 'kommentekCollapseBtn')"
+                class="m-0 mb-1 mx-2 px-1 fs-4 rounded text-center"
+                style="border: 2px solid white; background-color: white; color: #377ded; height: 40px; width: 30px; font-weight: bold; display: flex; float: left;"
+                id="kommentekCollapseBtn">+
+        </button>
+        <h2 class="font-bold" style="font-weight: bold; display: flex; float: left;">Kommentek tábla</h2>
+        <hr style="background-color: white; height: 3px; width: 100%; border: none; color: white;">
+        <div id="kommentekTable" class="container" style="max-height: 400px; overflow-y: auto; display: none;">
+            <div class="row">
+                <div class="col-1">
+                    <h3 style="font-weight: bold;">ID</h3>
                 </div>
-                <div class="row my-2 mb-4" style="background-color: white; width: 100%; height: 2px;"></div>
-                <!-- Módosítás -->
+                <div class="col">
+                    <h3 style="font-weight: bold;">Poszt ID</h3>
+                </div>
+                <div class="col">
+                    <h3 style="font-weight: bold;">PS-kód</h3>
+                </div>
+                <div class="col">
+                    <h3 style="font-weight: bold;">tartalom</h3>
+                </div>
+                <div class="col-1"></div>
+            </div>
+            <div class="row my-2 mb-4" style="background-color: white; width: 100%; height: 2px;"></div>
+            <!-- Módosítás -->
 
-                <form th:action="@{/admin/edit-poszt}" method="post" class="row mt-2 mb-4">
-                    <div class="col-1">
-                        <input style="width: 100%;" type="number" name="id" value="1">
-                    </div>
-                    <div class="col">
-                        <input style="width: 100%;" type="text" name="psCode" value="BWE8LT">
-                    </div>
-                    <div class="col">
-                        <input style="width: 100%;" type="text" name="tartalom" value="I love HTML <3">
-                    </div>
-                    <div class="col-1">
-                        <input class="rounded" style="background-color: green; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Mentés">
-                    </div>
-                </form>
+            <form th:action="@{/admin/edit-komment}" method="post" class="row mt-2 mb-4">
+                <div class="col-1">
+                    <input style="width: 100%;" type="number" name="id" value="1">
+                </div>
+                <div class="col">
+                    <input style="width: 100%;" type="number" name="posztId" value="1">
+                </div>
+                <div class="col">
+                    <input style="width: 100%;" type="text" name="psCode" value="BWE8LT">
+                </div>
+                <div class="col">
+                    <input style="width: 100%;" type="text" name="tartalom" value="I love HTML <3">
+                </div>
+                <div class="col-1">
+                    <input class="rounded"
+                           style="background-color: green; border:none; color: white; width: 100%; height: 100%; font-size: 20px;"
+                           type="submit" value="Mentés">
+                </div>
+            </form>
 
-                <div th:each="poszt,iter : ${posztok}" class="row mt-0 mb-4">
-                    <div class="col-1">
-                        <h3 class="fs-4" th:text="${poszt.getPosztId()}">1</h3>
-                    </div>
-                    <div class="col">
-                        <h3 class="fs-4" th:text="${poszt.getPsCode()}">BWE8LT</h3>
-                    </div>
-                    <div class="col">
-                        <h3 class="fs-4" th:text="${poszt.getTartalom()}">I love HTML <3</h3>
-                    </div>
-                    <div class="col-1">
-                        <form th:action="@{/admin/delete-poszt}" method="post" style="height: 60%; min-height: 50px; width: 100%;">
-                            <input hidden type="text" name="key" th:value="${poszt.getPosztId()}">
-                            <input class="rounded" style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Törlés">
-                        </form>
-                    </div>
+            <div th:each="komment,iter : ${kommentek}" class="row mt-0 mb-4">
+                <div class="col-1">
+                    <h3 class="fs-4" th:text="${komment.getKommentId()}">1</h3>
+                </div>
+                <div class="col">
+                    <h3 class="fs-4" th:text="${komment.getPosztId()}">1</h3>
+                </div>
+                <div class="col">
+                    <h3 class="fs-4" th:text="${komment.getPsCode()}">BWE8LT</h3>
+                </div>
+                <div class="col">
+                    <h3 class="fs-4" th:text="${komment.getTartalom()}">I love HTML <3</h3>
+                </div>
+                <div class="col-1">
+                    <form th:action="@{/admin/delete-komment}" method="post"
+                          style="height: 60%; min-height: 50px; width: 100%;">
+                        <input hidden type="text" name="key" th:value="${komment.getKommentId()}">
+                        <input class="rounded"
+                               style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;"
+                               type="submit" value="Törlés">
+                    </form>
                 </div>
             </div>
         </div>
-
-        <div class="m-3 mx-5 p-3 rounded" style="background-color: #377ded; color:white; box-shadow: 2px 2px 2px #377ded;">
-            <button onclick="collapse('kommentekTable', 'kommentekCollapseBtn')" class="m-0 mb-1 mx-2 px-1 fs-4 rounded text-center" style="border: 2px solid white; background-color: white; color: #377ded; height: 40px; width: 30px; font-weight: bold; display: flex; float: left;" id="kommentekCollapseBtn">+</button>
-            <h2 class="font-bold" style="font-weight: bold; display: flex; float: left;">Kommentek tábla</h2>
-            <hr style="background-color: white; height: 3px; width: 100%; border: none; color: white;">
-            <div id="kommentekTable" class="container" style="max-height: 400px; overflow-y: auto; display: none;">
-                <div class="row">
-                    <div class="col-1">
-                        <h3 style="font-weight: bold;">ID</h3>
-                    </div>
-                    <div class="col">
-                        <h3 style="font-weight: bold;">Poszt ID</h3>
-                    </div>
-                    <div class="col">
-                        <h3 style="font-weight: bold;">PS-kód</h3>
-                    </div>
-                    <div class="col">
-                        <h3 style="font-weight: bold;">tartalom</h3>
-                    </div>
-                    <div class="col-1"></div>
-                </div>
-                <div class="row my-2 mb-4" style="background-color: white; width: 100%; height: 2px;"></div>
-                <!-- Módosítás -->
-
-                <form th:action="@{/admin/edit-komment}" method="post" class="row mt-2 mb-4">
-                    <div class="col-1">
-                        <input style="width: 100%;" type="number" name="id" value="1">
-                    </div>
-                    <div class="col">
-                        <input style="width: 100%;" type="number" name="posztId" value="1">
-                    </div>
-                    <div class="col">
-                        <input style="width: 100%;" type="text" name="psCode" value="BWE8LT">
-                    </div>
-                    <div class="col">
-                        <input style="width: 100%;" type="text" name="tartalom" value="I love HTML <3">
-                    </div>
-                    <div class="col-1">
-                        <input class="rounded" style="background-color: green; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Mentés">
-                    </div>
-                </form>
-
-                <div th:each="komment,iter : ${kommentek}" class="row mt-0 mb-4">
-                    <div class="col-1">
-                        <h3 class="fs-4" th:text="${komment.getKommentId()}">1</h3>
-                    </div>
-                    <div class="col">
-                        <h3 class="fs-4" th:text="${komment.getPosztId()}">1</h3>
-                    </div>
-                    <div class="col">
-                        <h3 class="fs-4" th:text="${komment.getPsCode()}">BWE8LT</h3>
-                    </div>
-                    <div class="col">
-                        <h3 class="fs-4" th:text="${komment.getTartalom()}">I love HTML <3</h3>
-                    </div>
-                    <div class="col-1">
-                        <form th:action="@{/admin/delete-komment}" method="post" style="height: 60%; min-height: 50px; width: 100%;">
-                            <input hidden type="text" name="key" th:value="${komment.getKommentId()}">
-                            <input class="rounded" style="background-color: red; border:none; color: white; width: 100%; height: 100%; font-size: 20px;" type="submit" value="Törlés">
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
+    </div>
+</main>
 </body>
 </html>
