@@ -94,6 +94,15 @@ public class IndexController {
                 .average();
         model.addAttribute("gradAvg", gradAvg.isPresent() ? gradAvg.getAsDouble() : 0);
 
+        // graduates
+        var graduates = _szakDAO.getAllYearlyGraduatesForSzak(szak, LocalDateTime.now().getYear());
+        model.addAttribute("graduateCount", graduates.size());
+        var avgGraduates =_userDAO.graduatesAverage(szak, LocalDateTime.now().getYear());
+        var gradAvg = avgGraduates.values().stream()
+                .mapToDouble(a -> a)
+                .average();
+        model.addAttribute("gradAvg", gradAvg.isPresent() ? gradAvg.getAsDouble() : 0);
+
         return "main/index";
     }
 
