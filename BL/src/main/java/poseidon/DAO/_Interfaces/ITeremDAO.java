@@ -1,7 +1,10 @@
 package poseidon.DAO._Interfaces;
 
 import poseidon.DTO._Interfaces.ITerem;
+import poseidon.DTO._Interfaces.ITeremStats;
 import poseidon.Exceptions.QueryException;
+
+import java.util.List;
 
 public interface ITeremDAO {
     Iterable<ITerem> getAll() throws QueryException;
@@ -11,4 +14,6 @@ public interface ITeremDAO {
     ITerem save(ITerem terem) throws QueryException;
 
     void remove(ITerem terem) throws IllegalArgumentException, QueryException;
+
+    List<ITeremStats> getClassroomStats();
 }
