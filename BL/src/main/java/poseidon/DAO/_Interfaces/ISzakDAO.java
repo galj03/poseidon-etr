@@ -22,6 +22,8 @@ public interface ISzakDAO {
 
     List<IUser> getAllUsersForSzak(ISzak szak) throws QueryException;
 
+    List<IUser> getAllYearlyGraduatesForSzak(ISzak szak, Integer vegzesEv) throws QueryException;
+
     Integer getRequiredClassesCount(ISzak szak) throws QueryException;
 
     Map<String, Float> getAveragesForAll(ISzak szak) throws QueryException;
