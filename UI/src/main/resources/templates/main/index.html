@@ -143,13 +143,13 @@
             <tbody>
                 <tr th:each="stats : ${stats}" class="sor" style="min-height: 50px">
                     <td th:text="${stats.getId()}" style="font-size: 22px;"></td>
-                    <td th:text="${stats.getNap()} == null ? 'N/A' : ${stats.getNap()} + ' - ' + (${stats.getKezdesIdo()} == null ? 'N/A ' : ${stats.getKezdesIdo()}) + 'óra'" style="font-size: 22px;"></td>
+                    <td th:text="${stats.getNap()} == null ? 'N/A' : ${stats.getNap()} + ' - ' + (${stats.getKezdesIdo()} == null ? 'N/A ' : ${stats.getKezdesIdo()}) + ' óra'" style="font-size: 22px;"></td>
                     <td th:text="(${stats.getLetszam()} == null ? '-' : ${stats.getLetszam()}) + '/' + (${stats.getFerohely()} == null ? '-' : ${stats.getFerohely()})" style="font-size: 22px;"></td>
                 </tr>
             </tbody>
         </table>
     </div>
-    
+
 </main>
 </body>
 </html>
