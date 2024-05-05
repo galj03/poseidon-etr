@@ -67,6 +67,7 @@ public class AdminController {
         model.addAttribute("szakok", _szakDAO.getAll());
         model.addAttribute("tantargyak", _tantargyDAO.getAll());
         model.addAttribute("termek", _teremDAO.getAll());
+        model.addAttribute("kotelezok", _szakDAO.getAllKotelezo());
         return "main/admin";
     }
 
@@ -305,6 +306,40 @@ public class AdminController {
         }
 
         _tantargyDAO.save(tantargy);
+
+        return "redirect:/admin";
+    }
+
+    @PostMapping("/admin/remove-kotelezo")
+    public String deleteKotelezo(@RequestParam("szak_id") int szakId,
+                                 @RequestParam("tantargy_id") int tantargyId) {
+        _szakDAO.removeKotelezo(szakId, tantargyId);
+        return "redirect:/admin";
+    }
+
+    @PostMapping("/admin/save-kotelezo")
+    public String saveKotelezo(@RequestParam("szak_id") Integer szakId,
+                               @RequestParam("tantargy_id") Integer tantargyId,
+                               Model model) {
+
+        if (szakId == null || szakId < 0) {
+            szakId = 0;
+        }
+
+        if (tantargyId == null || tantargyId < 0) {
+            tantargyId = 0;
+        }
+
+        ISzak tmpSzak = new Szak().setSzakId(szakId);
+        ITantargy tmpTantargy = new Tantargy().setTantargyId(tantargyId);
+
+        try {
+            _szakDAO.saveKotelezo(tmpSzak, tmpTantargy);
+        } catch (Exception e) {
+            model.addAttribute("error", "Hiba a kötelező hozzáadásánál! " +
+                    "Nézd meg nem-e létezik ilyen kötelező");
+            return "main/error";
+        }
 
         return "redirect:/admin";
     }
