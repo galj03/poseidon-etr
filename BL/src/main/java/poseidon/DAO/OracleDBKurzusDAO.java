@@ -24,11 +24,7 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.sql.PreparedStatement;
 import java.sql.Types;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Repository
 public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
@@ -51,6 +47,91 @@ public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
 
     public List<IKurzus> getKurzusokByTantargyId(Integer tantargyId) throws QueryException {
         return getRows("select * from kurzus where tantargy_id=?", tantargyId);
+    }
+
+    public Integer getTantargyIdByKurzusId(Integer kurzusId) throws QueryException {
+        try {
+            List<Map<String, Object>> rows = getJdbcTemplate().queryForList(
+                    "SELECT tantargy.id AS tantargy_id " +
+                            "FROM tantargy, kurzus " +
+                            "WHERE tantargy.id = kurzus.tantargy_id " +
+                            "AND tantargy.id = ?", kurzusId);
+
+
+
+            return ((BigDecimal) rows.get(0).get("tantargy_id")).intValue();
+
+        } catch (DataAccessException exception) {
+            throw new QueryException("Could not get values from database", exception);
+        } catch (QueryException exception) {
+            throw new QueryException("Failed to query a nested value", exception);
+        }
+    }
+
+    public Set<Integer> getAllPrerequisities(Integer tantargyId) {
+        try {
+            List<Map<String, Object>> rows = getJdbcTemplate().queryForList(
+                    "SELECT feltetel_id AS elofeltetel " +
+                        "FROM elofeltetel " +
+                        "WHERE elofeltetel.tantargy_id = ?", tantargyId);
+
+            Set<Integer> prerequsiteSubjects = new HashSet<>();
+
+            for (Map<String, Object> row : rows) {
+                prerequsiteSubjects.add(((BigDecimal) row.get("elofeltetel")).intValue());
+            }
+
+            return prerequsiteSubjects;
+
+        } catch (DataAccessException exception) {
+            throw new QueryException("Could not get values from database", exception);
+        } catch (QueryException exception) {
+            throw new QueryException("Failed to query a nested value", exception);
+        }
+    }
+
+    public Set<Integer> getAllCompletedSubjectsByUser(String PsCode) {
+        try {
+            List<Map<String, Object>> rows = getJdbcTemplate().queryForList(
+                    "SELECT tantargy_id AS teljesitett_targy " +
+                        "FROM felvette " +
+                        "WHERE felvette.PS_kod = '" + PsCode + "' " +
+                        "AND allapot = 'TELJESITETT'");
+
+            Set<Integer> completedSubjects = new HashSet<>();
+
+            // debug
+            if (!rows.isEmpty()) {
+                Set<String> keys = rows.get(0).keySet();
+
+                for (String key : keys) {
+                    System.err.println(key);
+                }
+            }
+
+            for (Map<String, Object> row : rows) {
+                completedSubjects.add(((BigDecimal) row.get("teljesitett_targy")).intValue());
+            }
+
+            return completedSubjects;
+
+        } catch (DataAccessException exception) {
+            throw new QueryException("Could not get values from database", exception);
+        } catch (QueryException exception) {
+            throw new QueryException("Failed to query a nested value", exception);
+        }
+    }
+
+    public List<Integer> checkPrerequisitesCompleted(Set<Integer> prerequisiteSubjects, Set<Integer> completedSubjects) {
+        List<Integer> notCompletedSubjects = new ArrayList<>();
+
+        for (Integer pSubject : prerequisiteSubjects) {
+            if (!completedSubjects.contains(pSubject)) {
+                notCompletedSubjects.add(pSubject);
+            }
+        }
+
+        return notCompletedSubjects;
     }
 
     public Integer getSumOfEnrolledStudents(Integer kurzusId) {
