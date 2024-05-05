@@ -39,8 +39,8 @@ public class CourseController {
     }
 
     @GetMapping("/subjectlisting/courselisting")
-    public String courseListing(@RequestParam("tantargyId") Integer tantargyId, Model model) {
-        List<IKurzusData> kurzusok = _kurzusDAO.getAllCoursesOfSubject(tantargyId);
+    public String courseListing(@RequestParam("tantargyId") Integer tantargyId, Model model, Principal principal) {
+        List<IKurzusData> kurzusok = _kurzusDAO.getAllCoursesOfSubject(tantargyId, principal.getName());
         String tantargyNev = _tantargyDAO.getById(tantargyId).getNev();
 
         model.addAttribute("kurzusok", kurzusok);

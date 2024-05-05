@@ -21,6 +21,7 @@ import poseidon.Exceptions.QueryException;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.sql.PreparedStatement;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -65,12 +66,24 @@ public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
         }
     }
 
-    public List<IKurzusData> getAllCoursesOfSubject(Integer tantargyId) {
+    public List<IKurzusData> getAllCoursesOfSubject(Integer tantargyId, String PsCode) {
         try {
-            List<Map<String, Object>> rows = getJdbcTemplate().queryForList("SELECT kurzus.id, nev, oktato_ps_kod, kezdes_ideje_nap, kezdes_ideje_idopont, felveheto, vizsga, ferohely, (SELECT nev FROM felhasznalo WHERE PS_kod = oktato_ps_kod) AS OKTATO_NEV\n" +
-                    "    FROM kurzus, terem\n" +
-                    "    WHERE kurzus.terem_id = terem.id\n" +
-                    "    AND kurzus.tantargy_id = ?", tantargyId);
+            List<Map<String, Object>> rows = getJdbcTemplate().queryForList("" +
+                    "SELECT " +
+                    "kurzus.id, " +
+                    "nev, " +
+                    "oktato_ps_kod, " +
+                    "kezdes_ideje_nap, " +
+                    "kezdes_ideje_idopont, " +
+                    "felveheto, " +
+                    "vizsga, " +
+                    "ferohely, " +
+                    "(SELECT nev FROM felhasznalo WHERE PS_kod = oktato_ps_kod) AS OKTATO_NEV, " +
+                    "(SELECT COUNT(*) FROM felvette WHERE kurzus_id=kurzus.id AND PS_kod='" + PsCode + "') AS felvette,\n" +
+                    "(SELECT COUNT(*) FROM felvette WHERE kurzus_id=kurzus.id AND PS_kod='" + PsCode + "' AND allapot='TELJESITETT') AS teljesitette\n" +
+                    "FROM kurzus, terem\n" +
+                    "WHERE kurzus.terem_id = terem.id\n" +
+                    "AND kurzus.tantargy_id = ?", tantargyId);
 
             List<IKurzusData> result = new ArrayList<>();
 
@@ -96,7 +109,9 @@ public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
                         .setFelveheto("I".equals(row.get("felveheto")))
                         .setVizsga("I".equals(row.get("vizsga")))
                         .setFerohely(((BigDecimal) row.get("ferohely")).intValue())
-                        .setAktualisLetszam(getSumOfEnrolledStudents(kurzusData.getKurzusId()));
+                        .setAktualisLetszam(getSumOfEnrolledStudents(kurzusData.getKurzusId()))
+                        .setFelvette(((BigDecimal) row.get("felvette")).intValue() > 0)
+                        .setTeljesitette(((BigDecimal) row.get("teljesitette")).intValue() > 0);
                 result.add(kurzusData);
             }
 

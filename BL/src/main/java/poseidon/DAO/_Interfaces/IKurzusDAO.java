@@ -18,7 +18,7 @@ public interface IKurzusDAO {
 
     Integer getSumOfEnrolledStudents(Integer kurzusId);
 
-    List<IKurzusData> getAllCoursesOfSubject(Integer tantargyId);
+    List<IKurzusData> getAllCoursesOfSubject(Integer tantargyId, String PsCode);
 
     void enrollCourse(Integer kurzusId, String PsCode);
 

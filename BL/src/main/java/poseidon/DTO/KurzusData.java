@@ -14,8 +14,10 @@ public class KurzusData implements IKurzusData {
     private Boolean vizsga;
     private Integer ferohely;
     private Integer aktualisLetszam;
+    private Boolean felvette;
+    private Boolean teljesitette;
 
-    public KurzusData(Integer kurzusId, String nev, String oktatoNeve, String oktatoPsKod, String nap, Integer kezdesIdeje, Boolean felveheto, Boolean vizsga, Integer ferohely, Integer aktualisLetszam) {
+    public KurzusData(Integer kurzusId, String nev, String oktatoNeve, String oktatoPsKod, String nap, Integer kezdesIdeje, Boolean felveheto, Boolean vizsga, Integer ferohely, Integer aktualisLetszam, Boolean felvette, Boolean teljesitette) {
         this.kurzusId = kurzusId;
         this.nev = nev;
         this.oktatoNeve = oktatoNeve;
@@ -26,6 +28,8 @@ public class KurzusData implements IKurzusData {
         this.vizsga = vizsga;
         this.ferohely = ferohely;
         this.aktualisLetszam = aktualisLetszam;
+        this.felvette = felvette;
+        this.teljesitette = teljesitette;
     }
 
     public KurzusData() {
@@ -75,6 +79,14 @@ public class KurzusData implements IKurzusData {
     @Override
     public Integer getAktualisLetszam() {
         return aktualisLetszam;
+    }
+
+    public Boolean getFelvette() {
+        return felvette;
+    }
+
+    public Boolean getTeljesitette() {
+        return teljesitette;
     }
 
     public KurzusData setKurzusId(Integer kurzusId) {
@@ -130,6 +142,16 @@ public class KurzusData implements IKurzusData {
     @Override
     public KurzusData setAktualisLetszam(Integer aktualisLetszam) {
         this.aktualisLetszam = aktualisLetszam;
+        return this;
+    }
+
+    public KurzusData setFelvette(Boolean felvette) {
+        this.felvette = felvette;
+        return this;
+    }
+
+    public KurzusData setTeljesitette(Boolean teljesitette) {
+        this.teljesitette = teljesitette;
         return this;
     }
 }
