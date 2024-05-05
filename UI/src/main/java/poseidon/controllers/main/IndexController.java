@@ -69,11 +69,15 @@ public class IndexController {
         var allCompletedCredits = _userDAO.finishedCoursesCount(_user);
         model.addAttribute("requiredCredits", allRequiredCredits);
         model.addAttribute("completedCredits", allCompletedCredits);
-        model.addAttribute("completionRate", (float) allCompletedCredits / allRequiredCredits);
+        if (allCompletedCredits != 0 && allRequiredCredits != 0) {
+            model.addAttribute("completionRate", (float) allCompletedCredits / allRequiredCredits);
+        } else {
+            model.addAttribute("completionRate", 0);
+        }
 
         // averages for current user
         var avgAll = _szakDAO.getAveragesForAll(szak);
-        model.addAttribute("userNormalAvg", avgAll.get(_user.getPsCode()).toString());
+        model.addAttribute("userNormalAvg", avgAll.get(_user.getPsCode()) != null ? avgAll.get(_user.getPsCode()).toString() : 0);
 
         // averages for all users
         var normalAvg = avgAll.values().stream()
