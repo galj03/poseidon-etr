@@ -1,8 +1,6 @@
 package poseidon.controllers.main;
 
-import poseidon.DAO._Interfaces.IKommentDAO;
-import poseidon.DAO._Interfaces.IPosztDAO;
-import poseidon.DAO._Interfaces.ISzakDAO;
+import poseidon.DAO._Interfaces.*;
 import poseidon.DTO.Komment;
 import poseidon.DTO.Kurzus;
 import poseidon.DTO.Poszt;
@@ -11,7 +9,6 @@ import poseidon.DTO._Interfaces.IKurzus;
 import poseidon.DTO._Interfaces.IPoszt;
 import poseidon.DTO._Interfaces.IUser;
 import org.springframework.security.access.prepost.PreAuthorize;
-import poseidon.DAO._Interfaces.IUserDAO;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static poseidon.Constants.*;
@@ -35,15 +31,17 @@ public class IndexController {
     private final IPosztDAO _posztDAO;
     private final IKommentDAO _kommentDAO;
     private IUser _user;
+    private final ITeremDAO _teremDAO;
 
     public IndexController(IUserDAO userDAO,
                            ISzakDAO szakDAO,
                            IPosztDAO posztDAO,
-                           IKommentDAO kommentDAO) {
+                           IKommentDAO kommentDAO, ITeremDAO teremDAO) {
         _userDAO = userDAO;
         _szakDAO = szakDAO;
         _posztDAO = posztDAO;
         _kommentDAO = kommentDAO;
+        _teremDAO = teremDAO;
     }
 
     @GetMapping("/")
@@ -55,6 +53,7 @@ public class IndexController {
         }
         model.addAttribute("_userDAO", _userDAO);
         model.addAttribute("user", _user);
+        model.addAttribute("stats", _teremDAO.getClassroomStats());
 
         // timetable
         var userCourses = _userDAO.currentCourses(_user);

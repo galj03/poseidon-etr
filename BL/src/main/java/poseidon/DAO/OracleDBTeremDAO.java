@@ -6,8 +6,12 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import poseidon.DAO._Interfaces.ITeremDAO;
+import poseidon.DTO.KurzusData;
 import poseidon.DTO.Terem;
+import poseidon.DTO.TeremStats;
+import poseidon.DTO._Interfaces.IKurzusData;
 import poseidon.DTO._Interfaces.ITerem;
+import poseidon.DTO._Interfaces.ITeremStats;
 import poseidon.Exceptions.ArgumentNullException;
 import poseidon.Exceptions.QueryException;
 
@@ -17,6 +21,7 @@ import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Repository
 public class OracleDBTeremDAO extends BaseDAO implements ITeremDAO {
@@ -35,6 +40,45 @@ public class OracleDBTeremDAO extends BaseDAO implements ITeremDAO {
     @Override
     public ITerem getById(Integer id) throws QueryException {
         return getRow("select * from terem where id=?", id);
+    }
+
+    public List<ITeremStats> getClassroomStats() {
+        try {
+            List<Map<String, Object>> rows = getJdbcTemplate().queryForList("SELECT terem.id, ferohely,\n" +
+                    "(SELECT DISTINCT(kurzus.kezdes_ideje_nap) FROM kurzus INNER JOIN felvette ON kurzus_id = kurzus.id AND kurzus.terem_id = terem.id AND allapot='JOVAHAGYOTT') AS kezdes_nap,\n" +
+                    "(SELECT DISTINCT(kurzus.kezdes_ideje_idopont) FROM kurzus INNER JOIN felvette ON kurzus_id = kurzus.id AND kurzus.terem_id = terem.id AND allapot='JOVAHAGYOTT') AS kezdes_ido,\n" +
+                    "(SELECT DISTINCT(SELECT COUNT(*) FROM kurzus INNER JOIN felvette ON kurzus_id = kurzus.id AND kurzus.terem_id = terem.id AND allapot='JOVAHAGYOTT') AS letszam FROM kurzus INNER JOIN felvette ON kurzus_id = kurzus.id AND kurzus.terem_id = terem.id AND allapot='JOVAHAGYOTT') AS letszam\n" +
+                    "FROM terem");
+
+            List<ITeremStats> result = new ArrayList<>();
+
+            if (!rows.isEmpty()) {
+                Set<String> keys = rows.get(0).keySet();
+
+                for (String key : keys) {
+                    System.err.println(key);
+                }
+                System.err.println("-------------------");
+            }
+
+            for (Map<String, Object> row : rows) {
+                ITeremStats teremStats = new TeremStats();
+                teremStats
+                        .setId(((BigDecimal) row.get("id")).intValue())
+                        .setFerohely(row.get("ferohely") == null ? null : ((BigDecimal) row.get("ferohely")).intValue())
+                        .setNap((String) row.get("kezdes_nap"))
+                        .setKezdesIdo(row.get("kezdes_ido") == null ? null : ((BigDecimal) row.get("kezdes_ido")).intValue())
+                        .setLetszam(row.get("letszam") == null ? null : ((BigDecimal) row.get("letszam")).intValue());
+                result.add(teremStats);
+            }
+
+            return result;
+
+        } catch (DataAccessException exception) {
+            throw new QueryException("Could not get values from database", exception);
+        } catch (QueryException exception) {
+            throw new QueryException("Failed to query a nested value", exception);
+        }
     }
 
     @Override

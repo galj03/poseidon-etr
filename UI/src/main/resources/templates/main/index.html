@@ -127,6 +127,29 @@
             </div>
         </div>
     </div>
+
+    <div class="m-3 mx-5 p-3 rounded" style="background-color: #377ded; color:white; box-shadow: 2px 2px 2px #377ded;">
+        <div class="row col-12 font-bold" style="text-align: center; justify-content: center; font-size: 40px; margin-bottom: 20px;">
+            Teremstatisztikák
+        </div>
+        <table id="stats" class="container">
+            <thead style="margin-bottom: 20px">
+                <tr class="sor" style="border-bottom: 2px solid white;">
+                    <td style="font-size: 30px;">ID</td>
+                    <td style="font-size: 30px;">Időpont</td>
+                    <td style="font-size: 30px;">Telítettség</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="stats : ${stats}" class="sor" style="min-height: 50px">
+                    <td th:text="${stats.getId()}" style="font-size: 22px;"></td>
+                    <td th:text="${stats.getNap()} == null ? 'N/A' : ${stats.getNap()} + ' - ' + (${stats.getKezdesIdo()} == null ? 'N/A ' : ${stats.getKezdesIdo()}) + ' óra'" style="font-size: 22px;"></td>
+                    <td th:text="(${stats.getLetszam()} == null ? '-' : ${stats.getLetszam()}) + '/' + (${stats.getFerohely()} == null ? '-' : ${stats.getFerohely()})" style="font-size: 22px;"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
 </main>
 </body>
 </html>
