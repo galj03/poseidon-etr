@@ -21,7 +21,6 @@
 }
 
 .header-data {
-    flex: 1;
     font-weight: bold;
     text-align: left;
 }
@@ -38,6 +37,33 @@
 }
 
 .card-data {
-    flex: 1;
     text-align: left;
+}
+
+.card-data:nth-child(1), .header-data:nth-child(1) {
+    width: 120px;
+}
+
+.card-data:nth-child(2), .header-data:nth-child(2) {
+    width: 90px;
+}
+
+.card-data:nth-child(3), .header-data:nth-child(3) {
+    width: 120px;
+}
+
+.card-data:nth-child(4), .header-data:nth-child(4) {
+    width: 80px;
+}
+
+.card-data:nth-child(5), .header-data:nth-child(5) {
+    width: 80px;
+}
+
+.card-data:nth-child(6), .header-data:nth-child(6) {
+    width: 80px;
+}
+
+.card-data:nth-child(7), .header-data:nth-child(7) {
+    width: 180px;
 }

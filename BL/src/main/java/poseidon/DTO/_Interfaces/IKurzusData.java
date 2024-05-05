@@ -13,6 +13,8 @@ public interface IKurzusData {
     Boolean getVizsga();
     Integer getFerohely();
     Integer getAktualisLetszam();
+    Boolean getFelvette();
+    Boolean getTeljesitette();
     KurzusData setKurzusId(Integer kurzusId);
     KurzusData setNev(String nev);
     KurzusData setOktatoNeve(String oktatoNeve);
@@ -23,5 +25,6 @@ public interface IKurzusData {
     KurzusData setVizsga(Boolean vizsga);
     KurzusData setFerohely(Integer ferohely);
     KurzusData setAktualisLetszam(Integer aktualisLetszam);
-
+    KurzusData setFelvette(Boolean felvette);
+    KurzusData setTeljesitette(Boolean teljesitette);
 }

@@ -13,6 +13,7 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Controller
 public class CourseController {
@@ -39,8 +40,8 @@ public class CourseController {
     }
 
     @GetMapping("/subjectlisting/courselisting")
-    public String courseListing(@RequestParam("tantargyId") Integer tantargyId, Model model) {
-        List<IKurzusData> kurzusok = _kurzusDAO.getAllCoursesOfSubject(tantargyId);
+    public String courseListing(@RequestParam("tantargyId") Integer tantargyId, Model model, Principal principal) {
+        List<IKurzusData> kurzusok = _kurzusDAO.getAllCoursesOfSubject(tantargyId, principal.getName());
         String tantargyNev = _tantargyDAO.getById(tantargyId).getNev();
 
         model.addAttribute("kurzusok", kurzusok);
@@ -50,6 +51,15 @@ public class CourseController {
 
     @GetMapping("/enrollcourse")
     public String enrollCourse(@RequestParam("kurzusId") Integer kurzusId, Model model, Principal principal) {
+        Set<Integer> prerequisities = _kurzusDAO.getAllPrerequisities(_kurzusDAO.getTantargyIdByKurzusId(kurzusId));
+        Set<Integer> completed = _kurzusDAO.getAllCompletedSubjectsByUser(principal.getName());
+
+        if (!_kurzusDAO.checkPrerequisitesCompleted(prerequisities, completed).isEmpty()) {
+            model.addAttribute("error", "Nem teljesülnek az előfeltételek! Ellenőrizd a tantervet! A tantárgyak ID-jai: ");
+            model.addAttribute("notCompletedSubjects", _kurzusDAO.checkPrerequisitesCompleted(prerequisities, completed));
+            return "main/error";
+        }
+
         _kurzusDAO.enrollCourse(kurzusId, principal.getName());
         return "redirect:/subjectlisting";
     }

@@ -8,7 +8,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import poseidon.DAO._Interfaces.ISzakDAO;
 import poseidon.DAO._Interfaces.IUserDAO;
-import poseidon.DTO.Kurzus;
 import poseidon.DTO.Szak;
 import poseidon.DTO.Tantargy;
 import poseidon.DTO.User;
@@ -23,6 +22,7 @@ import poseidon.UserRoles;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.util.*;
 
@@ -255,6 +255,54 @@ public class OracleDBSzakDAO extends BaseDAO implements ISzakDAO {
         }
 
         return sum;
+    }
+
+    /**
+     * Returns everything from the kotelezo table.
+     * @return the result of SELECT * FROM kotelezo
+     */
+    @Override
+    public List<Map<ISzak, ITantargy>> getAllKotelezo() {
+        String sql = "SELECT * FROM kotelezo";
+        var queryResult = getJdbcTemplate().queryForList(sql);
+        List<Map<ISzak, ITantargy>> result = new ArrayList<>();
+        Map<ISzak, ITantargy> map = new HashMap<>();
+        for (var row : queryResult) {
+            ISzak tmpSzak = new Szak().setSzakId(((BigDecimal)row.get("szak_id")).intValue());
+            ITantargy tmpTargy = new Tantargy().setTantargyId(((BigDecimal)row.get("tantargy_id")).intValue());
+            map.put(tmpSzak, tmpTargy);
+            result.add(new HashMap<>(map));
+            map.clear();
+        }
+        return result;
+    }
+
+    @Override
+    public boolean saveKotelezo(ISzak szak, ITantargy tantargy) {
+        if (szak.getSzakId() != null) {
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+            try {
+                String sql = "INSERT INTO kotelezo(szak_id, tantargy_id) VALUES (?, ?)";
+                getJdbcTemplate().update(connection -> {
+                    PreparedStatement ps = connection.prepareStatement(sql);
+                    ps.setInt(1, szak.getSzakId());
+                    ps.setInt(2, tantargy.getTantargyId());
+
+                    return ps;
+                }, keyHolder);
+            } catch (DataAccessException exception) {
+                throw new QueryException("Could not insert value into database", exception);
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public void removeKotelezo(int szakId, int tantargyId) {
+        String sql = "DELETE FROM kotelezo WHERE szak_id=? AND tantargy_id=?";
+        getJdbcTemplate().update(sql, szakId, tantargyId);
     }
 
     //region Private members

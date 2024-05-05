@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import java.util.List;
+import java.util.Set;
 
 public interface IKurzusDAO {
     Iterable<IKurzus> getAll() throws QueryException;
@@ -16,9 +17,17 @@ public interface IKurzusDAO {
 
     List<IKurzus> getKurzusokByTantargyId(Integer tantargyId);
 
+    Integer getTantargyIdByKurzusId(Integer kurzusId) throws QueryException;
+
     Integer getSumOfEnrolledStudents(Integer kurzusId);
 
-    List<IKurzusData> getAllCoursesOfSubject(Integer tantargyId);
+    List<IKurzusData> getAllCoursesOfSubject(Integer tantargyId, String PsCode);
+
+    Set<Integer> getAllPrerequisities(Integer tantargyId);
+
+    Set<Integer> getAllCompletedSubjectsByUser(String PsCode);
+
+    List<Integer> checkPrerequisitesCompleted(Set<Integer> prerequisiteSubjects, Set<Integer> completedSubjects);
 
     void enrollCourse(Integer kurzusId, String PsCode);
 

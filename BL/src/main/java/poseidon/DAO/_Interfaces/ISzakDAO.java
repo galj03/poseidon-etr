@@ -2,6 +2,7 @@ package poseidon.DAO._Interfaces;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import poseidon.DTO._Interfaces.ISzak;
+import poseidon.DTO._Interfaces.ITantargy;
 import poseidon.DTO._Interfaces.IUser;
 import poseidon.DTO._Interfaces.ITantargyData;
 import poseidon.Exceptions.QueryException;
@@ -29,4 +30,7 @@ public interface ISzakDAO {
     Map<String, Float> getAveragesForAll(ISzak szak) throws QueryException;
 
     Integer finishedCoursesCountForEvfolyam(ISzak szak, Integer kezdEv) throws QueryException;
+    List<Map<ISzak, ITantargy>> getAllKotelezo();
+    void removeKotelezo(int szakId, int tantargyId);
+    boolean saveKotelezo(ISzak szak, ITantargy tantargy);
 }
