@@ -8,20 +8,23 @@ import org.springframework.stereotype.Repository;
 import poseidon.Constants;
 import poseidon.DAO._Interfaces.IKurzusDAO;
 import poseidon.DTO.Kurzus;
-import poseidon.DTO.User;
+import poseidon.DTO.KurzusData;
+import poseidon.DTO.Tantargy;
+import poseidon.DTO.TantargyData;
 import poseidon.DTO._Interfaces.IKurzus;
+import poseidon.DTO._Interfaces.IKurzusData;
+import poseidon.DTO._Interfaces.ITantargyData;
+import poseidon.DTO.User;
 import poseidon.DTO._Interfaces.IUser;
 import poseidon.Exceptions.ArgumentNullException;
 import poseidon.Exceptions.QueryException;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.sql.PreparedStatement;
 import java.sql.Types;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
@@ -40,6 +43,186 @@ public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
     @Override
     public IKurzus getById(Integer id) throws QueryException {
         return getRow("select * from kurzus where id=?", id);
+    }
+
+    public List<IKurzus> getKurzusokByTantargyId(Integer tantargyId) throws QueryException {
+        return getRows("select * from kurzus where tantargy_id=?", tantargyId);
+    }
+
+    public Integer getTantargyIdByKurzusId(Integer kurzusId) throws QueryException {
+        try {
+            List<Map<String, Object>> rows = getJdbcTemplate().queryForList(
+                    "SELECT tantargy.id AS tantargy_id " +
+                            "FROM tantargy, kurzus " +
+                            "WHERE tantargy.id = kurzus.tantargy_id " +
+                            "AND tantargy.id = ?", kurzusId);
+
+
+
+            return ((BigDecimal) rows.get(0).get("tantargy_id")).intValue();
+
+        } catch (DataAccessException exception) {
+            throw new QueryException("Could not get values from database", exception);
+        } catch (QueryException exception) {
+            throw new QueryException("Failed to query a nested value", exception);
+        }
+    }
+
+    public Set<Integer> getAllPrerequisities(Integer tantargyId) {
+        try {
+            List<Map<String, Object>> rows = getJdbcTemplate().queryForList(
+                    "SELECT feltetel_id AS elofeltetel " +
+                        "FROM elofeltetel " +
+                        "WHERE elofeltetel.tantargy_id = ?", tantargyId);
+
+            Set<Integer> prerequsiteSubjects = new HashSet<>();
+
+            for (Map<String, Object> row : rows) {
+                prerequsiteSubjects.add(((BigDecimal) row.get("elofeltetel")).intValue());
+            }
+
+            return prerequsiteSubjects;
+
+        } catch (DataAccessException exception) {
+            throw new QueryException("Could not get values from database", exception);
+        } catch (QueryException exception) {
+            throw new QueryException("Failed to query a nested value", exception);
+        }
+    }
+
+    public Set<Integer> getAllCompletedSubjectsByUser(String PsCode) {
+        try {
+            List<Map<String, Object>> rows = getJdbcTemplate().queryForList(
+                    "SELECT tantargy_id AS teljesitett_targy " +
+                        "FROM felvette " +
+                        "WHERE felvette.PS_kod = '" + PsCode + "' " +
+                        "AND allapot = 'TELJESITETT'");
+
+            Set<Integer> completedSubjects = new HashSet<>();
+
+            // debug
+            if (!rows.isEmpty()) {
+                Set<String> keys = rows.get(0).keySet();
+
+                for (String key : keys) {
+                    System.err.println(key);
+                }
+            }
+
+            for (Map<String, Object> row : rows) {
+                completedSubjects.add(((BigDecimal) row.get("teljesitett_targy")).intValue());
+            }
+
+            return completedSubjects;
+
+        } catch (DataAccessException exception) {
+            throw new QueryException("Could not get values from database", exception);
+        } catch (QueryException exception) {
+            throw new QueryException("Failed to query a nested value", exception);
+        }
+    }
+
+    public List<Integer> checkPrerequisitesCompleted(Set<Integer> prerequisiteSubjects, Set<Integer> completedSubjects) {
+        List<Integer> notCompletedSubjects = new ArrayList<>();
+
+        for (Integer pSubject : prerequisiteSubjects) {
+            if (!completedSubjects.contains(pSubject)) {
+                notCompletedSubjects.add(pSubject);
+            }
+        }
+
+        return notCompletedSubjects;
+    }
+
+    public Integer getSumOfEnrolledStudents(Integer kurzusId) {
+        try {
+            List<Map<String, Object>> rows = getJdbcTemplate().queryForList("SELECT * FROM felvette WHERE kurzus_id = ? AND allapot = " + "'" + Constants.JOVAHAGYOTT + "'", kurzusId);
+
+            return rows.size();
+
+        } catch (DataAccessException exception) {
+            throw new QueryException("Could not get values from database", exception);
+        } catch (QueryException exception) {
+            throw new QueryException("Failed to query a nested value", exception);
+        }
+    }
+
+    public List<IKurzusData> getAllCoursesOfSubject(Integer tantargyId, String PsCode) {
+        try {
+            List<Map<String, Object>> rows = getJdbcTemplate().queryForList("" +
+                    "SELECT " +
+                    "kurzus.id, " +
+                    "nev, " +
+                    "oktato_ps_kod, " +
+                    "kezdes_ideje_nap, " +
+                    "kezdes_ideje_idopont, " +
+                    "felveheto, " +
+                    "vizsga, " +
+                    "ferohely, " +
+                    "(SELECT nev FROM felhasznalo WHERE PS_kod = oktato_ps_kod) AS OKTATO_NEV, " +
+                    "(SELECT COUNT(*) FROM felvette WHERE kurzus_id=kurzus.id AND PS_kod='" + PsCode + "') AS felvette,\n" +
+                    "(SELECT COUNT(*) FROM felvette WHERE kurzus_id=kurzus.id AND PS_kod='" + PsCode + "' AND allapot='TELJESITETT') AS teljesitette\n" +
+                    "FROM kurzus, terem\n" +
+                    "WHERE kurzus.terem_id = terem.id\n" +
+                    "AND kurzus.tantargy_id = ?", tantargyId);
+
+            List<IKurzusData> result = new ArrayList<>();
+
+            // debug
+//            if (!rows.isEmpty()) {
+//                Set<String> keys = rows.get(0).keySet();
+//
+//                for (String key : keys) {
+//                    System.err.println(key);
+//                }
+//                System.err.println("-------------------");
+//            }
+
+            for (Map<String, Object> row : rows) {
+                IKurzusData kurzusData = new KurzusData();
+                kurzusData
+                        .setKurzusId(((BigDecimal) row.get("id")).intValue())
+                        .setNev((String) row.get("nev"))
+                        .setOktatoPsKod((String) row.get("oktato_ps_kod"))
+                        .setOktatoNeve((String) row.get("oktato_nev"))
+                        .setNap((String) row.get("kezdes_ideje_nap"))
+                        .setKezdesIdeje(((BigDecimal) row.get("kezdes_ideje_idopont")).intValue())
+                        .setFelveheto("I".equals(row.get("felveheto")))
+                        .setVizsga("I".equals(row.get("vizsga")))
+                        .setFerohely(((BigDecimal) row.get("ferohely")).intValue())
+                        .setAktualisLetszam(getSumOfEnrolledStudents(kurzusData.getKurzusId()))
+                        .setFelvette(((BigDecimal) row.get("felvette")).intValue() > 0)
+                        .setTeljesitette(((BigDecimal) row.get("teljesitette")).intValue() > 0);
+                result.add(kurzusData);
+            }
+
+            return result;
+
+        } catch (DataAccessException exception) {
+            throw new QueryException("Could not get values from database", exception);
+        } catch (QueryException exception) {
+            throw new QueryException("Failed to query a nested value", exception);
+        }
+    }
+
+    public void enrollCourse(Integer kurzusId, String PsCode) {
+        try {
+            String sql = "INSERT INTO felvette VALUES (?, ?, ?, " + "'" + Constants.JOVAHAGYASRA_VAR + "'" + ", NULL)";
+            getJdbcTemplate().update(connection -> {
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ps.setString(1, PsCode);
+                ps.setString(2, String.valueOf(kurzusId));
+                ps.setString(3, String.valueOf(getById(kurzusId).getTantargyId()));
+                return ps;
+            });
+        } catch (DataAccessException exception) {
+            throw new QueryException("Could not insert value into database", exception);
+        }
+    }
+
+    public void removeFromCourse(String PsCode, Integer kurzusId) {
+        String sql = "DELETE FROM felvette WHERE kurzus_id=? AND PS_kod=?";
+        getJdbcTemplate().update(sql, kurzusId, PsCode);
     }
 
     @Override
@@ -105,7 +288,7 @@ public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
     @Override
     public void saveGrade(String psCode, Integer tantargyId, Integer grade) {
         try {
-            String sql = "UPDATE felvette SET jegy = ? WHERE ps_kod = ? AND tantargy_id = ?";
+            String sql = "UPDATE felvette SET jegy = ?, allapot = ? WHERE ps_kod = ? AND tantargy_id = ?";
             getJdbcTemplate().update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(sql);
                 if (grade == null) {
@@ -113,8 +296,9 @@ public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
                 } else {
                     ps.setInt(1, grade);
                 }
-                ps.setString(2, psCode);
-                ps.setInt(3, tantargyId);
+                ps.setString(2, grade == null ? Constants.JOVAHAGYOTT : Constants.TELJESITETT);
+                ps.setString(3, psCode);
+                ps.setInt(4, tantargyId);
                 return ps;
             });
         } catch (DataAccessException exception) {
@@ -149,7 +333,7 @@ public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
             }
 
             IUser tmpUser = new User()
-                    .setPsCode((String)item.get("ps_kod"));
+                    .setPsCode((String) item.get("ps_kod"));
 
             if (lastKurzus.getKurzusId() != tmpKurzus.getKurzusId()) {
                 hallgatokJegyeKurzusonkent.put(lastKurzus, new HashMap<>(hallgatokJegyei));
@@ -157,9 +341,9 @@ public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
                 lastKurzus = tmpKurzus;
                 hallgatokJegyei.clear();
                 hallgatokJegyeKurzusonkent.clear();
-                hallgatokJegyei.put(tmpUser, item.get("jegy") == null ? 0 : ((BigDecimal)item.get("jegy")).intValue());
+                hallgatokJegyei.put(tmpUser, item.get("jegy") == null ? 0 : ((BigDecimal) item.get("jegy")).intValue());
             } else {
-                hallgatokJegyei.put(tmpUser, item.get("jegy") == null ? 0 : ((BigDecimal)item.get("jegy")).intValue());
+                hallgatokJegyei.put(tmpUser, item.get("jegy") == null ? 0 : ((BigDecimal) item.get("jegy")).intValue());
             }
         }
         if (lastKurzus.getKurzusId() == tmpKurzus.getKurzusId()) {
@@ -203,6 +387,16 @@ public class OracleDBKurzusDAO extends BaseDAO implements IKurzusDAO {
             List<IKurzus> result = new ArrayList<>();
 
             for (Map<String, Object> row : rows) {
+
+                // debug
+//                if (!rows.isEmpty()) {
+//                    Set<String> keys = rows.get(0).keySet();
+//
+//                    for (String key : keys) {
+//                        System.err.println(key);
+//                    }
+//                }
+
                 Boolean isFelveheto = row.get("felveheto").equals(Constants.TRUE);
                 Boolean isVizsga = row.get("vizsga").equals(Constants.TRUE);
 

@@ -4,14 +4,16 @@ import org.springframework.dao.DataIntegrityViolationException;
 import poseidon.DTO._Interfaces.ISzak;
 import poseidon.DTO._Interfaces.ITantargy;
 import poseidon.DTO._Interfaces.IUser;
+import poseidon.DTO._Interfaces.ITantargyData;
 import poseidon.Exceptions.QueryException;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
 public interface ISzakDAO {
     Iterable<ISzak> getAll() throws QueryException;
+
+    List<ITantargyData> kotelezokGetAll(String psCode, Integer szakId) throws QueryException;
 
     ISzak getById(Integer id) throws QueryException;
 
@@ -19,7 +21,16 @@ public interface ISzakDAO {
 
     void remove(ISzak szak) throws IllegalArgumentException, QueryException, DataIntegrityViolationException;
 
+    List<IUser> getAllUsersForSzak(ISzak szak) throws QueryException;
+
+    List<IUser> getAllYearlyGraduatesForSzak(ISzak szak, Integer vegzesEv) throws QueryException;
+
     Integer getRequiredClassesCount(ISzak szak) throws QueryException;
 
     Map<String, Float> getAveragesForAll(ISzak szak) throws QueryException;
+
+    Integer finishedCoursesCountForEvfolyam(ISzak szak, Integer kezdEv) throws QueryException;
+    List<Map<ISzak, ITantargy>> getAllKotelezo();
+    void removeKotelezo(int szakId, int tantargyId);
+    boolean saveKotelezo(ISzak szak, ITantargy tantargy);
 }

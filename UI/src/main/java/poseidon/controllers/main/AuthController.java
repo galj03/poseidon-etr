@@ -44,12 +44,14 @@ public class AuthController {
 
         Map<String, String> user_content = new HashMap<>();
 
-        for (IPoszt post: posts) {
-            String author = "";
-            String content = post.getTartalom();
-            IUser user = _userDAO.getByPsCode(post.getPsCode());
-            author += user.getName() + " (" + post.getPsCode() + "):";
-            user_content.put(author, content);
+        for (IPoszt post : posts) {
+            if (post.isForBoard()) {
+                String author = "";
+                String content = post.getTartalom();
+                IUser user = _userDAO.getByPsCode(post.getPsCode());
+                author += user.getName() + " (" + post.getPsCode() + "):";
+                user_content.put(author, content);
+            }
         }
 
         model.addAttribute("posts", user_content);

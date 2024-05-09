@@ -32,7 +32,8 @@
                 <div th:each="course : ${coursesPerHour}">
                     <td th:if="${course.getKurzusId()} != null"
                         th:text="${course.getTeremId()} + ' - ' + ${course.getNev()} + ' - ' + ${course.getOktato()}"
-                        th:headers="${course.getKezdesNapja()}" class="col-2" style="font-size: 20px; text-align: center;"></td>
+                        th:headers="${course.getKezdesNapja()}" class="col-2"
+                        style="font-size: 20px; text-align: center;"></td>
                     <td th:if="${course.getKurzusId()} == null"
                         class="col-2" style="font-size: 20px"></td>
                 </div>
@@ -46,31 +47,109 @@
             Tantervi teljesítések
         </div>
         <div style="justify-content: center">
-            <label for="tanterv_percent" style="font-size: 20px; margin: 20px 0; justify-self: left">Teljesített kötelező tantárgyak (%):</label>
+            <label for="tanterv_percent" style="font-size: 20px; margin: 20px 0; justify-self: left">Teljesített
+                kötelező tantárgyak (%):</label>
             <div class="progress" style="width: 75vw; margin-left: 8vw">
                 <div class="progress-bar bg-success" id="tanterv_percent" role="progressbar"
                      th:style="'width: ' + ${completionRate*100} + '%;'"
                      th:aria-valuenow="${completionRate*100}"
                      th:text="${completionRate*100} + '%'"
-                     aria-valuemin="0" aria-valuemax="100">25%</div>
+                     aria-valuemin="0" aria-valuemax="100">25%
+                </div>
             </div>
-            <label for="tanterv_credit" style="font-size: 20px; margin: 20px 0; justify-self: left">Teljesített kötelező tantárgyak (kredit):</label>
+            <label for="tanterv_credit" style="font-size: 20px; margin: 20px 0; justify-self: left">Teljesített kötelező
+                tantárgyak (kredit):</label>
             <div class="progress" style="width: 75vw; margin-left: 8vw">
                 <div class="progress-bar bg-success" id="tanterv_credit" role="progressbar"
                      th:style="'width: ' + ${completionRate*100} + '%;'"
                      th:aria-valuenow="${completionRate}"
                      th:text="${completedCredits} + '/' + ${requiredCredits}"
-                     aria-valuemin="0" aria-valuemax="100">4/20</div>
+                     aria-valuemin="0" aria-valuemax="100">4/20
+                </div>
             </div>
         </div>
         <div style="margin-top: 50px;">
             <label for="atlag" style="font-size: 20px; margin: 20px 0; justify-self: left">Tanulmányi átlag:</label>
             <div id="atlag"
-                 th:text="${normalAvg}">
-                5.0
+                 th:text="${userNormalAvg}">
+                0.0
             </div>
         </div>
     </div>
+
+    <div class="m-3 mx-5 p-3 rounded" style="background-color: #377ded; color:white; box-shadow: 2px 2px 2px #377ded;">
+        <div class="row col-12 font-bold" style="text-align: center; justify-content: center; font-size: 40px">
+            Évfolyam statisztika
+        </div>
+        <div class="row" style="margin-top: 50px;">
+            <div class="col-4">
+                <label for="atlag_all" style="font-size: 20px; margin: 20px 0; justify-self: left">Összesített átlag:</label>
+                <div id="atlag_all"
+                     th:text="${allNormalAvg}">
+                    0.0
+                </div>
+            </div>
+            <div class="col-4">
+                <label for="completed_courses" style="font-size: 20px; margin: 20px 0; justify-self: left">Összesen teljesített kreditek száma:</label>
+                <div id="completed_courses"
+                     th:text="${completedCoursesForSzak}">
+                    0.0
+                </div>
+            </div>
+            <div class="col-4">
+                <label for="completed_courses_per_user" style="font-size: 20px; margin: 20px 0; justify-self: left">Hallgatónként átlagosan teljesített kreditek száma:</label>
+                <div id="completed_courses_per_user"
+                     th:text="${averageCoursesForUserInSzak}">
+                    0.0
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="m-3 mx-5 p-3 rounded" style="background-color: #377ded; color:white; box-shadow: 2px 2px 2px #377ded;">
+        <div class="row col-12 font-bold" style="text-align: center; justify-content: center; font-size: 40px"
+        th:text="'Idei diplomastatisztikák - ' + ${szak.getName()}">
+        </div>
+        <div class="row" style="margin-top: 50px;">
+            <div class="col-6">
+                <label for="grad_num" style="font-size: 20px; margin: 20px 0; justify-self: left">Idén végzett hallgatók száma:</label>
+                <div id="grad_num"
+                     th:text="${graduateCount}">
+                    0.0
+                </div>
+            </div>
+            <div class="col-6">
+                <label for="grad_avg" style="font-size: 20px; margin: 20px 0; justify-self: left">Az idén végzett hallgatók összesített átlaga:</label>
+                <div id="grad_avg"
+                     th:text="${gradAvg}">
+                    0.0
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="m-3 mx-5 p-3 rounded" style="background-color: #377ded; color:white; box-shadow: 2px 2px 2px #377ded;">
+        <div class="row col-12 font-bold" style="text-align: center; justify-content: center; font-size: 40px; margin-bottom: 20px;">
+            Teremstatisztikák
+        </div>
+        <table id="stats" class="container">
+            <thead style="margin-bottom: 20px">
+                <tr class="sor" style="border-bottom: 2px solid white;">
+                    <td style="font-size: 30px;">ID</td>
+                    <td style="font-size: 30px;">Időpont</td>
+                    <td style="font-size: 30px;">Telítettség</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="stats : ${stats}" class="sor" style="min-height: 50px">
+                    <td th:text="${stats.getId()}" style="font-size: 22px;"></td>
+                    <td th:text="${stats.getNap()} == null ? 'N/A' : ${stats.getNap()} + ' - ' + (${stats.getKezdesIdo()} == null ? 'N/A ' : ${stats.getKezdesIdo()}) + ' óra'" style="font-size: 22px;"></td>
+                    <td th:text="(${stats.getLetszam()} == null ? '-' : ${stats.getLetszam()}) + '/' + (${stats.getFerohely()} == null ? '-' : ${stats.getFerohely()})" style="font-size: 22px;"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
 </main>
 </body>
 </html>

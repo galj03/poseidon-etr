@@ -8,19 +8,21 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import poseidon.DAO._Interfaces.ISzakDAO;
 import poseidon.DAO._Interfaces.IUserDAO;
-import poseidon.DTO.Kurzus;
 import poseidon.DTO.Szak;
 import poseidon.DTO.Tantargy;
 import poseidon.DTO.User;
 import poseidon.DTO._Interfaces.ISzak;
 import poseidon.DTO._Interfaces.ITantargy;
 import poseidon.DTO._Interfaces.IUser;
+import poseidon.DTO.TantargyData;
+import poseidon.DTO._Interfaces.ITantargyData;
 import poseidon.Exceptions.ArgumentNullException;
 import poseidon.Exceptions.QueryException;
 import poseidon.UserRoles;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.util.*;
 
@@ -41,6 +43,50 @@ public class OracleDBSzakDAO extends BaseDAO implements ISzakDAO {
     @Override
     public Iterable<ISzak> getAll() throws QueryException {
         return getRows("select * from szak");
+    }
+
+    @Override
+    public List<ITantargyData> kotelezokGetAll(String psCode, Integer szakId) throws QueryException {
+        try {
+            List<Map<String, Object>> rows = getJdbcTemplate().queryForList("SELECT tantargy.id, tantargy.nev, tantargy.targyfelelos, " +
+                    "  (SELECT CASE WHEN COUNT(*) > 0 THEN 'IGEN' ELSE 'NEM' END " +
+                    "   FROM felvette " +
+                    "   WHERE PS_kod=? AND allapot='TELJESITETT' AND tantargy_id=tantargy.id) " +
+                    "  AS teljesitette, (SELECT felhasznalo.nev FROM felhasznalo WHERE felhasznalo.PS_kod=tantargy.targyfelelos) AS targyfelelosneve " +
+                    "FROM kotelezo, tantargy " +
+                    "WHERE szak_id=? AND kotelezo.tantargy_id=tantargy.id", psCode, szakId);
+
+            List<ITantargyData> result = new ArrayList<>();
+
+//            // debug
+//            if (!rows.isEmpty()) {
+//                Set<String> keys = rows.get(0).keySet();
+//
+//                for (String key : keys) {
+//                    System.err.println(key);
+//                }
+//            }
+
+            for (Map<String, Object> row : rows) {
+                ITantargyData tantargyData = new TantargyData();
+                tantargyData.setTantargy(
+                        new Tantargy()
+                                .setTantargyId(((BigDecimal) row.get("id")).intValue())
+                                .setNev((String) row.get("nev"))
+                                .setFelelos((String) row.get("targyfelelos"))
+                );
+                tantargyData.setTeljesitett(row.get("teljesitette").equals("IGEN"));
+                tantargyData.setTargyfelelosNev((String) row.get("targyfelelosneve"));
+                result.add(tantargyData);
+            }
+
+            return result;
+
+        } catch (DataAccessException exception) {
+            throw new QueryException("Could not get values from database", exception);
+        } catch (QueryException exception) {
+            throw new QueryException("Failed to query a nested value", exception);
+        }
     }
 
     @Override
@@ -95,6 +141,62 @@ public class OracleDBSzakDAO extends BaseDAO implements ISzakDAO {
     }
 
     @Override
+    public List<IUser> getAllUsersForSzak(ISzak szak) throws QueryException {
+        var userData = getRawUsersForSzak(szak);
+        if (userData == null) {
+            return new ArrayList<>();
+        }
+
+        List<IUser> result = new ArrayList<>();
+
+        for (var user : userData) {
+            UserRoles role = Objects.equals(user.get("jogosultsag"), "ROLE_USER") ? UserRoles.ROLE_USER : UserRoles.ROLE_ADMIN;
+
+            result.add(new User()
+                    .setPsCode((String) user.get("PS_kod"))
+                    .setName((String) user.get("nev"))
+                    .setEmail((String) user.get("email"))
+                    .setPassword((String) user.get("jelszo"))
+                    .setSzakId(((BigDecimal) user.get("szak_id")).intValue())
+                    .setRole(role)
+                    .setKezdesEve(((BigDecimal) user.get("kezdes_eve")).intValue())
+                    .setVegzesEve(((BigDecimal) user.get("vegzes_ideje")).intValue())
+            );
+        }
+
+        return result;
+    }
+
+    @Override
+    public List<IUser> getAllYearlyGraduatesForSzak(ISzak szak, Integer vegzesEv) throws QueryException {
+        String sql = "select * from felhasznalo where szak_id=? and vegzes_ideje=?";
+
+        var graduates = super.getCustomRows(sql, szak.getSzakId(), vegzesEv);
+        if (graduates == null) {
+            return new ArrayList<>();
+        }
+
+        List<IUser> result = new ArrayList<>();
+
+        for (var graduate : graduates) {
+            UserRoles role = Objects.equals(graduate.get("jogosultsag"), "ROLE_USER") ? UserRoles.ROLE_USER : UserRoles.ROLE_ADMIN;
+
+            result.add(new User()
+                    .setPsCode((String) graduate.get("PS_kod"))
+                    .setName((String) graduate.get("nev"))
+                    .setEmail((String) graduate.get("email"))
+                    .setPassword((String) graduate.get("jelszo"))
+                    .setSzakId(((BigDecimal) graduate.get("szak_id")).intValue())
+                    .setRole(role)
+                    .setKezdesEve(((BigDecimal) graduate.get("kezdes_eve")).intValue())
+                    .setVegzesEve(((BigDecimal) graduate.get("vegzes_ideje")).intValue())
+            );
+        }
+
+        return result;
+    }
+
+    @Override
     public Integer getRequiredClassesCount(ISzak szak) throws QueryException {
         String sql = "select count(*) as num, kotelezo.szak_id from kotelezo, tantargy " +
                 "where kotelezo.tantargy_id=tantargy.id " +
@@ -110,13 +212,12 @@ public class OracleDBSzakDAO extends BaseDAO implements ISzakDAO {
 
     @Override
     public Map<String, Float> getAveragesForAll(ISzak szak) throws QueryException {
-        String sql = "select * from get_students_for_szak (?)";
-        var userData = super.getCustomRows(sql, szak.getSzakId());
+        var userData = getRawUsersForSzak(szak);
         if (userData == null) {
             return new HashMap<>();
         }
 
-        sql = "select avg(jegy) as avg_jegy, felhasznalo.PS_kod as PS_kod from felhasznalo, felvette " +
+        String sql = "select avg(jegy) as avg_jegy, felhasznalo.PS_kod as PS_kod from felhasznalo, felvette " +
                 String.format("where felhasznalo.szak_id=? and felvette.PS_kod=felhasznalo.PS_kod and allapot='%s' ", TELJESITETT)
                 + "group by felhasznalo.PS_kod";
         var avgData = super.getCustomRows(sql, szak.getSzakId());
@@ -136,6 +237,72 @@ public class OracleDBSzakDAO extends BaseDAO implements ISzakDAO {
         }
 
         return results;
+    }
+
+    @Override
+    public Integer finishedCoursesCountForEvfolyam(ISzak szak, Integer kezdEv) throws QueryException {
+        String sql = "select count(*) as num, felvette.PS_kod from tantargy, felvette, felhasznalo " +
+                String.format("where felvette.tantargy_id=tantargy.id and felvette.PS_kod=felhasznalo.PS_kod and allapot='%s' and felhasznalo.szak_id=? and felhasznalo.kezdes_eve=? ", TELJESITETT)
+                + "group by felvette.PS_kod";
+        var finishedCoursesData = super.getCustomRows(sql, szak.getSzakId(), kezdEv);
+        if (finishedCoursesData == null) {
+            return 0;
+        }
+
+        var sum = 0;
+        for (var finishedCourse : finishedCoursesData) {
+            sum += ((BigDecimal) finishedCourse.get("num")).intValue();
+        }
+
+        return sum;
+    }
+
+    /**
+     * Returns everything from the kotelezo table.
+     * @return the result of SELECT * FROM kotelezo
+     */
+    @Override
+    public List<Map<ISzak, ITantargy>> getAllKotelezo() {
+        String sql = "SELECT * FROM kotelezo";
+        var queryResult = getJdbcTemplate().queryForList(sql);
+        List<Map<ISzak, ITantargy>> result = new ArrayList<>();
+        Map<ISzak, ITantargy> map = new HashMap<>();
+        for (var row : queryResult) {
+            ISzak tmpSzak = new Szak().setSzakId(((BigDecimal)row.get("szak_id")).intValue());
+            ITantargy tmpTargy = new Tantargy().setTantargyId(((BigDecimal)row.get("tantargy_id")).intValue());
+            map.put(tmpSzak, tmpTargy);
+            result.add(new HashMap<>(map));
+            map.clear();
+        }
+        return result;
+    }
+
+    @Override
+    public boolean saveKotelezo(ISzak szak, ITantargy tantargy) {
+        if (szak.getSzakId() != null) {
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+            try {
+                String sql = "INSERT INTO kotelezo(szak_id, tantargy_id) VALUES (?, ?)";
+                getJdbcTemplate().update(connection -> {
+                    PreparedStatement ps = connection.prepareStatement(sql);
+                    ps.setInt(1, szak.getSzakId());
+                    ps.setInt(2, tantargy.getTantargyId());
+
+                    return ps;
+                }, keyHolder);
+            } catch (DataAccessException exception) {
+                throw new QueryException("Could not insert value into database", exception);
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public void removeKotelezo(int szakId, int tantargyId) {
+        String sql = "DELETE FROM kotelezo WHERE szak_id=? AND tantargy_id=?";
+        getJdbcTemplate().update(sql, szakId, tantargyId);
     }
 
     //region Private members
@@ -175,6 +342,11 @@ public class OracleDBSzakDAO extends BaseDAO implements ISzakDAO {
         } catch (QueryException exception) {
             throw new QueryException("Failed to query a nested value", exception);
         }
+    }
+
+    private List<Map<String, Object>> getRawUsersForSzak(ISzak szak){
+        String sql = "select * from get_students_for_szak (?)";
+        return super.getCustomRows(sql, szak.getSzakId());
     }
     //endregion
 }
